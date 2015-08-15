@@ -1,2 +1,2 @@
 # ABOCR
-A simiple strategy game using LibGDX
+A simple strategy game using LibGDX

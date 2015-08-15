@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit trunk//EN" "http://google-web-toolkit.googlecode.com/svn/trunk/distro-source/core/src/gwt-module.dtd">
+<module>
+	<source path="net/matthiasauer/abocr" />
+	
+	<extend-configuration-property name="gdx.reflect.include" value="net.matthiasauer.abocr.graphics.RenderComponent" />
+	<extend-configuration-property name="gdx.reflect.include" value="net.matthiasauer.abocr.graphics.RenderSystem" />
+	<extend-configuration-property name="gdx.reflect.include" value="net.matthiasauer.abocr.graphics.RenderLayer" />
+	<extend-configuration-property name="gdx.reflect.include" value="net.matthiasauer.abocr.graphics.RenderTextureArchiveEntryComponent" />
+	<extend-configuration-property name="gdx.reflect.include" value="net.matthiasauer.abocr.graphics.RenderTextureArchiveEventComponent" />
+	<extend-configuration-property name="gdx.reflect.include" value="net.matthiasauer.abocr.graphics.RenderTextureArchiveSystem" />
+	<extend-configuration-property name="gdx.reflect.include" value="net.matthiasauer.abocr.graphics.RenderTextureArchiveEventType" />
+	<extend-configuration-property name="gdx.reflect.include" value="net.matthiasauer.abocr.input.InputTouchEventComponent" />
+	<extend-configuration-property name="gdx.reflect.include" value="net.matthiasauer.abocr.input.InputTouchTargetComponent" />
+	<extend-configuration-property name="gdx.reflect.include" value="net.matthiasauer.abocr.input.InputTouchGeneratorSystem" />
+	<extend-configuration-property name="gdx.reflect.include" value="net.matthiasauer.abocr.input.InputTouchEventType" />
+	<extend-configuration-property name="gdx.reflect.include" value="net.matthiasauer.abocr.map.tile.TileType" />
+	<extend-configuration-property name="gdx.reflect.include" value="net.matthiasauer.abocr.map.tile.TileComponent" />
+	<extend-configuration-property name="gdx.reflect.include" value="net.matthiasauer.abocr.map.tile.TileRenderSystem" />
+</module>
