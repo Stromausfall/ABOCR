@@ -2,7 +2,8 @@ package net.matthiasauer.abocr.graphics;
 
 public enum RenderLayer {
 	Tiles(1, true),
-	UI(2, false);
+	UnitType(100, true),
+	UI(1000, false);
 
 	public final Integer order;
 	public final boolean projected;

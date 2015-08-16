@@ -18,6 +18,10 @@ import net.matthiasauer.abocr.input.InputTouchGeneratorSystem;
 import net.matthiasauer.abocr.map.tile.TileComponent;
 import net.matthiasauer.abocr.map.tile.TileRenderSystem;
 import net.matthiasauer.abocr.map.tile.TileType;
+import net.matthiasauer.abocr.map.unit.UnitComponent;
+import net.matthiasauer.abocr.map.unit.UnitRenderSystem;
+import net.matthiasauer.abocr.map.unit.UnitStrength;
+import net.matthiasauer.abocr.map.unit.UnitType;
 
 public class MapView extends ScreenAdapter {
 	private final PooledEngine engine;
@@ -36,20 +40,53 @@ public class MapView extends ScreenAdapter {
 		Gdx.input.setInputProcessor(this.inputMultiplexer);
 		
 		this.createMap();
+		this.createUnits();
 		
 		this.engine.addSystem(new RenderTextureArchiveSystem());
+
+		this.engine.addSystem(new TileRenderSystem());
+		this.engine.addSystem(new UnitRenderSystem());
+
 		this.engine.addSystem(new InputTouchGeneratorSystem(this.inputMultiplexer, this.camera));
 		this.engine.addSystem(new CameraSystem(this.camera));
-		this.engine.addSystem(new TileRenderSystem());
 
 		this.engine.addSystem(new RenderSystem(this.camera));
 		
 		//Gdx.app.setLogLevel(Gdx.app.LOG_ERROR);
 	}
 	
+	private static final int xSize = 4;
+	private static final int ySize = 3;
+	private static final double unitChancePercentage = 25;
+	
+	private void createUnits() {
+		Random random = new Random();
+		
+		for (int x = 0; x < xSize; x++) {
+			for (int y = 0; y < ySize; y++) {
+				if (random.nextInt(100) <= unitChancePercentage) {
+					Entity unit =
+							this.engine.createEntity();
+					
+					UnitComponent unitComponent =
+							this.engine.createComponent(UnitComponent.class);
+					unitComponent.x = x;
+					unitComponent.y = y;
+					unitComponent.type = UnitType.Infantry;
+					unitComponent.strength = UnitStrength.One;
+					
+					unit.add(unitComponent);
+					
+					this.engine.addEntity(unit);
+				}
+			}
+		}
+		
+	}
+	
 	private void createMap() {		
-		for (int x = 0; x < 4; x++) {
-			for (int y = 0; y < 3; y++) {
+		for (int x = 0; x < xSize; x++) {
+			for (int y = 0; y < ySize; y++) {
 				Entity tile =
 						this.engine.createEntity();
 				

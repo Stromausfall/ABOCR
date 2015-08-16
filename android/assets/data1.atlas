@@ -4,31 +4,73 @@ size: 1024,256
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
+fourUnit
+  rotate: false
+  xy: 522, 164
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+infantry
+  rotate: false
+  xy: 100, 34
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+oneUnit
+  rotate: false
+  xy: 588, 164
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
 screenMoveArrow
   rotate: false
-  xy: 2, 2
+  xy: 2, 100
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: -1
+threeUnit
+  rotate: false
+  xy: 166, 34
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
 tile_dirt
   rotate: false
-  xy: 132, 2
+  xy: 132, 100
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: -1
 tile_grass
   rotate: false
-  xy: 262, 2
+  xy: 262, 100
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: -1
 tile_sand
   rotate: false
-  xy: 392, 2
+  xy: 392, 100
   size: 128, 128
   orig: 128, 128
+  offset: 0, 0
+  index: -1
+twoUnit
+  rotate: false
+  xy: 654, 164
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+unitDirection
+  rotate: false
+  xy: 2, 2
+  size: 96, 96
+  orig: 96, 96
   offset: 0, 0
   index: -1

@@ -12,10 +12,14 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 import net.matthiasauer.abocr.graphics.RenderComponent;
+import net.matthiasauer.abocr.graphics.RenderPositionUnitTranslator;
 import net.matthiasauer.abocr.graphics.RenderTextureArchiveSystem;
+import net.matthiasauer.abocr.graphics.RenderedComponent;
 
 /**
  * Catches touch up events and distributes them to the graphic which was
@@ -32,6 +36,7 @@ public class InputTouchGeneratorSystem extends EntitySystem implements InputProc
 	private PooledEngine engine;
 	private ImmutableArray<Entity> targetEntities;
 	private ComponentMapper<RenderComponent> renderComponentMapper;
+	private ComponentMapper<RenderedComponent> renderedComponentMapper;
 	private ComponentMapper<InputTouchTargetComponent> targetComponentMapper;
 	private InputTouchEventComponent lastEvent;
 	private RenderTextureArchiveSystem archive;
@@ -52,13 +57,16 @@ public class InputTouchGeneratorSystem extends EntitySystem implements InputProc
 		this.engine.addEntity(this.inputTouchContainerEntity);
 		this.renderComponentMapper =
 				ComponentMapper.getFor(RenderComponent.class);
+		this.renderedComponentMapper =
+				ComponentMapper.getFor(RenderedComponent.class);
 		this.targetComponentMapper =
 				ComponentMapper.getFor(InputTouchTargetComponent.class);
 		this.targetEntities =
 				this.engine.getEntitiesFor(
 						Family.all(
 								InputTouchTargetComponent.class,
-								RenderComponent.class).get());
+								RenderComponent.class,
+								RenderedComponent.class).get());
 		this.archive =
 				this.engine.getSystem(RenderTextureArchiveSystem.class);
 		
@@ -72,22 +80,19 @@ public class InputTouchGeneratorSystem extends EntitySystem implements InputProc
 		super.removedFromEngine(engine);
 	}
 	
-	private boolean touchesVisiblePartOfTarget(Entity targetEntity, RenderComponent renderComponent) {
+	private boolean touchesVisiblePartOfTarget(
+			Entity targetEntity, RenderComponent renderComponent, RenderedComponent renderedComponent) {
 		InputTouchTargetComponent targetComponent =
 				this.targetComponentMapper.get(targetEntity);
-
-		if (targetComponent.target == null) {
-			throw new NullPointerException("targetComponent.target was null !");
-		}
 		
 		// if in the bounding box
-		if (targetComponent.target.contains(this.lastEvent.unprojectedPosition)) {
-
+		if (renderedComponent.renderedTarget.contains(this.lastEvent.unprojectedPosition)) {
+System.err.println("! " + renderComponent.texture.name);
 			if (renderComponent.texture == null) {
 				throw new NullPointerException("targetComponent.texture was null !");
 			}
 			
-			if (this.isClickedPixelInvisible(renderComponent, targetComponent)) {
+			if (this.isClickedPixelInvisible(renderedComponent, renderComponent, targetComponent)) {
 				return true;
 			}					
 		}
@@ -108,12 +113,15 @@ public class InputTouchGeneratorSystem extends EntitySystem implements InputProc
 			for (Entity targetEntity : targetEntities) {
 				RenderComponent renderComponent =
 						this.renderComponentMapper.get(targetEntity);
+				RenderedComponent renderedComponent =
+						this.renderedComponentMapper.get(targetEntity);
 
 				// search for the one that is touched and has the highest order of the layer
-				if (this.touchesVisiblePartOfTarget(targetEntity, renderComponent)) {
+				if (this.touchesVisiblePartOfTarget(targetEntity, renderComponent, renderedComponent)) {
 					if (renderComponent.layer.order > orderOfCurrentTarget) {
 						orderOfCurrentTarget = renderComponent.layer.order;
 						this.lastEvent.target = targetEntity;
+System.err.println("oi !!! " + renderComponent.texture.name);
 					}
 				}
 			}
@@ -128,15 +136,18 @@ public class InputTouchGeneratorSystem extends EntitySystem implements InputProc
 		}
 	}
 	
-	private boolean isClickedPixelInvisible(RenderComponent renderComponent, InputTouchTargetComponent targetComponent) {
+	private boolean isClickedPixelInvisible(RenderedComponent renderedComponent, RenderComponent renderComponent, InputTouchTargetComponent targetComponent) {
 		// http://gamedev.stackexchange.com/questions/43943/how-to-detect-a-touch-on-transparent-area-of-an-image-in-a-libgdx-stage
 		Pixmap pixmap =
 				this.archive.getPixmap(renderComponent.texture.getTexture());
-
+System.err.println(
+		
+		(int)(renderComponent.texture.getRegionX() + this.lastEvent.unprojectedPosition.x - renderedComponent.renderedTarget.x) + " - " + 
+		(int)(renderComponent.texture.getRegionY() + pixmap.getHeight() - (this.lastEvent.unprojectedPosition.y - renderedComponent.renderedTarget.y)));
 		int pixel =
 				pixmap.getPixel(
-						(int)(this.lastEvent.unprojectedPosition.x - targetComponent.target.x),
-						(int)(pixmap.getHeight() - (this.lastEvent.unprojectedPosition.y - targetComponent.target.y)));
+						(int)(renderComponent.texture.getRegionX() + this.lastEvent.unprojectedPosition.x - renderedComponent.renderedTarget.x),
+						(int)(renderComponent.texture.getRegionY() + pixmap.getHeight() - (renderComponent.texture.getRegionY() - this.lastEvent.unprojectedPosition.y - renderedComponent.renderedTarget.y)));
 
 		return (pixel & 0x000000ff) != 0;
 	}

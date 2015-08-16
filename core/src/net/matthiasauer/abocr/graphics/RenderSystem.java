@@ -10,6 +10,7 @@ import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
+import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
@@ -22,11 +23,14 @@ public class RenderSystem extends EntitySystem {
 	private ImmutableArray<Entity> entitiesToRender;
 	private ComponentMapper<RenderComponent> renderComponentMapper;
 	private final Map<RenderLayer, List<RenderComponent>> sortedComponents;
+	private final Map<RenderComponent, Entity> reverseRenderComponentMapper;
+	private PooledEngine pooledEngine;
 
 	public RenderSystem(OrthographicCamera camera) {
 		this.camera = camera;
 		this.spriteBatch = new SpriteBatch();
 		this.sortedComponents = new HashMap<RenderLayer, List<RenderComponent>>();
+		this.reverseRenderComponentMapper = new HashMap<RenderComponent, Entity>();
 		
 		for (RenderLayer layer : RenderLayer.values()) {
 			this.sortedComponents.put(layer, new ArrayList<RenderComponent>());
@@ -42,6 +46,8 @@ public class RenderSystem extends EntitySystem {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void addedToEngine(Engine engine) {
+		this.pooledEngine =
+				(PooledEngine) engine;
 		this.renderComponentMapper =
 				ComponentMapper.getFor(RenderComponent.class);
 		this.entitiesToRender =
@@ -83,11 +89,21 @@ public class RenderSystem extends EntitySystem {
 			
 			
 			for (RenderComponent renderComponent : this.sortedComponents.get(layer)) {
+				float actualPositionX =
+						RenderPositionUnitTranslator.translateX(
+								renderComponent.position.x,
+								renderComponent.position.y,
+								renderComponent.positionUnit) - renderComponent.texture.getRegionWidth() / 2;
+				float actualPositionY =
+						RenderPositionUnitTranslator.translateY(
+								renderComponent.position.x,
+								renderComponent.position.y,
+								renderComponent.positionUnit) - renderComponent.texture.getRegionHeight() / 2;
 				
 				this.spriteBatch.draw(
 						renderComponent.texture,
-						renderComponent.position.x - renderComponent.texture.getRegionWidth() / 2,
-						renderComponent.position.y - renderComponent.texture.getRegionHeight() / 2,
+						actualPositionX,
+						actualPositionY,
 						renderComponent.texture.getRegionWidth()/2,
 						renderComponent.texture.getRegionHeight()/2,
 						renderComponent.texture.getRegionWidth(),
@@ -95,6 +111,13 @@ public class RenderSystem extends EntitySystem {
 						1f,
 						1f,
 						renderComponent.rotation);
+				
+				this.reverseRenderComponentMapper.get(renderComponent).add(
+						this.pooledEngine.createComponent(RenderedComponent.class).set(
+								actualPositionX,
+								actualPositionY,
+								renderComponent.texture.getRegionWidth(),
+								renderComponent.texture.getRegionHeight()));					
 			}
 		}
 		
@@ -103,12 +126,14 @@ public class RenderSystem extends EntitySystem {
 	
 	private void orderRenderComponents() {
 		this.clearSortedComponents();
+		this.reverseRenderComponentMapper.clear();
 		
 		for (Entity renderEntity : this.entitiesToRender) {
 			RenderComponent data =
 					this.renderComponentMapper.get(renderEntity);
 			
 			this.sortedComponents.get(data.layer).add(data);
+			this.reverseRenderComponentMapper.put(data, renderEntity);
 		}
 	}
 }

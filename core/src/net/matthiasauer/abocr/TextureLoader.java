@@ -31,6 +31,10 @@ public final class TextureLoader {
 	public AtlasRegion getTexture(String name) {
 		AtlasRegion texture = null;
 		
+		if (name == null) {
+			throw new NullPointerException("name mustn't be null !");
+		}
+		
 		// if there is no entry - load it and save it
 		if (!archive.containsKey(name)) {
 			texture = textureAtlas.findRegion(name);

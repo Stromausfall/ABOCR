@@ -20,6 +20,7 @@ public class CameraSystem extends EntitySystem {
 	private final float cameraMoveSpeedPercentagePerSecond = 50;
 	private final float borderCameraMovePercentage = 10;
 	private final ComponentMapper<InputTouchEventComponent> inputTouchEventComponentMapper;
+	private final ComponentMapper<RenderedComponent> renderedComponentMapper;
 	private final ComponentMapper<RenderComponent> renderComponentMapper;
 	private final OrthographicCamera camera;
 	private final AtlasRegion arrow;
@@ -29,7 +30,7 @@ public class CameraSystem extends EntitySystem {
 	private Entity leftArrow;
 	private Entity rightArrow;
 	private PooledEngine engine;
-	private ImmutableArray<Entity> entitiesToRender;
+	private ImmutableArray<Entity> renderedEntities;
 	
 	public CameraSystem(OrthographicCamera camera) {
 		this.arrow = TextureLoader.getInstance().getTexture("screenMoveArrow");
@@ -38,6 +39,8 @@ public class CameraSystem extends EntitySystem {
 				ComponentMapper.getFor(InputTouchEventComponent.class);
 		this.renderComponentMapper =
 				ComponentMapper.getFor(RenderComponent.class);
+		this.renderedComponentMapper =
+				ComponentMapper.getFor(RenderedComponent.class);
 		
 		this.camera.position.set(0, 0, 0);
 		this.camera.update();
@@ -47,9 +50,9 @@ public class CameraSystem extends EntitySystem {
 	@Override
 	public void addedToEngine(Engine engine) {
 		this.engine = (PooledEngine)engine;
-		this.entitiesToRender =
+		this.renderedEntities =
 				engine.getEntitiesFor(
-						Family.all(RenderComponent.class).get());
+						Family.all(RenderComponent.class, RenderedComponent.class).get());
 		InputTouchGeneratorSystem inputTouchGeneratorSystem =
 				engine.getSystem(InputTouchGeneratorSystem.class);
 				
@@ -121,6 +124,7 @@ public class CameraSystem extends EntitySystem {
 							-Gdx.graphics.getWidth() / 2 + this.arrow.getRegionWidth() / 2,
 							0,
 							90,
+							RenderPositionUnit.Pixels,
 							this.arrow,
 							RenderLayer.UI));
 			
@@ -140,6 +144,7 @@ public class CameraSystem extends EntitySystem {
 							Gdx.graphics.getWidth()/2 - this.arrow.getRegionWidth() / 2,
 							0,
 							270,
+							RenderPositionUnit.Pixels,
 							this.arrow,
 							RenderLayer.UI));
 			
@@ -159,6 +164,7 @@ public class CameraSystem extends EntitySystem {
 							0,
 							- Gdx.graphics.getHeight()/2 + this.arrow.getRegionHeight() / 2,
 							180,
+							RenderPositionUnit.Pixels,
 							this.arrow,
 							RenderLayer.UI));
 			
@@ -178,6 +184,7 @@ public class CameraSystem extends EntitySystem {
 							0,
 							Gdx.graphics.getHeight()/2 - this.arrow.getRegionHeight() / 2,
 							0,
+							RenderPositionUnit.Pixels,
 							this.arrow,
 							RenderLayer.UI));
 			
@@ -196,18 +203,20 @@ public class CameraSystem extends EntitySystem {
 		Vector2 translateCamera = new Vector2();
 		
 		// get values
-		for (Entity entity : this.entitiesToRender) {
+		for (Entity entity : this.renderedEntities) {
 			RenderComponent renderComponent =
 					this.renderComponentMapper.get(entity);
+			RenderedComponent renderedComponent =
+					this.renderedComponentMapper.get(entity);
 			
 			// it only makes sense to collect the positions of projected
 			// textures !
-			if (renderComponent.layer.projected == true) {
-				minX = Math.min(minX, renderComponent.position.x);
-				minY = Math.min(minY, renderComponent.position.y);
+			if (renderComponent.layer.projected == true) {				
+				minX = Math.min(minX, renderedComponent.renderedTarget.x);
+				minY = Math.min(minY, renderedComponent.renderedTarget.y);
 	
-				maxX = Math.max(maxX, renderComponent.position.x);
-				maxY = Math.max(maxY, renderComponent.position.y);
+				maxX = Math.max(maxX, renderedComponent.renderedTarget.x + renderComponent.texture.getRegionWidth());
+				maxY = Math.max(maxY, renderedComponent.renderedTarget.y + renderComponent.texture.getRegionHeight());
 				
 				collectedEntities += 1;
 			}
