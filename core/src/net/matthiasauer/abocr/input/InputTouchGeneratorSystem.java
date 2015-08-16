@@ -87,7 +87,6 @@ public class InputTouchGeneratorSystem extends EntitySystem implements InputProc
 		
 		// if in the bounding box
 		if (renderedComponent.renderedTarget.contains(this.lastEvent.unprojectedPosition)) {
-System.err.println("! " + renderComponent.texture.name);
 			if (renderComponent.texture == null) {
 				throw new NullPointerException("targetComponent.texture was null !");
 			}
@@ -140,14 +139,20 @@ System.err.println("oi !!! " + renderComponent.texture.name);
 		// http://gamedev.stackexchange.com/questions/43943/how-to-detect-a-touch-on-transparent-area-of-an-image-in-a-libgdx-stage
 		Pixmap pixmap =
 				this.archive.getPixmap(renderComponent.texture.getTexture());
-System.err.println(
+
+		System.err.println(
+
+				(int)(renderComponent.texture.getRegionY() + this.lastEvent.unprojectedPosition.y - renderedComponent.renderedTarget.y) 
+				+" - "+
+				(int)(renderComponent.texture.getTexture().getHeight() - (this.lastEvent.unprojectedPosition.y - renderedComponent.renderedTarget.y))
+				+" - "+
+				(this.lastEvent.unprojectedPosition.y - renderedComponent.renderedTarget.y)
+				);
 		
-		(int)(renderComponent.texture.getRegionX() + this.lastEvent.unprojectedPosition.x - renderedComponent.renderedTarget.x) + " - " + 
-		(int)(renderComponent.texture.getRegionY() + pixmap.getHeight() - (this.lastEvent.unprojectedPosition.y - renderedComponent.renderedTarget.y)));
 		int pixel =
 				pixmap.getPixel(
 						(int)(renderComponent.texture.getRegionX() + this.lastEvent.unprojectedPosition.x - renderedComponent.renderedTarget.x),
-						(int)(renderComponent.texture.getRegionY() + pixmap.getHeight() - (renderComponent.texture.getRegionY() - this.lastEvent.unprojectedPosition.y - renderedComponent.renderedTarget.y)));
+						(int)(renderComponent.texture.getRegionY() + this.lastEvent.unprojectedPosition.y - renderedComponent.renderedTarget.y));
 
 		return (pixel & 0x000000ff) != 0;
 	}
