@@ -12,12 +12,9 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 import net.matthiasauer.abocr.graphics.RenderComponent;
-import net.matthiasauer.abocr.graphics.RenderPositionUnitTranslator;
 import net.matthiasauer.abocr.graphics.RenderTextureArchiveSystem;
 import net.matthiasauer.abocr.graphics.RenderedComponent;
 
@@ -120,7 +117,6 @@ public class InputTouchGeneratorSystem extends EntitySystem implements InputProc
 					if (renderComponent.layer.order > orderOfCurrentTarget) {
 						orderOfCurrentTarget = renderComponent.layer.order;
 						this.lastEvent.target = targetEntity;
-System.err.println("oi !!! " + renderComponent.texture.name);
 					}
 				}
 			}
@@ -140,19 +136,20 @@ System.err.println("oi !!! " + renderComponent.texture.name);
 		Pixmap pixmap =
 				this.archive.getPixmap(renderComponent.texture.getTexture());
 
-		System.err.println(
-
-				(int)(renderComponent.texture.getRegionY() + this.lastEvent.unprojectedPosition.y - renderedComponent.renderedTarget.y) 
-				+" - "+
-				(int)(renderComponent.texture.getTexture().getHeight() - (this.lastEvent.unprojectedPosition.y - renderedComponent.renderedTarget.y))
-				+" - "+
-				(this.lastEvent.unprojectedPosition.y - renderedComponent.renderedTarget.y)
-				);
+		// we want the position of the pixel in the texture !
+		// first add the offset of the region inside the texture, then add the position inside the texture !
+		// -> because we need the position inside the texture
+		int pixelX =
+				(int)(renderComponent.texture.getRegionX() + this.lastEvent.unprojectedPosition.x - renderedComponent.renderedTarget.x);
+		
+		// the same goes for the Y component, BUT the Y axis is inverted, therefore
+		// we need to invert the position INSIDE the texture !
+		// --> that's why we use regionHeigth - positionInsideTexture
+		int pixelY =
+				(int)(renderComponent.texture.getRegionY() + renderComponent.texture.getRegionHeight() - (this.lastEvent.unprojectedPosition.y - renderedComponent.renderedTarget.y));
 		
 		int pixel =
-				pixmap.getPixel(
-						(int)(renderComponent.texture.getRegionX() + this.lastEvent.unprojectedPosition.x - renderedComponent.renderedTarget.x),
-						(int)(renderComponent.texture.getRegionY() + this.lastEvent.unprojectedPosition.y - renderedComponent.renderedTarget.y));
+				pixmap.getPixel(pixelX, pixelY);
 
 		return (pixel & 0x000000ff) != 0;
 	}
