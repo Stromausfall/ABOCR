@@ -15,6 +15,8 @@ import net.matthiasauer.abocr.graphics.CameraSystem;
 import net.matthiasauer.abocr.graphics.RenderSystem;
 import net.matthiasauer.abocr.graphics.RenderTextureArchiveSystem;
 import net.matthiasauer.abocr.input.InputTouchGeneratorSystem;
+import net.matthiasauer.abocr.input.click.ClickableComponent;
+import net.matthiasauer.abocr.input.click.ClickGeneratorSystem;
 import net.matthiasauer.abocr.map.tile.TileComponent;
 import net.matthiasauer.abocr.map.tile.TileRenderSystem;
 import net.matthiasauer.abocr.map.tile.TileType;
@@ -22,8 +24,6 @@ import net.matthiasauer.abocr.map.unit.UnitComponent;
 import net.matthiasauer.abocr.map.unit.UnitRenderSystem;
 import net.matthiasauer.abocr.map.unit.UnitStrength;
 import net.matthiasauer.abocr.map.unit.UnitType;
-import net.matthiasauer.abocr.map.unit.interaction.UnitSelectableComponent;
-import net.matthiasauer.abocr.map.unit.interaction.UnitSelectionSystem;
 
 public class MapView extends ScreenAdapter {
 	private final PooledEngine engine;
@@ -49,7 +49,7 @@ public class MapView extends ScreenAdapter {
 		this.engine.addSystem(new UnitRenderSystem());
 
 		this.engine.addSystem(new InputTouchGeneratorSystem(this.inputMultiplexer, this.camera));
-		this.engine.addSystem(new UnitSelectionSystem());
+		this.engine.addSystem(new ClickGeneratorSystem());
 		this.engine.addSystem(new CameraSystem(this.camera));
 
 		this.engine.addSystem(new RenderSystem(this.camera));
@@ -84,7 +84,7 @@ public class MapView extends ScreenAdapter {
 					unitComponent.strengthUnit = this.engine.createEntity();
 					
 					unit.add(unitComponent);
-					unit.add(new UnitSelectableComponent());
+					unit.add(new ClickableComponent());
 					
 					this.engine.addEntity(unit);
 					this.engine.addEntity(unitComponent.strengthUnit);
