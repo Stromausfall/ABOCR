@@ -78,15 +78,15 @@ public class InputTouchGeneratorSystem extends EntitySystem implements InputProc
 	}
 	
 	private boolean touchesVisiblePartOfTarget(
-			Entity targetEntity, RenderComponent renderComponent, RenderedComponent renderedComponent) {
-		InputTouchTargetComponent targetComponent =
-				this.targetComponentMapper.get(targetEntity);
-		
+			Entity targetEntity, RenderComponent renderComponent, RenderedComponent renderedComponent) {		
 		// if in the bounding box
 		if (renderedComponent.renderedTarget.contains(this.lastEvent.unprojectedPosition)) {
 			if (renderComponent.texture == null) {
 				throw new NullPointerException("targetComponent.texture was null !");
 			}
+			
+			InputTouchTargetComponent targetComponent =
+					this.targetComponentMapper.get(targetEntity);
 			
 			if (this.isClickedPixelInvisible(renderedComponent, renderComponent, targetComponent)) {
 				return true;
@@ -98,12 +98,12 @@ public class InputTouchGeneratorSystem extends EntitySystem implements InputProc
 	
 	@Override
 	public void update(float deltaTime) {
+		// remove any previous event
+		this.inputTouchContainerEntity.remove(InputTouchEventComponent.class);
+		
 		// if there is an event that needs to be processsed
 		if (this.lastEvent != null) {
 			int orderOfCurrentTarget = -1;
-			
-			// remove any previous event
-			this.inputTouchContainerEntity.remove(InputTouchEventComponent.class);
 
 			// go over all entities
 			for (Entity targetEntity : targetEntities) {

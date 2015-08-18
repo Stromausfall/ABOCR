@@ -22,21 +22,22 @@ import net.matthiasauer.abocr.map.unit.UnitComponent;
 import net.matthiasauer.abocr.map.unit.UnitRenderSystem;
 import net.matthiasauer.abocr.map.unit.UnitStrength;
 import net.matthiasauer.abocr.map.unit.UnitType;
+import net.matthiasauer.abocr.map.unit.interaction.UnitSelectableComponent;
+import net.matthiasauer.abocr.map.unit.interaction.UnitSelectionSystem;
 
 public class MapView extends ScreenAdapter {
 	private final PooledEngine engine;
-	private final Random random;
+	private static final Random random = new Random();
 	private final OrthographicCamera camera;
 	private final InputMultiplexer inputMultiplexer;
 	private final Viewport viewport;
 
 	public MapView() {
 		this.engine = new PooledEngine();
-		this.random = new Random();
 		this.camera = new OrthographicCamera(800, 600);
 		this.viewport = new ScreenViewport(this.camera);
 
-		this.inputMultiplexer = new InputMultiplexer();
+		this.inputMultiplexer = new InputMultiplexer();		
 		Gdx.input.setInputProcessor(this.inputMultiplexer);
 		
 		this.createMap();
@@ -48,6 +49,7 @@ public class MapView extends ScreenAdapter {
 		this.engine.addSystem(new UnitRenderSystem());
 
 		this.engine.addSystem(new InputTouchGeneratorSystem(this.inputMultiplexer, this.camera));
+		this.engine.addSystem(new UnitSelectionSystem());
 		this.engine.addSystem(new CameraSystem(this.camera));
 
 		this.engine.addSystem(new RenderSystem(this.camera));
@@ -59,8 +61,13 @@ public class MapView extends ScreenAdapter {
 	private static final int ySize = 3;
 	private static final double unitChancePercentage = 25;
 	
+	private static <T> T choice(T ... elements) {
+		int randomIndex = random.nextInt(elements.length);
+		return
+				elements[randomIndex];
+	}
+	
 	private void createUnits() {
-		Random random = new Random();
 		
 		for (int x = 0; x < xSize; x++) {
 			for (int y = 0; y < ySize; y++) {
@@ -72,12 +79,15 @@ public class MapView extends ScreenAdapter {
 							this.engine.createComponent(UnitComponent.class);
 					unitComponent.x = x;
 					unitComponent.y = y;
-					unitComponent.type = UnitType.Infantry;
-					unitComponent.strength = UnitStrength.One;
+					unitComponent.type = choice(UnitType.values());
+					unitComponent.strength = choice(UnitStrength.values());
+					unitComponent.strengthUnit = this.engine.createEntity();
 					
 					unit.add(unitComponent);
+					unit.add(new UnitSelectableComponent());
 					
 					this.engine.addEntity(unit);
+					this.engine.addEntity(unitComponent.strengthUnit);
 				}
 			}
 		}
@@ -94,8 +104,7 @@ public class MapView extends ScreenAdapter {
 						this.engine.createComponent(TileComponent.class);
 				tileComponent.x = x;
 				tileComponent.y = y;
-				tileComponent.tileType =
-						TileType.values()[random.nextInt(TileType.values().length)];
+				tileComponent.tileType = choice(TileType.values());
 				tileComponent.receivesInput = true;
 
 				tile.add(tileComponent);

@@ -12,6 +12,7 @@ import net.matthiasauer.abocr.TextureContainer;
 import net.matthiasauer.abocr.graphics.RenderComponent;
 import net.matthiasauer.abocr.graphics.RenderLayer;
 import net.matthiasauer.abocr.graphics.RenderPositionUnit;
+import net.matthiasauer.abocr.input.InputTouchTargetComponent;
 
 public class UnitRenderSystem extends IteratingSystem {
 	@SuppressWarnings("unchecked")
@@ -19,6 +20,7 @@ public class UnitRenderSystem extends IteratingSystem {
 			Family.all(UnitComponent.class).get();
 	private final ComponentMapper<UnitComponent> unitComponentMapper;
 	private final TextureContainer<UnitType> unitTypeTextureContainer;
+	private final TextureContainer<UnitStrength> unitStrengthTextureContainer;
 	private PooledEngine engine; 
 
 	public UnitRenderSystem() {
@@ -26,6 +28,12 @@ public class UnitRenderSystem extends IteratingSystem {
 		
 		this.unitTypeTextureContainer = new TextureContainer<UnitType>();
 		this.unitTypeTextureContainer.add(UnitType.Infantry, "infantry");
+		
+		this.unitStrengthTextureContainer = new TextureContainer<UnitStrength>();
+		this.unitStrengthTextureContainer.add(UnitStrength.One, "oneUnit");
+		this.unitStrengthTextureContainer.add(UnitStrength.Two, "twoUnit");
+		this.unitStrengthTextureContainer.add(UnitStrength.Three, "threeUnit");
+		this.unitStrengthTextureContainer.add(UnitStrength.Four, "fourUnit");
 
 		this.unitComponentMapper =
 				ComponentMapper.getFor(UnitComponent.class);
@@ -45,7 +53,7 @@ public class UnitRenderSystem extends IteratingSystem {
 				this.unitComponentMapper.get(entity);
 		AtlasRegion typeTexture =
 				this.unitTypeTextureContainer.get(unitComponent.type);
-		RenderComponent renderComponent =
+		RenderComponent typeRenderComponent =
 				this.engine.createComponent(RenderComponent.class).set(
 						unitComponent.x,
 						unitComponent.y,
@@ -53,7 +61,22 @@ public class UnitRenderSystem extends IteratingSystem {
 						RenderPositionUnit.Tiles,
 						typeTexture,
 						RenderLayer.UnitType);
+
+		AtlasRegion strengthTexture =
+				this.unitStrengthTextureContainer.get(unitComponent.strength);
+		RenderComponent strengthRenderComponent =
+				this.engine.createComponent(RenderComponent.class).set(
+						unitComponent.x,
+						unitComponent.y,
+						0,
+						RenderPositionUnit.Tiles,
+						strengthTexture,
+						RenderLayer.UnitType);
+		InputTouchTargetComponent inputTouchTargetComponent =
+				this.engine.createComponent(InputTouchTargetComponent.class);
 		
-		entity.add(renderComponent);
+		entity.add(inputTouchTargetComponent);
+		entity.add(typeRenderComponent);
+		unitComponent.strengthUnit.add(strengthRenderComponent);
 	}
 }

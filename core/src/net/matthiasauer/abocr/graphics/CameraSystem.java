@@ -69,24 +69,31 @@ public class CameraSystem extends EntitySystem {
 		this.engine.addEntity(this.rightArrow);
 	};
 	
+	private final Vector2 lastPosition = new Vector2();
+	
 	@Override
 	public void update(float deltaTime) {
 		InputTouchEventComponent inputTouchEvent =
 				this.inputTouchEventComponentMapper.get(this.inputTouchEntity);
 		
+		if (inputTouchEvent != null) {
+			lastPosition.set(inputTouchEvent.projectedPosition);
+		}
+		
 		this.removeArrows();
 		
 		// if there is an event
-		if (inputTouchEvent != null) {
+		//if (inputTouchEvent != null) {		
+		{
 			Vector2 translateCamera = new Vector2();
 			translateCamera.add(
-					this.checkLeftBorder(inputTouchEvent.projectedPosition.x, deltaTime));
+					this.checkLeftBorder(lastPosition.x, deltaTime));
 			translateCamera.add(
-					this.checkRightBorder(inputTouchEvent.projectedPosition.x, deltaTime));
+					this.checkRightBorder(lastPosition.x, deltaTime));
 			translateCamera.add(
-					this.checkBottomBorder(inputTouchEvent.projectedPosition.y, deltaTime));
+					this.checkBottomBorder(lastPosition.y, deltaTime));
 			translateCamera.add(
-					this.checkTopBorder(inputTouchEvent.projectedPosition.y, deltaTime));
+					this.checkTopBorder(lastPosition.y, deltaTime));
 			translateCamera.add(
 					this.limitCameraPos());
 			

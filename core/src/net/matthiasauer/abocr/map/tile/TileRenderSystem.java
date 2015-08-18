@@ -20,7 +20,6 @@ public class TileRenderSystem extends IteratingSystem {
 	private static final Family family =
 			Family.all(TileComponent.class).get();
 	private final ComponentMapper<TileComponent> tileComponentMapper; 
-
 	private final TextureContainer<TileType> tileTextureContainer;
 	private PooledEngine engine;
 	
