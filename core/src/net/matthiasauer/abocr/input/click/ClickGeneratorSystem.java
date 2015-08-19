@@ -10,8 +10,8 @@ import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.ashley.systems.IteratingSystem;
 
 import net.matthiasauer.abocr.SystemStateLogger;
-import net.matthiasauer.abocr.input.InputTouchEventComponent;
-import net.matthiasauer.abocr.input.InputTouchEventType;
+import net.matthiasauer.abocr.input.base.touch.InputTouchEventComponent;
+import net.matthiasauer.abocr.input.base.touch.InputTouchEventType;
 
 public class ClickGeneratorSystem extends IteratingSystem {
 	private enum SystemState {

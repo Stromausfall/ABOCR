@@ -1,4 +1,4 @@
-package net.matthiasauer.abocr.input;
+package net.matthiasauer.abocr.input.base.touch;
 
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Engine;
@@ -15,8 +15,8 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.math.Vector3;
 
 import net.matthiasauer.abocr.graphics.RenderComponent;
-import net.matthiasauer.abocr.graphics.RenderTextureArchiveSystem;
 import net.matthiasauer.abocr.graphics.RenderedComponent;
+import net.matthiasauer.abocr.graphics.texture.archive.RenderTextureArchiveSystem;
 
 /**
  * Catches touch up events and distributes them to the graphic which was
@@ -29,7 +29,7 @@ import net.matthiasauer.abocr.graphics.RenderedComponent;
 public class InputTouchGeneratorSystem extends EntitySystem implements InputProcessor {
 	private final InputMultiplexer inputMultiplexer;
 	private final OrthographicCamera camera;
-	public final Entity inputTouchContainerEntity;
+	private Entity inputTouchContainerEntity;
 	private PooledEngine engine;
 	private ImmutableArray<Entity> targetEntities;
 	private ComponentMapper<RenderComponent> renderComponentMapper;
@@ -42,7 +42,6 @@ public class InputTouchGeneratorSystem extends EntitySystem implements InputProc
 		this.camera = camera;
 		this.lastEvent = null;
 		this.inputMultiplexer = inputMultiplexer;
-		this.inputTouchContainerEntity = new Entity();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -51,6 +50,7 @@ public class InputTouchGeneratorSystem extends EntitySystem implements InputProc
 		this.inputMultiplexer.addProcessor(this);
 		
 		this.engine = (PooledEngine)engine;
+		this.inputTouchContainerEntity = this.engine.createEntity();
 		this.engine.addEntity(this.inputTouchContainerEntity);
 		this.renderComponentMapper =
 				ComponentMapper.getFor(RenderComponent.class);
@@ -172,11 +172,12 @@ public class InputTouchGeneratorSystem extends EntitySystem implements InputProc
 		return false;
 	}
 	
-	private void saveEvent(int screenX, int screenY, InputTouchEventType inputType) {
+	private void saveEvent(int screenX, int screenY, InputTouchEventType inputType, int argument) {
 		Vector3 projected = new Vector3(screenX, screenY, 0);
 		Vector3 unprojected = this.camera.unproject(projected);
 		this.lastEvent =
 				this.engine.createComponent(InputTouchEventComponent.class);
+		this.lastEvent.argument = argument;
 		this.lastEvent.target = null;
 		this.lastEvent.inputType = inputType;
 		this.lastEvent.timestamp = System.currentTimeMillis();
@@ -188,25 +189,25 @@ public class InputTouchGeneratorSystem extends EntitySystem implements InputProc
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		this.saveEvent(screenX, screenY, InputTouchEventType.TouchDown);
+		this.saveEvent(screenX, screenY, InputTouchEventType.TouchDown, button);
 		return false;
 	}
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		this.saveEvent(screenX, screenY, InputTouchEventType.TouchUp);
+		this.saveEvent(screenX, screenY, InputTouchEventType.TouchUp, button);
 		return false;
 	}
 
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		this.saveEvent(screenX, screenY, InputTouchEventType.Dragged);
+		this.saveEvent(screenX, screenY, InputTouchEventType.Dragged, pointer);
 		return false;
 	}
 
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
-		this.saveEvent(screenX, screenY, InputTouchEventType.Moved);
+		this.saveEvent(screenX, screenY, InputTouchEventType.Moved, 0);
 		return false;
 	}
 

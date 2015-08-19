@@ -1,4 +1,4 @@
-package net.matthiasauer.abocr;
+package net.matthiasauer.abocr.graphics.texture;
 
 import java.util.HashMap;
 import java.util.Map;

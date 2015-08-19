@@ -1,4 +1,4 @@
-package net.matthiasauer.abocr.input;
+package net.matthiasauer.abocr.input.base.touch;
 
 public enum InputTouchEventType {
 	TouchDown,

@@ -1,22 +1,28 @@
-package net.matthiasauer.abocr.graphics;
+package net.matthiasauer.abocr.graphics.camera;
 
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.PooledEngine;
+import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.math.Vector2;
 
-import net.matthiasauer.abocr.TextureLoader;
-import net.matthiasauer.abocr.input.InputTouchEventComponent;
-import net.matthiasauer.abocr.input.InputTouchGeneratorSystem;
+import net.matthiasauer.abocr.graphics.RenderComponent;
+import net.matthiasauer.abocr.graphics.RenderLayer;
+import net.matthiasauer.abocr.graphics.RenderPositionUnit;
+import net.matthiasauer.abocr.graphics.RenderedComponent;
+import net.matthiasauer.abocr.graphics.texture.TextureLoader;
+import net.matthiasauer.abocr.input.base.touch.InputTouchEventComponent;
 
-public class CameraSystem extends EntitySystem {
+public class CameraSystem extends IteratingSystem {
+	@SuppressWarnings("unchecked")
+	private static final Family family =
+			Family.all(InputTouchEventComponent.class).get();
 	private final float cameraMoveSpeedPercentagePerSecond = 50;
 	private final float borderCameraMovePercentage = 10;
 	private final ComponentMapper<InputTouchEventComponent> inputTouchEventComponentMapper;
@@ -24,7 +30,6 @@ public class CameraSystem extends EntitySystem {
 	private final ComponentMapper<RenderComponent> renderComponentMapper;
 	private final OrthographicCamera camera;
 	private final AtlasRegion arrow;
-	private Entity inputTouchEntity;
 	private Entity topArrow;
 	private Entity bottomArrow;
 	private Entity leftArrow;
@@ -33,6 +38,7 @@ public class CameraSystem extends EntitySystem {
 	private ImmutableArray<Entity> renderedEntities;
 	
 	public CameraSystem(OrthographicCamera camera) {
+		super(family);
 		this.arrow = TextureLoader.getInstance().getTexture("screenMoveArrow");
 		this.camera = camera;
 		this.inputTouchEventComponentMapper =
@@ -53,11 +59,7 @@ public class CameraSystem extends EntitySystem {
 		this.renderedEntities =
 				engine.getEntitiesFor(
 						Family.all(RenderComponent.class, RenderedComponent.class).get());
-		InputTouchGeneratorSystem inputTouchGeneratorSystem =
-				engine.getSystem(InputTouchGeneratorSystem.class);
-				
-		this.inputTouchEntity =
-				inputTouchGeneratorSystem.inputTouchContainerEntity;
+
 		this.topArrow = this.engine.createEntity();
 		this.bottomArrow = this.engine.createEntity();
 		this.leftArrow = this.engine.createEntity();
@@ -67,38 +69,44 @@ public class CameraSystem extends EntitySystem {
 		this.engine.addEntity(this.bottomArrow);
 		this.engine.addEntity(this.leftArrow);
 		this.engine.addEntity(this.rightArrow);
-	};
+		
+		super.addedToEngine(engine);
+	}
 	
 	private final Vector2 lastPosition = new Vector2();
 	
 	@Override
 	public void update(float deltaTime) {
-		InputTouchEventComponent inputTouchEvent =
-				this.inputTouchEventComponentMapper.get(this.inputTouchEntity);
-		
-		if (inputTouchEvent != null) {
-			lastPosition.set(inputTouchEvent.projectedPosition);
-		}
-		
+		// process entities
+		super.update(deltaTime);
+
+		// now begin to handle the event
 		this.removeArrows();
 		
-		// if there is an event
-		//if (inputTouchEvent != null) {		
-		{
-			Vector2 translateCamera = new Vector2();
-			translateCamera.add(
-					this.checkLeftBorder(lastPosition.x, deltaTime));
-			translateCamera.add(
-					this.checkRightBorder(lastPosition.x, deltaTime));
-			translateCamera.add(
-					this.checkBottomBorder(lastPosition.y, deltaTime));
-			translateCamera.add(
-					this.checkTopBorder(lastPosition.y, deltaTime));
-			translateCamera.add(
-					this.limitCameraPos());
-			
-			this.camera.translate(translateCamera);
-			this.camera.update();
+		Vector2 translateCamera = new Vector2();
+		translateCamera.add(
+				this.checkLeftBorder(lastPosition.x, deltaTime));
+		translateCamera.add(
+				this.checkRightBorder(lastPosition.x, deltaTime));
+		translateCamera.add(
+				this.checkBottomBorder(lastPosition.y, deltaTime));
+		translateCamera.add(
+				this.checkTopBorder(lastPosition.y, deltaTime));
+		translateCamera.add(
+				this.limitCameraPos());
+
+		this.camera.translate(translateCamera);
+		this.camera.update();
+	}
+	
+	@Override
+	protected void processEntity(Entity entity, float deltaTime) {
+		// collect the events
+		InputTouchEventComponent inputTouchEvent =
+				this.inputTouchEventComponentMapper.get(entity);
+
+		if (inputTouchEvent != null) {
+			lastPosition.set(inputTouchEvent.projectedPosition);
 		}
 	}
 	

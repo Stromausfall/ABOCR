@@ -8,11 +8,11 @@ import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 
-import net.matthiasauer.abocr.TextureContainer;
 import net.matthiasauer.abocr.graphics.RenderComponent;
 import net.matthiasauer.abocr.graphics.RenderLayer;
 import net.matthiasauer.abocr.graphics.RenderPositionUnit;
-import net.matthiasauer.abocr.input.InputTouchTargetComponent;
+import net.matthiasauer.abocr.graphics.texture.TextureContainer;
+import net.matthiasauer.abocr.input.base.touch.InputTouchTargetComponent;
 
 public class UnitRenderSystem extends IteratingSystem {
 	@SuppressWarnings("unchecked")

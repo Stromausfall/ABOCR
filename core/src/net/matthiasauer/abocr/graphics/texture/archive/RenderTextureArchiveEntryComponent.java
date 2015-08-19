@@ -1,4 +1,4 @@
-package net.matthiasauer.abocr.graphics;
+package net.matthiasauer.abocr.graphics.texture.archive;
 
 import com.badlogic.ashley.core.Component;
 import com.badlogic.gdx.graphics.Pixmap;
