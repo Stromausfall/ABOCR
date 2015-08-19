@@ -7,8 +7,6 @@ import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 
-import net.matthiasauer.abocr.input.base.touch.InputTouchEventComponent;
-
 public class InputSimpleEventGenerator extends EntitySystem implements InputProcessor {
 	private final InputMultiplexer inputMultiplexer;
 	private PooledEngine engine;
@@ -23,11 +21,10 @@ public class InputSimpleEventGenerator extends EntitySystem implements InputProc
 	@Override
 	public void update(float deltaTime) {
 		// remove any previous event
-		this.inputSimpleEventContainerEntity.remove(InputTouchEventComponent.class);
+		this.inputSimpleEventContainerEntity.remove(InputSimpleEventComponent.class);
 		
 		if (this.lastEvent != null) {
 			this.inputSimpleEventContainerEntity.add(this.lastEvent);
-System.err.println(this.lastEvent.inputType + " - " + this.lastEvent.argument);
 			this.lastEvent = null;
 		}
 	}

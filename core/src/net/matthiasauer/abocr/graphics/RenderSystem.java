@@ -69,8 +69,6 @@ public class RenderSystem extends EntitySystem {
 		
 		// iterate over the enum in order
 		for (RenderLayer layer : RenderLayer.values()) {
-			
-			
 			if (lastProjectedValue != (Boolean)layer.projected) {
 				lastProjectedValue = layer.projected;
 				
@@ -89,39 +87,56 @@ public class RenderSystem extends EntitySystem {
 			
 			
 			for (RenderComponent renderComponent : this.sortedComponents.get(layer)) {
-				float actualPositionX =
-						RenderPositionUnitTranslator.translateX(
-								renderComponent.position.x,
-								renderComponent.position.y,
-								renderComponent.positionUnit) - renderComponent.texture.getRegionWidth() / 2;
-				float actualPositionY =
-						RenderPositionUnitTranslator.translateY(
-								renderComponent.position.x,
-								renderComponent.position.y,
-								renderComponent.positionUnit) - renderComponent.texture.getRegionHeight() / 2;
-				
-				this.spriteBatch.draw(
-						renderComponent.texture,
-						actualPositionX,
-						actualPositionY,
-						renderComponent.texture.getRegionWidth()/2,
-						renderComponent.texture.getRegionHeight()/2,
-						renderComponent.texture.getRegionWidth(),
-						renderComponent.texture.getRegionHeight(),
-						1f,
-						1f,
-						renderComponent.rotation);
-				
-				this.reverseRenderComponentMapper.get(renderComponent).add(
-						this.pooledEngine.createComponent(RenderedComponent.class).set(
-								actualPositionX,
-								actualPositionY,
-								renderComponent.texture.getRegionWidth(),
-								renderComponent.texture.getRegionHeight()));					
+				this.drawSprite(renderComponent);					
 			}
 		}
 		
 		this.spriteBatch.end();
+	}
+	
+	private void drawSprite(RenderComponent renderComponent) {
+		float actualPositionX =
+				RenderPositionUnitTranslator.translateX(
+						renderComponent.position.x,
+						renderComponent.position.y,
+						renderComponent.positionUnit) - renderComponent.texture.getRegionWidth() / 2;
+		float actualPositionY =
+				RenderPositionUnitTranslator.translateY(
+						renderComponent.position.x,
+						renderComponent.position.y,
+						renderComponent.positionUnit) - renderComponent.texture.getRegionHeight() / 2;
+		float originX = renderComponent.texture.getRegionWidth()/2;
+		float originY = renderComponent.texture.getRegionHeight()/2;
+		float width = renderComponent.texture.getRegionWidth();
+		float height = renderComponent.texture.getRegionHeight();
+		
+		if (!renderComponent.layer.projected) {
+			actualPositionX *= this.camera.zoom;
+			actualPositionY *= this.camera.zoom;
+			originX *= this.camera.zoom;
+			originY *= this.camera.zoom;
+			width *= this.camera.zoom;
+			height *= this.camera.zoom;
+		}
+		
+		this.spriteBatch.draw(
+				renderComponent.texture,
+				actualPositionX,
+				actualPositionY,
+				originX,
+				originY,
+				width,
+				height,
+				1,
+				1,
+				renderComponent.rotation);
+		
+		this.reverseRenderComponentMapper.get(renderComponent).add(
+				this.pooledEngine.createComponent(RenderedComponent.class).set(
+						actualPositionX,
+						actualPositionY,
+						renderComponent.texture.getRegionWidth(),
+						renderComponent.texture.getRegionHeight()));
 	}
 	
 	private void orderRenderComponents() {

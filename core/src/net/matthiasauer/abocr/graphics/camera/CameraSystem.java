@@ -119,6 +119,9 @@ public class CameraSystem extends IteratingSystem {
 		float totalSpeed =
 				(maxAxis * cameraMoveSpeedPercentagePerSecond) / 100;
 		
+		// add zoom factor
+		totalSpeed *= this.camera.zoom;
+		
 		return totalSpeed * deltaTime;
 	}
 	
