@@ -16,6 +16,7 @@ import net.matthiasauer.abocr.graphics.camera.CameraSystem;
 import net.matthiasauer.abocr.graphics.camera.CameraZoomSystem;
 import net.matthiasauer.abocr.graphics.texture.archive.RenderTextureArchiveSystem;
 import net.matthiasauer.abocr.input.click.ClickableComponent;
+import net.matthiasauer.abocr.input.base.gestures.InputGestureEventGenerator;
 import net.matthiasauer.abocr.input.base.simple.InputSimpleEventGenerator;
 import net.matthiasauer.abocr.input.base.touch.InputTouchGeneratorSystem;
 import net.matthiasauer.abocr.input.click.ClickGeneratorSystem;
@@ -50,8 +51,11 @@ public class MapView extends ScreenAdapter {
 		this.engine.addSystem(new TileRenderSystem());
 		this.engine.addSystem(new UnitRenderSystem());
 
+		this.engine.addSystem(new InputGestureEventGenerator(this.inputMultiplexer, this.camera));
 		this.engine.addSystem(new InputTouchGeneratorSystem(this.inputMultiplexer, this.camera));
+		
 		this.engine.addSystem(new InputSimpleEventGenerator(this.inputMultiplexer));
+		
 		this.engine.addSystem(new ClickGeneratorSystem());
 		this.engine.addSystem(new CameraZoomSystem(this.camera));
 		this.engine.addSystem(new CameraSystem(this.camera));
