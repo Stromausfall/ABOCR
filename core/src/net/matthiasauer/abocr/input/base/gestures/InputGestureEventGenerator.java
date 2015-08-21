@@ -4,8 +4,8 @@ import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.PooledEngine;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.Vector2;
@@ -13,17 +13,15 @@ import com.badlogic.gdx.math.Vector2;
 public class InputGestureEventGenerator extends EntitySystem implements GestureListener {
 	private final InputMultiplexer inputMultiplexer;
 	private final GestureDetector gestureDetector;
-	private final OrthographicCamera camera;
 	private PooledEngine engine;
 	private InputGestureEventComponent lastEvent;
-	private Entity inputSimpleEventContainerEntity;
+	private Entity inputGestureEventContainerEntity;
 	private Float lastDistance = null;
 	private Float currentDistance = null;
 
-	public InputGestureEventGenerator(InputMultiplexer inputMultiplexer, OrthographicCamera camera) {
+	public InputGestureEventGenerator(InputMultiplexer inputMultiplexer) {
 		this.lastEvent = null;
 		this.inputMultiplexer = inputMultiplexer;
-		this.camera = camera;
 		this.gestureDetector =
 				new GestureDetector(20, 0.5f, 2, 0.15f, this);
 		
@@ -33,27 +31,11 @@ public class InputGestureEventGenerator extends EntitySystem implements GestureL
 	@Override
 	public void update(float deltaTime) {
 		// remove any previous event
-		this.inputSimpleEventContainerEntity.remove(InputGestureEventComponent.class);
+		this.inputGestureEventContainerEntity.remove(InputGestureEventComponent.class);
 		
 		if (this.lastEvent != null) {
-			this.inputSimpleEventContainerEntity.add(this.lastEvent);
+			this.inputGestureEventContainerEntity.add(this.lastEvent);
 			this.lastEvent = null;
-		}
-
-		if ((this.lastDistance != null)
-				&& (this.currentDistance != null)) {
-			if (this.currentDistance > this.lastDistance) {
-				this.camera.zoom -= 0.01;
-			}
-			if (this.currentDistance < this.lastDistance) {
-				this.camera.zoom += 0.01;
-			}
-
-			this.camera.zoom =
-					Math.max(0.05f, this.camera.zoom);
-			this.camera.zoom =
-					Math.min(2.0f, this.camera.zoom);
-			this.camera.update();
 		}
 		
 		this.lastDistance = this.currentDistance;
@@ -63,19 +45,10 @@ public class InputGestureEventGenerator extends EntitySystem implements GestureL
 	@Override
 	public void addedToEngine(Engine engine) {
 		this.engine = (PooledEngine)engine;
-		this.inputSimpleEventContainerEntity = this.engine.createEntity();		
-		this.engine.addEntity(this.inputSimpleEventContainerEntity);
+		this.inputGestureEventContainerEntity = this.engine.createEntity();		
+		this.engine.addEntity(this.inputGestureEventContainerEntity);
 
 		super.addedToEngine(engine);
-	}
-	
-	private void saveEvent(InputGestureEventComponent inputType, int argument) {
-		/*
-		this.lastEvent =
-				this.engine.createComponent(InputSimpleEventComponent.class).set(
-						inputType,
-						System.currentTimeMillis(),
-						argument);*/
 	}
 
 	@Override
@@ -111,6 +84,11 @@ public class InputGestureEventGenerator extends EntitySystem implements GestureL
 
 	@Override
 	public boolean pan(float x, float y, float deltaX, float deltaY) {
+		Gdx.app.error("pan!",
+		" x:" + x
+		+ "| y:" + y
+		+ "| deltaX:" + deltaX
+		+ "| deltaY:" + deltaY);
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -124,6 +102,23 @@ public class InputGestureEventGenerator extends EntitySystem implements GestureL
 	@Override
 	public boolean zoom(float initialDistance, float distance) {
 		this.currentDistance = distance;
+
+		if ((this.lastDistance != null)
+				&& (this.currentDistance != null)) {
+			float zoomFactor = 0;
+			
+			if (this.currentDistance > this.lastDistance) {
+				zoomFactor = -1;
+			}
+			if (this.currentDistance < this.lastDistance) {
+				zoomFactor = 1;
+			}
+
+			this.lastEvent =
+					this.engine.createComponent(InputGestureEventComponent.class).set(
+							InputGestureEventType.Zoom, zoomFactor);
+		}
+		
 		return false;
 	}
 

@@ -101,5 +101,4 @@ public class InputSimpleEventGenerator extends EntitySystem implements InputProc
 		this.saveEvent(InputSimpleEventType.Scrolled, amount);
 		return false;
 	}
-
 }

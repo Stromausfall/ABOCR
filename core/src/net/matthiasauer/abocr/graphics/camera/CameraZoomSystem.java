@@ -6,31 +6,33 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 
-import net.matthiasauer.abocr.input.base.simple.InputSimpleEventComponent;
-
 public class CameraZoomSystem extends IteratingSystem {
 	@SuppressWarnings("unchecked")
 	private static final Family family =
-			Family.all(InputSimpleEventComponent.class).get();
+			Family.all(ZoomEventComponent.class).get();
 	private final OrthographicCamera camera;
-	private final ComponentMapper<InputSimpleEventComponent> inputSimpleEventComponentMapper;
+	private final ComponentMapper<ZoomEventComponent> zoomEventComponentComponentMapper;
 	
 	public CameraZoomSystem(OrthographicCamera camera) {
 		super(family);
 		
 		this.camera = camera;
-		this.inputSimpleEventComponentMapper =
-				ComponentMapper.getFor(InputSimpleEventComponent.class);
+		this.zoomEventComponentComponentMapper =
+				ComponentMapper.getFor(ZoomEventComponent.class);
 	}
 
 	@Override
 	protected void processEntity(Entity entity, float deltaTime) {
-		InputSimpleEventComponent inputSimpleEventComponent =
-				this.inputSimpleEventComponentMapper.get(entity);
+		ZoomEventComponent zoomEvent =
+				this.zoomEventComponentComponentMapper.get(entity);
 
-		this.camera.zoom += 0.25 * inputSimpleEventComponent.argument;
+		this.camera.zoom += zoomEvent.value;
+
+		// limit
 		this.camera.zoom = Math.max(0.05f, this.camera.zoom);
 		this.camera.zoom = Math.min(2.0f, this.camera.zoom);
+		
+		// update the camera
 		this.camera.update();
 	}
 }
