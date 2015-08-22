@@ -1,4 +1,4 @@
-package net.matthiasauer.abocr.graphics.camera;
+package net.matthiasauer.abocr.graphics.camera.zoom;
 
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;

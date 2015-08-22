@@ -12,10 +12,11 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import net.matthiasauer.abocr.graphics.RenderSystem;
-import net.matthiasauer.abocr.graphics.camera.CameraSystem;
-import net.matthiasauer.abocr.graphics.camera.CameraZoomSystem;
-import net.matthiasauer.abocr.graphics.camera.InputGestureToZoomEventSystem;
-import net.matthiasauer.abocr.graphics.camera.InputSimpleToZoomEventSystem;
+import net.matthiasauer.abocr.graphics.camera.move.CameraMoveSystem;
+import net.matthiasauer.abocr.graphics.camera.move.InputGestureToMoveEventSystem;
+import net.matthiasauer.abocr.graphics.camera.zoom.CameraZoomSystem;
+import net.matthiasauer.abocr.graphics.camera.zoom.InputGestureToZoomEventSystem;
+import net.matthiasauer.abocr.graphics.camera.zoom.InputSimpleToZoomEventSystem;
 import net.matthiasauer.abocr.graphics.texture.archive.RenderTextureArchiveSystem;
 import net.matthiasauer.abocr.input.click.ClickableComponent;
 import net.matthiasauer.abocr.input.base.gestures.InputGestureEventGenerator;
@@ -62,9 +63,12 @@ public class MapView extends ScreenAdapter {
 		
 		this.engine.addSystem(new InputGestureToZoomEventSystem());
 		this.engine.addSystem(new InputSimpleToZoomEventSystem());
+		
 		this.engine.addSystem(new CameraZoomSystem(this.camera));
 		
-		this.engine.addSystem(new CameraSystem(this.camera));
+		this.engine.addSystem(new InputGestureToMoveEventSystem());
+		
+		this.engine.addSystem(new CameraMoveSystem(this.camera));
 
 		this.engine.addSystem(new RenderSystem(this.camera));
 		

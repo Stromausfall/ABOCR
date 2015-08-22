@@ -1,4 +1,4 @@
-package net.matthiasauer.abocr.graphics.camera;
+package net.matthiasauer.abocr.graphics.camera.zoom;
 
 import com.badlogic.ashley.core.Component;
 import com.badlogic.gdx.utils.Pool.Poolable;

@@ -1,4 +1,4 @@
-package net.matthiasauer.abocr.graphics.camera;
+package net.matthiasauer.abocr.graphics.camera.zoom;
 
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Engine;
@@ -7,25 +7,25 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.ashley.systems.IteratingSystem;
 
-import net.matthiasauer.abocr.input.base.simple.InputSimpleEventComponent;
+import net.matthiasauer.abocr.input.base.gestures.InputGestureEventComponent;
 
-public class InputSimpleToZoomEventSystem extends IteratingSystem {
+public class InputGestureToZoomEventSystem extends IteratingSystem {
 	@SuppressWarnings("unchecked")
 	private static final Family family =
-			Family.all(InputSimpleEventComponent.class).get();
-	private ComponentMapper<InputSimpleEventComponent> inputSimpleEventComponentComponentMapper;
+			Family.all(InputGestureEventComponent.class).get();
+	private ComponentMapper<InputGestureEventComponent> inputGestureEventComponentComponentMapper;
 	private PooledEngine engine;
 	private Entity containerEntity;
 
-	public InputSimpleToZoomEventSystem() {
+	public InputGestureToZoomEventSystem() {
 		super(family);
 	}
 	
 	@Override
 	public void addedToEngine(Engine engine) {
 		this.engine = (PooledEngine) engine;
-		this.inputSimpleEventComponentComponentMapper =
-				ComponentMapper.getFor(InputSimpleEventComponent.class);
+		this.inputGestureEventComponentComponentMapper =
+				ComponentMapper.getFor(InputGestureEventComponent.class);
 		
 		this.containerEntity = this.engine.createEntity();
 		this.engine.addEntity(this.containerEntity);
@@ -43,9 +43,9 @@ public class InputSimpleToZoomEventSystem extends IteratingSystem {
 
 	@Override
 	protected void processEntity(Entity entity, float deltaTime) {
-		InputSimpleEventComponent event =
-				this.inputSimpleEventComponentComponentMapper.get(entity);
-		float zoomValue = event.argument * 0.1f;
+		InputGestureEventComponent event =
+				this.inputGestureEventComponentComponentMapper.get(entity);
+		float zoomValue = event.argument * 0.75f * deltaTime;
 
 		this.containerEntity.add(
 				this.engine.createComponent(ZoomEventComponent.class).set(zoomValue));

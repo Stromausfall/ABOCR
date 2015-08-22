@@ -4,7 +4,6 @@ import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.PooledEngine;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
@@ -84,12 +83,9 @@ public class InputGestureEventGenerator extends EntitySystem implements GestureL
 
 	@Override
 	public boolean pan(float x, float y, float deltaX, float deltaY) {
-		Gdx.app.error("pan!",
-		" x:" + x
-		+ "| y:" + y
-		+ "| deltaX:" + deltaX
-		+ "| deltaY:" + deltaY);
-		// TODO Auto-generated method stub
+		this.lastEvent =
+				this.engine.createComponent(InputGestureEventComponent.class).set(
+						InputGestureEventType.Pan, 0, deltaX, deltaY);
 		return false;
 	}
 
@@ -116,7 +112,7 @@ public class InputGestureEventGenerator extends EntitySystem implements GestureL
 
 			this.lastEvent =
 					this.engine.createComponent(InputGestureEventComponent.class).set(
-							InputGestureEventType.Zoom, zoomFactor);
+							InputGestureEventType.Zoom, zoomFactor, 0, 0);
 		}
 		
 		return false;
