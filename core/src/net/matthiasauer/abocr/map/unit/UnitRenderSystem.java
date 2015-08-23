@@ -48,9 +48,14 @@ public class UnitRenderSystem extends IteratingSystem {
 
 	@Override
 	protected void processEntity(Entity entity, float deltaTime) {
-
 		UnitComponent unitComponent = 
 				this.unitComponentMapper.get(entity);
+		
+		this.displayCounterAndMakeItClickable(entity, unitComponent);
+		this.displayStrength(entity, unitComponent);;		
+	}
+	
+	private void displayCounterAndMakeItClickable(Entity entity, UnitComponent unitComponent) {
 		AtlasRegion typeTexture =
 				this.unitTypeTextureContainer.get(unitComponent.type);
 		RenderComponent typeRenderComponent =
@@ -62,6 +67,20 @@ public class UnitRenderSystem extends IteratingSystem {
 						typeTexture,
 						RenderLayer.UnitType);
 
+		entity.add(typeRenderComponent);
+		
+		this.makeClickable(entity);
+	}
+	
+	private void makeClickable(Entity entity) {
+		// also make the counter clickable !
+		InputTouchTargetComponent inputTouchTargetComponent =
+				this.engine.createComponent(InputTouchTargetComponent.class);
+		
+		entity.add(inputTouchTargetComponent);
+	}
+	
+	private void displayStrength(Entity entity, UnitComponent unitComponent) {
 		AtlasRegion strengthTexture =
 				this.unitStrengthTextureContainer.get(unitComponent.strength);
 		RenderComponent strengthRenderComponent =
@@ -72,11 +91,7 @@ public class UnitRenderSystem extends IteratingSystem {
 						RenderPositionUnit.Tiles,
 						strengthTexture,
 						RenderLayer.UnitType);
-		InputTouchTargetComponent inputTouchTargetComponent =
-				this.engine.createComponent(InputTouchTargetComponent.class);
-		
-		entity.add(inputTouchTargetComponent);
-		entity.add(typeRenderComponent);
+
 		unitComponent.strengthUnit.add(strengthRenderComponent);
 	}
 }

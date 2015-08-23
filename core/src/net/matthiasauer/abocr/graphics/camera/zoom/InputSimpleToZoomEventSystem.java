@@ -45,7 +45,7 @@ public class InputSimpleToZoomEventSystem extends IteratingSystem {
 	protected void processEntity(Entity entity, float deltaTime) {
 		InputSimpleEventComponent event =
 				this.inputSimpleEventComponentComponentMapper.get(entity);
-		float zoomValue = event.argument * 0.1f;
+		float zoomValue = event.argument * 0.15f;
 
 		this.containerEntity.add(
 				this.engine.createComponent(ZoomEventComponent.class).set(zoomValue));

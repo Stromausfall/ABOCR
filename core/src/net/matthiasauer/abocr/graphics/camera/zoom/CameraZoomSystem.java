@@ -26,7 +26,7 @@ public class CameraZoomSystem extends IteratingSystem {
 		ZoomEventComponent zoomEvent =
 				this.zoomEventComponentComponentMapper.get(entity);
 
-		this.camera.zoom += zoomEvent.value;
+		this.camera.zoom += zoomEvent.value * this.camera.zoom;
 
 		// limit
 		this.camera.zoom = Math.max(0.05f, this.camera.zoom);

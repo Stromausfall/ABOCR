@@ -101,18 +101,12 @@ public class InputGestureEventGenerator extends EntitySystem implements GestureL
 
 		if ((this.lastDistance != null)
 				&& (this.currentDistance != null)) {
-			float zoomFactor = 0;
-			
-			if (this.currentDistance > this.lastDistance) {
-				zoomFactor = -1;
-			}
-			if (this.currentDistance < this.lastDistance) {
-				zoomFactor = 1;
-			}
+			float zoomDistance =
+					(this.currentDistance - this.lastDistance);
 
 			this.lastEvent =
 					this.engine.createComponent(InputGestureEventComponent.class).set(
-							InputGestureEventType.Zoom, zoomFactor, 0, 0);
+							InputGestureEventType.Zoom, zoomDistance, 0, 0);
 		}
 		
 		return false;
