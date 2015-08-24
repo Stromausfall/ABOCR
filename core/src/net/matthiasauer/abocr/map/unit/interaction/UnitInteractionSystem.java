@@ -8,21 +8,27 @@ import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.ashley.systems.IteratingSystem;
 
 import net.matthiasauer.abocr.input.click.ClickedComponent;
+import net.matthiasauer.abocr.map.unit.UnitComponent;
 
 public class UnitInteractionSystem extends IteratingSystem {
 	@SuppressWarnings("unchecked")
 	private static final Family family =
-			Family.all(ClickedComponent.class).get();
+			Family.all(
+					ClickedComponent.class,
+					UnitComponent.class).get();
+	private ComponentMapper<UnitComponent> unitComponentMapper;
 	private ComponentMapper<ClickedComponent> clickedComponentMapper;
 	private PooledEngine engine;
 
-	public UnitInteractionSystem(Family family) {
+	public UnitInteractionSystem() {
 		super(family);
 	}
 
 	@Override
 	public void addedToEngine(Engine engine) {
 		this.engine = (PooledEngine) engine;
+		this.unitComponentMapper =
+				ComponentMapper.getFor(UnitComponent.class);
 		this.clickedComponentMapper =
 				ComponentMapper.getFor(ClickedComponent.class);
 		
@@ -31,8 +37,10 @@ public class UnitInteractionSystem extends IteratingSystem {
 	
 	@Override
 	protected void processEntity(Entity entity, float deltaTime) {
-		// TODO Auto-generated method stub
-		
+		UnitComponent unitComponent =
+				this.unitComponentMapper.get(entity);
+
+		unitComponent.selected = !unitComponent.selected;
 	}
 
 }

@@ -106,7 +106,6 @@ public class ClickGeneratorSystem extends IteratingSystem {
 		
 		// note this entity - so we can remove the component in the next frame !
 		this.lastClickedEntity = targetEntity;
-		System.err.println("oi !" + new Date() + " - " + targetEntity);
 	}
 	
 	@Override

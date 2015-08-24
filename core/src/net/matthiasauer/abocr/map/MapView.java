@@ -30,6 +30,7 @@ import net.matthiasauer.abocr.map.unit.UnitComponent;
 import net.matthiasauer.abocr.map.unit.UnitRenderSystem;
 import net.matthiasauer.abocr.map.unit.UnitStrength;
 import net.matthiasauer.abocr.map.unit.UnitType;
+import net.matthiasauer.abocr.map.unit.interaction.UnitInteractionSystem;
 
 public class MapView extends ScreenAdapter {
 	private final PooledEngine engine;
@@ -61,6 +62,12 @@ public class MapView extends ScreenAdapter {
 		
 		this.engine.addSystem(new ClickGeneratorSystem());
 		
+		
+		
+		this.engine.addSystem(new UnitInteractionSystem());
+		
+		
+		
 		this.engine.addSystem(new InputGestureToZoomEventSystem());
 		this.engine.addSystem(new InputSimpleToZoomEventSystem());
 		
@@ -69,7 +76,10 @@ public class MapView extends ScreenAdapter {
 		this.engine.addSystem(new InputGestureToMoveEventSystem());
 		
 		this.engine.addSystem(new CameraMoveSystem(this.camera));
+		
 
+		
+		
 		this.engine.addSystem(new RenderSystem(this.camera));
 		
 		//Gdx.app.setLogLevel(Gdx.app.LOG_ERROR);
@@ -100,12 +110,14 @@ public class MapView extends ScreenAdapter {
 					unitComponent.type = choice(UnitType.values());
 					unitComponent.strength = choice(UnitStrength.values());
 					unitComponent.strengthUnit = this.engine.createEntity();
+					unitComponent.selectedUnit = this.engine.createEntity();
 					
 					unit.add(unitComponent);
 					unit.add(new ClickableComponent());
 					
 					this.engine.addEntity(unit);
 					this.engine.addEntity(unitComponent.strengthUnit);
+					this.engine.addEntity(unitComponent.selectedUnit);
 				}
 			}
 		}
@@ -126,6 +138,7 @@ public class MapView extends ScreenAdapter {
 				tileComponent.receivesInput = true;
 
 				tile.add(tileComponent);
+				tile.add(new ClickableComponent());
 				
 				this.engine.addEntity(tile);
 			}
