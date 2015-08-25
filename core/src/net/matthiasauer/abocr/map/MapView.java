@@ -30,7 +30,6 @@ import net.matthiasauer.abocr.map.unit.UnitComponent;
 import net.matthiasauer.abocr.map.unit.UnitRenderSystem;
 import net.matthiasauer.abocr.map.unit.UnitStrength;
 import net.matthiasauer.abocr.map.unit.UnitType;
-import net.matthiasauer.abocr.map.unit.interaction.UnitInteractionSystem;
 
 public class MapView extends ScreenAdapter {
 	private final PooledEngine engine;
@@ -64,7 +63,6 @@ public class MapView extends ScreenAdapter {
 		
 		
 		
-		this.engine.addSystem(new UnitInteractionSystem());
 		
 		
 		
