@@ -1,26 +1,24 @@
 package net.matthiasauer.abocr.utils.state;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import com.badlogic.ashley.core.Component;
+import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.ashley.systems.IteratingSystem;
 
-public abstract class BaseStateGeneratorSystem<S extends StateActorComponent, T extends StateComponent> extends IteratingSystem {
-	private final Set<Class<? extends StateComponent>> stopComponents;
+public abstract class BaseStateGeneratorSystem<StateActor extends StateActorComponent, BaseState extends StateComponent> extends IteratingSystem {
 	protected PooledEngine engine;
+	private final Class<BaseState> baseStateClazz;
+	private final ComponentMapper<BaseState> componentMapper;
 
 	@SuppressWarnings("unchecked")
-	protected BaseStateGeneratorSystem(Class<S> stateActorClazz, List<Class<? extends StateComponent>> stopComponenets) {
-		super(Family.all(stateActorClazz).get());
+	protected BaseStateGeneratorSystem(Class<StateActor> clazz, Class<BaseState> baseStateClazz) {
+		super(Family.all(clazz).get());
 		
-		this.stopComponents =
-				new HashSet<Class<? extends StateComponent>>(stopComponenets);
+		this.baseStateClazz = baseStateClazz;
+		this.componentMapper =
+				ComponentMapper.getFor(this.baseStateClazz);
 	}
 	
 	@Override
@@ -30,27 +28,24 @@ public abstract class BaseStateGeneratorSystem<S extends StateActorComponent, T 
 		super.addedToEngine(engine);
 	}
 	
-	private boolean entityContainsStopComponent(Entity entity) {
-		for (Component component : entity.getComponents()) {
-			Class<? extends Component> clazz = component.getClass();
-			
-			if (this.stopComponents.contains(clazz)) {
-				return true;
-			}
-		}
-		
-		return false;
-	}
-	
 	@Override
 	protected void processEntity(Entity entity, float deltaTime) {
-		// first remove the StartToken
-		entity.remove(StartStateComponent.class);
+		BaseState baseStateComponent =
+				this.componentMapper.get(entity);
 
-		if (!this.entityContainsStopComponent(entity)) {
-			entity.add(this.createStartComponent());
+		if (baseStateComponent == null) {
+			System.err.println("!");
+			entity.add(this.createStartComponent(entity, deltaTime));
+		}
+		
+		if (baseStateComponent != null) {
+			if ((baseStateComponent.state == StateEnum.Finished)
+					|| (baseStateComponent.state == StateEnum.RequestFinished)
+					|| (baseStateComponent.state ==  StateEnum.Unclaimed)) {
+				entity.remove(this.baseStateClazz);
+			}
 		}
 	}
 	
-	protected abstract T createStartComponent();
+	protected abstract BaseState createStartComponent(Entity entity, float deltaTime);
 }
