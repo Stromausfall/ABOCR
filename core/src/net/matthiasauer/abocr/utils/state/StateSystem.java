@@ -36,8 +36,10 @@ public abstract class StateSystem<Created extends StateComponent, Trigger extend
 	}
 	
 	@Override
-	public final void addedToEngine(Engine engine) {
+	public void addedToEngine(Engine engine) {
 		this.pooledEngine = (PooledEngine) engine;
+		
+		super.addedToEngine(engine);
 	}
 	
 	private void handleCreated(Trigger triggerComponent, Created createdComponent, Entity entity, float deltaTime) {
@@ -66,7 +68,7 @@ public abstract class StateSystem<Created extends StateComponent, Trigger extend
 		}
 	}
 	
-	protected abstract boolean prepare(Created createdComponent, Entity entity, float deltaTime);
+	protected abstract void prepare(Created createdComponent, Entity entity, float deltaTime);
 
 	/**
 	 * If the trigger component is still unclaimed then check if the StateSystem implementation

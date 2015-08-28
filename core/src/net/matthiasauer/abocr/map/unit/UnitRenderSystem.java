@@ -12,7 +12,6 @@ import net.matthiasauer.abocr.graphics.RenderComponent;
 import net.matthiasauer.abocr.graphics.RenderLayer;
 import net.matthiasauer.abocr.graphics.RenderPositionUnit;
 import net.matthiasauer.abocr.graphics.texture.TextureContainer;
-import net.matthiasauer.abocr.graphics.texture.TextureLoader;
 import net.matthiasauer.abocr.input.base.touch.InputTouchTargetComponent;
 
 public class UnitRenderSystem extends IteratingSystem {
@@ -22,7 +21,6 @@ public class UnitRenderSystem extends IteratingSystem {
 	private final ComponentMapper<UnitComponent> unitComponentMapper;
 	private final TextureContainer<UnitType> unitTypeTextureContainer;
 	private final TextureContainer<UnitStrength> unitStrengthTextureContainer;
-	private final AtlasRegion selectedTexture;
 	private PooledEngine engine; 
 
 	public UnitRenderSystem() {
@@ -36,8 +34,6 @@ public class UnitRenderSystem extends IteratingSystem {
 		this.unitStrengthTextureContainer.add(UnitStrength.Two, "twoUnit");
 		this.unitStrengthTextureContainer.add(UnitStrength.Three, "threeUnit");
 		this.unitStrengthTextureContainer.add(UnitStrength.Four, "fourUnit");
-		this.selectedTexture = 
-				TextureLoader.getInstance().getTexture("selection");
 
 		this.unitComponentMapper =
 				ComponentMapper.getFor(UnitComponent.class);
@@ -57,7 +53,6 @@ public class UnitRenderSystem extends IteratingSystem {
 		
 		this.displayCounterAndMakeItClickable(entity, unitComponent);
 		this.displayStrength(entity, unitComponent);
-		this.displaySelection(entity, unitComponent);
 	}
 	
 	private void displayCounterAndMakeItClickable(Entity entity, UnitComponent unitComponent) {
@@ -83,23 +78,6 @@ public class UnitRenderSystem extends IteratingSystem {
 				this.engine.createComponent(InputTouchTargetComponent.class);
 		
 		entity.add(inputTouchTargetComponent);
-	}
-	
-	private void displaySelection(Entity entity, UnitComponent unitComponent) {
-		unitComponent.strengthUnit.remove(RenderComponent.class);
-		
-		if (unitComponent.selected) {
-			RenderComponent strengthRenderComponent =
-					this.engine.createComponent(RenderComponent.class).set(
-							unitComponent.x,
-							unitComponent.y,
-							0,
-							RenderPositionUnit.Tiles,
-							this.selectedTexture,
-							RenderLayer.UnitSelection);
-	
-			unitComponent.strengthUnit.add(strengthRenderComponent);
-		}
 	}
 	
 	private void displayStrength(Entity entity, UnitComponent unitComponent) {

@@ -34,8 +34,13 @@ public abstract class BaseStateGeneratorSystem<StateActor extends StateActorComp
 				this.componentMapper.get(entity);
 
 		if (baseStateComponent == null) {
-			System.err.println("!");
-			entity.add(this.createStartComponent(entity, deltaTime));
+			BaseState newlyCreated =
+					this.createStartComponent(entity, deltaTime);
+			
+			if (newlyCreated != null) {
+				newlyCreated.state = StateEnum.Unclaimed;
+				entity.add(newlyCreated);
+			}
 		}
 		
 		if (baseStateComponent != null) {

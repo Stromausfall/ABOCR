@@ -11,7 +11,7 @@ public class UnitComponent implements Component, Poolable {
 	public UnitStrength strength;
 	public UnitType type;
 	public Entity strengthUnit;
-	public Entity selectedUnit;
+	public Entity selectedEntity;
 
 	@Override
 	public void reset() {
@@ -19,7 +19,7 @@ public class UnitComponent implements Component, Poolable {
 		this.strength = null;
 		this.strengthUnit = null;
 		this.selected = false;
-		this.selectedUnit = null;
+		this.selectedEntity = null;
 	}
 
 }

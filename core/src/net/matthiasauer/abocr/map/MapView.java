@@ -30,8 +30,10 @@ import net.matthiasauer.abocr.map.unit.UnitComponent;
 import net.matthiasauer.abocr.map.unit.UnitRenderSystem;
 import net.matthiasauer.abocr.map.unit.UnitStrength;
 import net.matthiasauer.abocr.map.unit.UnitType;
-import net.matthiasauer.abocr.map.unit.interaction.select.BaseInteractionGeneratorSystem;
-import net.matthiasauer.abocr.map.unit.interaction.select.UnitInteractionActorComponent;
+import net.matthiasauer.abocr.map.unit.interaction.select.UnitSelectionMovementOriginRenderRemoveComponent;
+import net.matthiasauer.abocr.map.unit.interaction.select.UnitSelectionMovementOriginRenderRemoveSystem;
+import net.matthiasauer.abocr.map.unit.interaction.select.UnitSelectionMovementOriginRenderSystem;
+import net.matthiasauer.abocr.map.unit.interaction.select.UnitSelectionSystem;
 
 public class MapView extends ScreenAdapter {
 	private final PooledEngine engine;
@@ -67,8 +69,9 @@ public class MapView extends ScreenAdapter {
 		
 		
 		
-		this.engine.addSystem(new BaseInteractionGeneratorSystem());
-		
+		this.engine.addSystem(new UnitSelectionSystem());
+		this.engine.addSystem(new UnitSelectionMovementOriginRenderRemoveSystem());
+		this.engine.addSystem(new UnitSelectionMovementOriginRenderSystem());
 		
 		
 		
@@ -114,15 +117,14 @@ public class MapView extends ScreenAdapter {
 					unitComponent.type = choice(UnitType.values());
 					unitComponent.strength = choice(UnitStrength.values());
 					unitComponent.strengthUnit = this.engine.createEntity();
-					unitComponent.selectedUnit = this.engine.createEntity();
+					unitComponent.selectedEntity = this.engine.createEntity();
 					
 					unit.add(unitComponent);
 					unit.add(new ClickableComponent());
-					unit.add(new UnitInteractionActorComponent());
 					
 					this.engine.addEntity(unit);
 					this.engine.addEntity(unitComponent.strengthUnit);
-					this.engine.addEntity(unitComponent.selectedUnit);
+					this.engine.addEntity(unitComponent.selectedEntity);
 				}
 			}
 		}
