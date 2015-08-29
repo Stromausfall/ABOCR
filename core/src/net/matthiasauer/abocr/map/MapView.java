@@ -30,9 +30,9 @@ import net.matthiasauer.abocr.map.unit.UnitComponent;
 import net.matthiasauer.abocr.map.unit.UnitRenderSystem;
 import net.matthiasauer.abocr.map.unit.UnitStrength;
 import net.matthiasauer.abocr.map.unit.UnitType;
-import net.matthiasauer.abocr.map.unit.interaction.select.UnitSelectionMovementOriginRenderRemoveComponent;
 import net.matthiasauer.abocr.map.unit.interaction.select.UnitSelectionMovementOriginRenderRemoveSystem;
 import net.matthiasauer.abocr.map.unit.interaction.select.UnitSelectionMovementOriginRenderSystem;
+import net.matthiasauer.abocr.map.unit.interaction.select.UnitSelectionMovementSystem;
 import net.matthiasauer.abocr.map.unit.interaction.select.UnitSelectionSystem;
 
 public class MapView extends ScreenAdapter {
@@ -70,8 +70,13 @@ public class MapView extends ScreenAdapter {
 		
 		
 		this.engine.addSystem(new UnitSelectionSystem());
+		this.engine.addSystem(new UnitSelectionMovementSystem());
+		
+		
+		
 		this.engine.addSystem(new UnitSelectionMovementOriginRenderRemoveSystem());
 		this.engine.addSystem(new UnitSelectionMovementOriginRenderSystem());
+		
 		
 		
 		
