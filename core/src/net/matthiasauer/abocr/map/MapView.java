@@ -33,6 +33,8 @@ import net.matthiasauer.abocr.map.unit.UnitType;
 import net.matthiasauer.abocr.map.unit.interaction.select.UnitSelectionMovementOriginRenderRemoveSystem;
 import net.matthiasauer.abocr.map.unit.interaction.select.UnitSelectionMovementOriginRenderSystem;
 import net.matthiasauer.abocr.map.unit.interaction.select.UnitSelectionMovementSystem;
+import net.matthiasauer.abocr.map.unit.interaction.select.UnitSelectionMovementTargetRenderRemoveSystem;
+import net.matthiasauer.abocr.map.unit.interaction.select.UnitSelectionMovementTargetRenderSystem;
 import net.matthiasauer.abocr.map.unit.interaction.select.UnitSelectionSystem;
 
 public class MapView extends ScreenAdapter {
@@ -76,6 +78,8 @@ public class MapView extends ScreenAdapter {
 		
 		this.engine.addSystem(new UnitSelectionMovementOriginRenderRemoveSystem());
 		this.engine.addSystem(new UnitSelectionMovementOriginRenderSystem());
+		this.engine.addSystem(new UnitSelectionMovementTargetRenderRemoveSystem());
+		this.engine.addSystem(new UnitSelectionMovementTargetRenderSystem());
 		
 		
 		
@@ -97,8 +101,8 @@ public class MapView extends ScreenAdapter {
 		//Gdx.app.setLogLevel(Gdx.app.LOG_ERROR);
 	}
 	
-	private static final int xSize = 4;
-	private static final int ySize = 3;
+	private static final int xSize = 8;
+	private static final int ySize = 8;
 	private static final double unitChancePercentage = 25;
 	
 	private static <T> T choice(T ... elements) {
@@ -148,11 +152,13 @@ public class MapView extends ScreenAdapter {
 				tileComponent.y = y;
 				tileComponent.tileType = choice(TileType.values());
 				tileComponent.receivesInput = true;
+				tileComponent.selectionTargetEntity = this.engine.createEntity();
 
 				tile.add(tileComponent);
 				tile.add(new ClickableComponent());
 				
 				this.engine.addEntity(tile);
+				this.engine.addEntity(tileComponent.selectionTargetEntity);
 			}
 		}
 	}
