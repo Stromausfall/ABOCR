@@ -24,6 +24,7 @@ import net.matthiasauer.abocr.input.base.simple.InputSimpleEventGenerator;
 import net.matthiasauer.abocr.input.base.touch.InputTouchGeneratorSystem;
 import net.matthiasauer.abocr.input.click.ClickGeneratorSystem;
 import net.matthiasauer.abocr.map.tile.TileComponent;
+import net.matthiasauer.abocr.map.tile.TileFastAccessSystem;
 import net.matthiasauer.abocr.map.tile.TileRenderSystem;
 import net.matthiasauer.abocr.map.tile.TileType;
 import net.matthiasauer.abocr.map.unit.UnitComponent;
@@ -53,6 +54,8 @@ public class MapView extends ScreenAdapter {
 		
 		this.createMap();
 		this.createUnits();
+		
+		this.engine.addSystem(new TileFastAccessSystem());
 		
 		this.engine.addSystem(new RenderTextureArchiveSystem());
 
