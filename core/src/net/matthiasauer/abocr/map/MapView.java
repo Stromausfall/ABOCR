@@ -30,10 +30,9 @@ import net.matthiasauer.abocr.map.unit.UnitComponent;
 import net.matthiasauer.abocr.map.unit.UnitRenderSystem;
 import net.matthiasauer.abocr.map.unit.UnitStrength;
 import net.matthiasauer.abocr.map.unit.UnitType;
-import net.matthiasauer.abocr.map.unit.interaction.select.UnitSelectionMovementOriginRenderRemoveSystem;
 import net.matthiasauer.abocr.map.unit.interaction.select.UnitSelectionMovementOriginRenderSystem;
+import net.matthiasauer.abocr.map.unit.interaction.select.UnitSelectionMovementRangeSystem;
 import net.matthiasauer.abocr.map.unit.interaction.select.UnitSelectionMovementSystem;
-import net.matthiasauer.abocr.map.unit.interaction.select.UnitSelectionMovementTargetRenderRemoveSystem;
 import net.matthiasauer.abocr.map.unit.interaction.select.UnitSelectionMovementTargetRenderSystem;
 import net.matthiasauer.abocr.map.unit.interaction.select.UnitSelectionSystem;
 
@@ -76,10 +75,9 @@ public class MapView extends ScreenAdapter {
 		
 		
 		
-		this.engine.addSystem(new UnitSelectionMovementOriginRenderRemoveSystem());
 		this.engine.addSystem(new UnitSelectionMovementOriginRenderSystem());
-		this.engine.addSystem(new UnitSelectionMovementTargetRenderRemoveSystem());
 		this.engine.addSystem(new UnitSelectionMovementTargetRenderSystem());
+		this.engine.addSystem(new UnitSelectionMovementRangeSystem());
 		
 		
 		
@@ -125,15 +123,11 @@ public class MapView extends ScreenAdapter {
 					unitComponent.y = y;
 					unitComponent.type = choice(UnitType.values());
 					unitComponent.strength = choice(UnitStrength.values());
-					unitComponent.strengthUnit = this.engine.createEntity();
-					unitComponent.selectedEntity = this.engine.createEntity();
 					
 					unit.add(unitComponent);
 					unit.add(new ClickableComponent());
 					
 					this.engine.addEntity(unit);
-					this.engine.addEntity(unitComponent.strengthUnit);
-					this.engine.addEntity(unitComponent.selectedEntity);
 				}
 			}
 		}
@@ -152,13 +146,11 @@ public class MapView extends ScreenAdapter {
 				tileComponent.y = y;
 				tileComponent.tileType = choice(TileType.values());
 				tileComponent.receivesInput = true;
-				tileComponent.selectionTargetEntity = this.engine.createEntity();
 
 				tile.add(tileComponent);
 				tile.add(new ClickableComponent());
 				
 				this.engine.addEntity(tile);
-				this.engine.addEntity(tileComponent.selectionTargetEntity);
 			}
 		}
 	}

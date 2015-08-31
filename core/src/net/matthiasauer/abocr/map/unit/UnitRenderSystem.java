@@ -1,5 +1,8 @@
 package net.matthiasauer.abocr.map.unit;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
@@ -21,7 +24,8 @@ public class UnitRenderSystem extends IteratingSystem {
 	private final ComponentMapper<UnitComponent> unitComponentMapper;
 	private final TextureContainer<UnitType> unitTypeTextureContainer;
 	private final TextureContainer<UnitStrength> unitStrengthTextureContainer;
-	private PooledEngine engine; 
+	private PooledEngine engine;
+	private final List<Entity> renderTargets;
 
 	public UnitRenderSystem() {
 		super(family);
@@ -37,6 +41,7 @@ public class UnitRenderSystem extends IteratingSystem {
 
 		this.unitComponentMapper =
 				ComponentMapper.getFor(UnitComponent.class);
+		this.renderTargets = new LinkedList<Entity>();
 	}
 	
 	@Override
@@ -45,6 +50,18 @@ public class UnitRenderSystem extends IteratingSystem {
 		
 		super.addedToEngine(this.engine);
 	};
+	
+	@Override
+	public void update(float deltaTime) {
+		for (Entity entity : this.renderTargets) {
+			entity.removeAll();
+			this.engine.removeEntity(entity);
+		}
+		
+		this.renderTargets.clear();
+		
+		super.update(deltaTime);
+	}
 
 	@Override
 	protected void processEntity(Entity entity, float deltaTime) {
@@ -81,6 +98,8 @@ public class UnitRenderSystem extends IteratingSystem {
 	}
 	
 	private void displayStrength(Entity entity, UnitComponent unitComponent) {
+		Entity strengthRenderUnit = 
+				this.engine.createEntity();		
 		AtlasRegion strengthTexture =
 				this.unitStrengthTextureContainer.get(unitComponent.strength);
 		RenderComponent strengthRenderComponent =
@@ -92,6 +111,8 @@ public class UnitRenderSystem extends IteratingSystem {
 						strengthTexture,
 						RenderLayer.UnitType);
 
-		unitComponent.strengthUnit.add(strengthRenderComponent);
+		strengthRenderUnit.add(strengthRenderComponent);
+		this.engine.addEntity(strengthRenderUnit);
+		this.renderTargets.add(strengthRenderUnit);
 	}
 }

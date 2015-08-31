@@ -1,9 +1,7 @@
 package net.matthiasauer.abocr.map.unit.interaction.select;
 
-import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Engine;
@@ -26,25 +24,19 @@ public class UnitSelectionMovementOriginRenderSystem extends IteratingSystem {
 					UnitComponent.class,
 					UnitSelectionMovementOrigin.class).get();
 	private final ComponentMapper<UnitComponent> unitComponentMapper;
-	private final ComponentMapper<UnitSelectionMovementOrigin> unitSelectionComponentMapper;
 	private final AtlasRegion texture;
-	private final List<Entity> toRemove;
-	private Set<Entity> selectedEntities;
+	private List<Entity> selectedEntities;
 	private PooledEngine engine;
 	
 	public UnitSelectionMovementOriginRenderSystem() {
 		super(family);
 		
-		this.toRemove =
-				new LinkedList<Entity>();
 		this.texture =
 				TextureLoader.getInstance().getTexture("selection");
 		this.unitComponentMapper =
 				ComponentMapper.getFor(UnitComponent.class);
-		this.unitSelectionComponentMapper =
-				ComponentMapper.getFor(UnitSelectionMovementOrigin.class);
 		this.selectedEntities =
-				new HashSet<Entity>();
+				new ArrayList<Entity>();
 	}
 	
 	@Override
@@ -56,19 +48,12 @@ public class UnitSelectionMovementOriginRenderSystem extends IteratingSystem {
 	
 	@Override
 	public void update(float deltaTime) {
-		this.toRemove.clear();
-		
 		for (Entity entity : this.selectedEntities) {
-			UnitSelectionMovementOrigin component =
-					this.unitSelectionComponentMapper.get(entity);
-			
-			if (component == null) {
-				entity.remove(RenderComponent.class);
-				this.toRemove.add(entity);
-			}
+			entity.removeAll();
+			this.engine.removeEntity(entity);
 		}
 		
-		this.selectedEntities.removeAll(this.toRemove);
+		this.selectedEntities.clear();
 		 
 		super.update(deltaTime);
 	}
@@ -77,6 +62,8 @@ public class UnitSelectionMovementOriginRenderSystem extends IteratingSystem {
 	protected void processEntity(Entity entity, float deltaTime) {
 		UnitComponent unitComponent =
 				this.unitComponentMapper.get(entity);
+		Entity renderEntity =
+				this.engine.createEntity();
 
 		RenderComponent selectionOriginRenderComponent =
 				this.engine.createComponent(RenderComponent.class).set(
@@ -87,10 +74,11 @@ public class UnitSelectionMovementOriginRenderSystem extends IteratingSystem {
 						this.texture,
 						RenderLayer.UnitSelection);
 		 
-		unitComponent.selectedEntity.add(selectionOriginRenderComponent);
-		unitComponent.selectedEntity.add(
+		renderEntity.add(selectionOriginRenderComponent);
+		renderEntity.add(
 				this.engine.createComponent(UnitSelectionMovementOriginRenderRemoveComponent.class));
 		
-		this.selectedEntities.add(entity);
+		this.selectedEntities.add(renderEntity);
+		this.engine.addEntity(renderEntity);
 	}
 }

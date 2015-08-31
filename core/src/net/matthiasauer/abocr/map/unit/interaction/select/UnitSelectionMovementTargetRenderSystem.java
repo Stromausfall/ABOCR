@@ -1,9 +1,7 @@
 package net.matthiasauer.abocr.map.unit.interaction.select;
 
-import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Engine;
@@ -26,25 +24,19 @@ public class UnitSelectionMovementTargetRenderSystem extends IteratingSystem {
 					TileComponent.class,
 					UnitSelectionMovementTarget.class).get();
 	private final ComponentMapper<TileComponent> tileComponentMapper;
-	private final ComponentMapper<UnitSelectionMovementTarget> unitSelectionComponentMapper;
 	private final AtlasRegion texture;
-	private final List<Entity> toRemove;
-	private Set<Entity> selectedEntities;
+	private List<Entity> selectedEntities;
 	private PooledEngine engine;
 	
 	public UnitSelectionMovementTargetRenderSystem() {
 		super(family);
 		
-		this.toRemove =
-				new LinkedList<Entity>();
 		this.texture =
 				TextureLoader.getInstance().getTexture("selection");
 		this.tileComponentMapper =
 				ComponentMapper.getFor(TileComponent.class);
-		this.unitSelectionComponentMapper =
-				ComponentMapper.getFor(UnitSelectionMovementTarget.class);
 		this.selectedEntities =
-				new HashSet<Entity>();
+				new ArrayList<Entity>();
 	}
 	
 	@Override
@@ -56,20 +48,13 @@ public class UnitSelectionMovementTargetRenderSystem extends IteratingSystem {
 	
 	@Override
 	public void update(float deltaTime) {
-		this.toRemove.clear();
-		
 		for (Entity entity : this.selectedEntities) {
-			UnitSelectionMovementTarget component =
-					this.unitSelectionComponentMapper.get(entity);
-			
-			if (component == null) {
-				entity.remove(RenderComponent.class);
-				this.toRemove.add(entity);
-			}
+			entity.removeAll();
+			this.engine.removeEntity(entity);
 		}
 		
-		this.selectedEntities.removeAll(this.toRemove);
-		 
+		this.selectedEntities.clear();
+		
 		super.update(deltaTime);
 	}
 
@@ -77,6 +62,8 @@ public class UnitSelectionMovementTargetRenderSystem extends IteratingSystem {
 	protected void processEntity(Entity entity, float deltaTime) {
 		TileComponent unitComponent =
 				this.tileComponentMapper.get(entity);
+		Entity renderTargetEntity =
+				this.engine.createEntity();
 
 		RenderComponent selectionTargetRenderComponent =
 				this.engine.createComponent(RenderComponent.class).set(
@@ -87,10 +74,11 @@ public class UnitSelectionMovementTargetRenderSystem extends IteratingSystem {
 						this.texture,
 						RenderLayer.UnitSelection);
 		 
-		unitComponent.selectionTargetEntity.add(selectionTargetRenderComponent);
-		unitComponent.selectionTargetEntity.add(
+		renderTargetEntity.add(selectionTargetRenderComponent);
+		renderTargetEntity.add(
 				this.engine.createComponent(UnitSelectionMovementTargetRenderRemoveComponent.class));
 		
-		this.selectedEntities.add(entity);
+		this.selectedEntities.add(renderTargetEntity);
+		this.engine.addEntity(renderTargetEntity);
 	}
 }
