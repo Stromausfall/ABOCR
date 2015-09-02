@@ -23,11 +23,14 @@ import net.matthiasauer.abocr.input.base.gestures.InputGestureEventGenerator;
 import net.matthiasauer.abocr.input.base.simple.InputSimpleEventGenerator;
 import net.matthiasauer.abocr.input.base.touch.InputTouchGeneratorSystem;
 import net.matthiasauer.abocr.input.click.ClickGeneratorSystem;
+import net.matthiasauer.abocr.map.owner.MapElementOwnerComponent;
+import net.matthiasauer.abocr.map.owner.Owner;
 import net.matthiasauer.abocr.map.tile.TileComponent;
 import net.matthiasauer.abocr.map.tile.TileFastAccessSystem;
 import net.matthiasauer.abocr.map.tile.TileRenderSystem;
 import net.matthiasauer.abocr.map.tile.TileType;
 import net.matthiasauer.abocr.map.unit.UnitComponent;
+import net.matthiasauer.abocr.map.unit.UnitFastAccessSystem;
 import net.matthiasauer.abocr.map.unit.UnitRenderSystem;
 import net.matthiasauer.abocr.map.unit.UnitStrength;
 import net.matthiasauer.abocr.map.unit.UnitType;
@@ -56,6 +59,7 @@ public class MapView extends ScreenAdapter {
 		this.createUnits();
 		
 		this.engine.addSystem(new TileFastAccessSystem());
+		this.engine.addSystem(new UnitFastAccessSystem());
 		
 		this.engine.addSystem(new RenderTextureArchiveSystem());
 
@@ -128,8 +132,10 @@ public class MapView extends ScreenAdapter {
 					unitComponent.strength = choice(UnitStrength.values());
 					unitComponent.movement = 1 + random.nextInt(3);
 					
+					
 					unit.add(unitComponent);
 					unit.add(new ClickableComponent());
+					unit.add(new MapElementOwnerComponent().set(choice(Owner.values())));
 					
 					this.engine.addEntity(unit);
 				}

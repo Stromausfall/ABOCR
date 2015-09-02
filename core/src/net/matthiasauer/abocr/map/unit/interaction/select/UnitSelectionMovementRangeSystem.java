@@ -13,9 +13,12 @@ import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.ashley.utils.ImmutableArray;
 
+import net.matthiasauer.abocr.map.owner.MapElementOwnerComponent;
+import net.matthiasauer.abocr.map.owner.Owner;
 import net.matthiasauer.abocr.map.tile.TileComponent;
 import net.matthiasauer.abocr.map.tile.TileFastAccessSystem;
 import net.matthiasauer.abocr.map.unit.UnitComponent;
+import net.matthiasauer.abocr.map.unit.UnitFastAccessSystem;
 
 public class UnitSelectionMovementRangeSystem extends IteratingSystem {
 	@SuppressWarnings("unchecked")
@@ -27,9 +30,11 @@ public class UnitSelectionMovementRangeSystem extends IteratingSystem {
 			Family.all(
 					UnitSelectionMovementTarget.class).get();
 	private TileFastAccessSystem tileFastAccessSystem;
+	private UnitFastAccessSystem unitFastAccessSystem;
 	private ImmutableArray<Entity> selectedMovementTargetEntities;
 	private final ComponentMapper<UnitComponent> unitComponentMapper;
 	private final ComponentMapper<TileComponent> tileComponentMapper;
+	private final ComponentMapper<MapElementOwnerComponent> mapElementOwnerComponentMapper;
 	private PooledEngine pooledEngine;
 
 	public UnitSelectionMovementRangeSystem() {
@@ -39,6 +44,8 @@ public class UnitSelectionMovementRangeSystem extends IteratingSystem {
 				ComponentMapper.getFor(UnitComponent.class);
 		this.tileComponentMapper =
 				ComponentMapper.getFor(TileComponent.class);
+		this.mapElementOwnerComponentMapper =
+				ComponentMapper.getFor(MapElementOwnerComponent.class);
 	}
 	
 	@Override
@@ -48,6 +55,8 @@ public class UnitSelectionMovementRangeSystem extends IteratingSystem {
 				this.pooledEngine.getEntitiesFor(selectedMovementTargetFamily);
 		this.tileFastAccessSystem =
 				this.pooledEngine.getSystem(TileFastAccessSystem.class);
+		this.unitFastAccessSystem =
+				this.pooledEngine.getSystem(UnitFastAccessSystem.class);
 		
 		super.addedToEngine(engine);
 	}
@@ -61,42 +70,59 @@ public class UnitSelectionMovementRangeSystem extends IteratingSystem {
 		super.update(deltaTime);
 	}
 	
-	private void addEntity(int x, int y, Collection<Entity> result) {
+	private void addTileEntity(int x, int y, Collection<Entity> result, Owner originEntityOwner) {
 		Entity entity =
 				this.tileFastAccessSystem.getTile(x, y);
 		
 		if (entity != null) {
-			result.add(entity);
+			Entity unitAtTile =
+					this.unitFastAccessSystem.getUnit(x, y);					
+			
+			if (unitAtTile == null) {
+				// no unit on the tile
+				result.add(entity);
+			} else {
+				// unit on the tile
+				MapElementOwnerComponent mapElementOwner =
+						this.mapElementOwnerComponentMapper.get(unitAtTile);
+				
+				if (mapElementOwner.owner != originEntityOwner) {
+					// only add it if the tile is NOT owned by the player 
+					// (for whom the range is drawn)
+					result.add(entity);
+				}
+						
+			}
 		}
 	}
 	
-	private Collection<Entity> getSurroundingTileEntities(int x, int y) {
+	private Collection<Entity> getSurroundingTileEntities(int x, int y, Owner originEntityOwner) {
 		Collection<Entity> entities =
 				new ArrayList<Entity>();
 		
 		// display always !
-		this.addEntity(x, y+1, entities);
-		this.addEntity(x, y-1, entities);
-		this.addEntity(x-1, y, entities);
-		this.addEntity(x+1, y, entities);
+		this.addTileEntity(x, y+1, entities, originEntityOwner);
+		this.addTileEntity(x, y-1, entities, originEntityOwner);
+		this.addTileEntity(x-1, y, entities, originEntityOwner);
+		this.addTileEntity(x+1, y, entities, originEntityOwner);
 		
 		if ((y % 2) == 1) {
-			this.addEntity(x+1, y+1, entities);
-			this.addEntity(x+1, y-1, entities);
+			this.addTileEntity(x+1, y+1, entities, originEntityOwner);
+			this.addTileEntity(x+1, y-1, entities, originEntityOwner);
 		} else {
-			this.addEntity(x-1, y-1, entities);
-			this.addEntity(x-1, y+1, entities);
+			this.addTileEntity(x-1, y-1, entities, originEntityOwner);
+			this.addTileEntity(x-1, y+1, entities, originEntityOwner);
 		}
 		
 		return entities;
 	}
 	
-	private void getSurroundingTileEntities(int x, int y, int range) {
+	private void getSurroundingTileEntities(int x, int y, int range, Owner originEntityOwner) {
 		Set<Entity> tiles =
 				new HashSet<Entity>();
 		Set<Entity> tiles2 =
 				new HashSet<Entity>();
-		this.addEntity(x, y, tiles);
+		tiles.add(this.tileFastAccessSystem.getTile(x, y));
 		Entity originEntity = tiles.iterator().next();
 
 		// for each range unit
@@ -112,7 +138,8 @@ public class UnitSelectionMovementRangeSystem extends IteratingSystem {
 				Collection<Entity> surrounding =
 					this.getSurroundingTileEntities(
 							unitComponent.x,
-							unitComponent.y);
+							unitComponent.y,
+							originEntityOwner);
 				
 				for (Entity surroundingEntity : surrounding) {
 					
@@ -139,9 +166,15 @@ public class UnitSelectionMovementRangeSystem extends IteratingSystem {
 	protected void processEntity(Entity entity, float deltaTime) {
 		UnitComponent unitComponent =
 				this.unitComponentMapper.get(entity);
+		MapElementOwnerComponent originEntityMapElementOwnerComponent =
+				this.mapElementOwnerComponentMapper.get(entity);
+		Owner originEntityOwner =
+				originEntityMapElementOwnerComponent.owner;
+		
 		this.getSurroundingTileEntities(
 				unitComponent.x,
 				unitComponent.y,
-				unitComponent.movement);
+				unitComponent.movement,
+				originEntityOwner);
 	}
 }
