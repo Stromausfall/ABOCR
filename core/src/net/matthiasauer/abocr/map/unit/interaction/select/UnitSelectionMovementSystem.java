@@ -24,16 +24,20 @@ public class UnitSelectionMovementSystem extends IteratingSystem {
 	private static final Family clickedTilesFamily =
 			Family.all(
 					TileComponent.class,
-					ClickedComponent.class).get();
+					ClickedComponent.class,
+					UnitSelectionMovementTarget.class).get();
 	
 	private PooledEngine pooledEngine;
 	private ImmutableArray<Entity> clickedTilesEntities;
-	private ComponentMapper<UnitComponent> unitComponentMapper;
-	private ComponentMapper<TileComponent> tileComponentMapper;
+	private final ComponentMapper<UnitSelectionMovementTarget> unitSelectionMovementTargetMapper;
+	private final ComponentMapper<UnitComponent> unitComponentMapper;
+	private final ComponentMapper<TileComponent> tileComponentMapper;
 	
 	public UnitSelectionMovementSystem() {
 		super(selectedEntitiesFamily);
 		
+		this.unitSelectionMovementTargetMapper =
+				ComponentMapper.getFor(UnitSelectionMovementTarget.class);
 		this.unitComponentMapper =
 				ComponentMapper.getFor(UnitComponent.class);
 		this.tileComponentMapper =
@@ -59,6 +63,8 @@ public class UnitSelectionMovementSystem extends IteratingSystem {
 		if (this.clickedTilesEntities.size() == 1) {
 			Entity tileEntity = this.clickedTilesEntities.first();
 			
+			UnitSelectionMovementTarget unitSelectionMovementTarget =
+					this.unitSelectionMovementTargetMapper.get(tileEntity);
 			TileComponent tileComponent =
 					this.tileComponentMapper.get(tileEntity);
 			UnitComponent unitComponent =
@@ -66,6 +72,7 @@ public class UnitSelectionMovementSystem extends IteratingSystem {
 			
 			unitComponent.x = tileComponent.x;
 			unitComponent.y = tileComponent.y;
+			unitComponent.movement -= unitSelectionMovementTarget.range;
 		}
 	}
 

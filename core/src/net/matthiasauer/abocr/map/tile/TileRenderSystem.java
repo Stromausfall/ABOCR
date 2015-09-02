@@ -55,7 +55,8 @@ public class TileRenderSystem extends IteratingSystem {
 						0,
 						RenderPositionUnit.Tiles,
 						texture,
-						RenderLayer.Tiles);
+						RenderLayer.Tiles,
+						null);
 		InputTouchTargetComponent inputTouchTargetComponent =
 				this.engine.createComponent(InputTouchTargetComponent.class);
 		

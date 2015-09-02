@@ -13,6 +13,7 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -119,6 +120,12 @@ public class RenderSystem extends EntitySystem {
 			height *= this.camera.zoom;
 		}
 		
+		Color base = this.spriteBatch.getColor();
+		
+		if (renderComponent.tint != null) {
+			this.spriteBatch.setColor(renderComponent.tint);
+		}
+
 		this.spriteBatch.draw(
 				renderComponent.texture,
 				actualPositionX,
@@ -130,6 +137,10 @@ public class RenderSystem extends EntitySystem {
 				1,
 				1,
 				renderComponent.rotation);
+		
+		if (renderComponent.tint != null) {
+			this.spriteBatch.setColor(base);
+		}
 		
 		this.reverseRenderComponentMapper.get(renderComponent).add(
 				this.pooledEngine.createComponent(RenderedComponent.class).set(

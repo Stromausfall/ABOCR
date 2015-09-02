@@ -22,7 +22,6 @@ public class UnitSelectionSystem extends IteratingSystem {
 	private PooledEngine pooledEngine;
 	private Entity unitSelectionEntity;
 	private ImmutableArray<Entity> selectedOriginEntities;
-	private ImmutableArray<Entity> selectedTargetEntities;
 
 	public UnitSelectionSystem() {
 		super(family);
@@ -38,9 +37,6 @@ public class UnitSelectionSystem extends IteratingSystem {
 		this.selectedOriginEntities =
 				this.pooledEngine.getEntitiesFor(
 						Family.all(UnitSelectionMovementOrigin.class).get());
-		this.selectedTargetEntities =
-				this.pooledEngine.getEntitiesFor(
-						Family.all(UnitSelectionMovementTarget.class).get());
 		super.addedToEngine(engine);
 	}
 	
@@ -64,9 +60,6 @@ public class UnitSelectionSystem extends IteratingSystem {
 				}
 
 				previouslySelected.remove(UnitSelectionMovementOrigin.class);
-			}
-			for (Entity previousTarget : this.selectedTargetEntities) {
-				previousTarget.remove(UnitSelectionMovementTarget.class);
 			}
 			
 			// only select the entity if it was not already selected !

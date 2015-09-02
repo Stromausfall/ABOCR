@@ -9,6 +9,7 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.ashley.systems.IteratingSystem;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 
 import net.matthiasauer.abocr.graphics.RenderComponent;
@@ -24,6 +25,7 @@ public class UnitSelectionMovementTargetRenderSystem extends IteratingSystem {
 					TileComponent.class,
 					UnitSelectionMovementTarget.class).get();
 	private final ComponentMapper<TileComponent> tileComponentMapper;
+	private final ComponentMapper<UnitSelectionMovementTarget> unitSelectionMovementTargetMapper;
 	private final AtlasRegion texture;
 	private List<Entity> selectedEntities;
 	private PooledEngine engine;
@@ -35,6 +37,8 @@ public class UnitSelectionMovementTargetRenderSystem extends IteratingSystem {
 				TextureLoader.getInstance().getTexture("selection");
 		this.tileComponentMapper =
 				ComponentMapper.getFor(TileComponent.class);
+		this.unitSelectionMovementTargetMapper =
+				ComponentMapper.getFor(UnitSelectionMovementTarget.class);
 		this.selectedEntities =
 				new ArrayList<Entity>();
 	}
@@ -60,19 +64,37 @@ public class UnitSelectionMovementTargetRenderSystem extends IteratingSystem {
 
 	@Override
 	protected void processEntity(Entity entity, float deltaTime) {
-		TileComponent unitComponent =
+		TileComponent tileComponent =
 				this.tileComponentMapper.get(entity);
 		Entity renderTargetEntity =
 				this.engine.createEntity();
+		UnitSelectionMovementTarget unitSelectionMovementTargetComponent =
+				this.unitSelectionMovementTargetMapper.get(entity);
+		
+		Color tint = Color.RED;
+		
+		switch (unitSelectionMovementTargetComponent.range) {
+		case 1:
+			tint = Color.YELLOW;
+			break;
+		case 2:
+			tint = Color.ORANGE;
+			break;
+		case 3:
+			tint = Color.GREEN;
+		default:
+			break;
+		}
 
 		RenderComponent selectionTargetRenderComponent =
 				this.engine.createComponent(RenderComponent.class).set(
-						unitComponent.x,
-						unitComponent.y,
+						tileComponent.x,
+						tileComponent.y,
 						0,
 						RenderPositionUnit.Tiles,
 						this.texture,
-						RenderLayer.UnitSelection);
+						RenderLayer.UnitSelection,
+						tint);
 		 
 		renderTargetEntity.add(selectionTargetRenderComponent);
 		renderTargetEntity.add(

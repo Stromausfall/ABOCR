@@ -82,7 +82,8 @@ public class UnitRenderSystem extends IteratingSystem {
 						0,
 						RenderPositionUnit.Tiles,
 						typeTexture,
-						RenderLayer.UnitType);
+						RenderLayer.UnitType,
+						null);
 
 		entity.add(typeRenderComponent);
 		
@@ -109,7 +110,8 @@ public class UnitRenderSystem extends IteratingSystem {
 						0,
 						RenderPositionUnit.Tiles,
 						strengthTexture,
-						RenderLayer.UnitType);
+						RenderLayer.UnitType,
+						null);
 
 		strengthRenderUnit.add(strengthRenderComponent);
 		this.engine.addEntity(strengthRenderUnit);

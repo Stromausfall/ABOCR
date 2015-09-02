@@ -26,16 +26,11 @@ public class UnitSelectionMovementRangeSystem extends IteratingSystem {
 	private static final Family selectedMovementTargetFamily =
 			Family.all(
 					UnitSelectionMovementTarget.class).get();
-	@SuppressWarnings("unchecked")
-	private static final Family tileComponentFamily =
-			Family.all(
-					TileComponent.class).get();
 	private TileFastAccessSystem tileFastAccessSystem;
 	private ImmutableArray<Entity> selectedMovementTargetEntities;
 	private final ComponentMapper<UnitComponent> unitComponentMapper;
 	private final ComponentMapper<TileComponent> tileComponentMapper;
 	private PooledEngine pooledEngine;
-	private ImmutableArray<Entity> tileEntities;
 
 	public UnitSelectionMovementRangeSystem() {
 		super(selectedMovementOriginFamily);
@@ -51,8 +46,6 @@ public class UnitSelectionMovementRangeSystem extends IteratingSystem {
 		this.pooledEngine = (PooledEngine) engine;
 		this.selectedMovementTargetEntities =
 				this.pooledEngine.getEntitiesFor(selectedMovementTargetFamily);
-		this.tileEntities =
-				this.pooledEngine.getEntitiesFor(tileComponentFamily);
 		this.tileFastAccessSystem =
 				this.pooledEngine.getSystem(TileFastAccessSystem.class);
 		
@@ -98,7 +91,7 @@ public class UnitSelectionMovementRangeSystem extends IteratingSystem {
 		return entities;
 	}
 	
-	private Collection<Entity> getSurroundingTileEntities(int x, int y, int range) {
+	private void getSurroundingTileEntities(int x, int y, int range) {
 		Set<Entity> tiles =
 				new HashSet<Entity>();
 		Set<Entity> tiles2 =
@@ -115,30 +108,40 @@ public class UnitSelectionMovementRangeSystem extends IteratingSystem {
 				TileComponent unitComponent =
 						this.tileComponentMapper.get(entity);
 				
-				tiles2.addAll(
+				//tiles2.addAll(
+				Collection<Entity> surrounding =
 					this.getSurroundingTileEntities(
 							unitComponent.x,
-							unitComponent.y));
+							unitComponent.y);
+				
+				for (Entity surroundingEntity : surrounding) {
+					
+					// if we don't know about it yet - then we know that the minimum
+					// moves to reach this tile are 'i'
+					if (!tiles.contains(surroundingEntity)
+							&& !tiles2.contains(surroundingEntity)
+							&& (surroundingEntity != originEntity)) {
+						surroundingEntity.add(
+								this.pooledEngine.createComponent(UnitSelectionMovementTarget.class)
+									.set(i+1));
+						
+						tiles2.add(surroundingEntity);
+					}
+				}
 			}
 			
 			tiles.addAll(tiles2);
 			tiles2.clear();
-		}		
-		
-		// we don't want the origin
-		tiles.remove(originEntity);
-		
-		return tiles;
+		}
 	}
 
 	@Override
 	protected void processEntity(Entity entity, float deltaTime) {
 		UnitComponent unitComponent =
 				this.unitComponentMapper.get(entity);
-		
-		for (Entity surroundingTileEntity : this.getSurroundingTileEntities(unitComponent.x, unitComponent.y, 1)) {
-			surroundingTileEntity.add(
-					this.pooledEngine.createComponent(UnitSelectionMovementTarget.class));
-		}
+		this.getSurroundingTileEntities(
+				unitComponent.x,
+				unitComponent.y,
+				unitComponent.movement);
 	}
 }

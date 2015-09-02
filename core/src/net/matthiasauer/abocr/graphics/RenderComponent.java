@@ -1,6 +1,7 @@
 package net.matthiasauer.abocr.graphics;
 
 import com.badlogic.ashley.core.Component;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Pool.Poolable;
@@ -11,6 +12,7 @@ public class RenderComponent implements Component, Poolable {
 	public RenderPositionUnit positionUnit;
 	public AtlasRegion texture;
 	public RenderLayer layer;
+	public Color tint;
 	
 	public RenderComponent() {
 		this.reset();
@@ -22,13 +24,15 @@ public class RenderComponent implements Component, Poolable {
 			float rotation,
 			RenderPositionUnit positionUnit,
 			AtlasRegion texture,
-			RenderLayer layer) {
+			RenderLayer layer,
+			Color tint) {
 		this.position.x = positionX;
 		this.position.y = positionY;
 		this.rotation = rotation;
 		this.positionUnit = positionUnit;
 		this.texture = texture;
 		this.layer = layer;
+		this.tint = tint;
 		
 		return this;
 	}
@@ -39,6 +43,7 @@ public class RenderComponent implements Component, Poolable {
 				0,
 				0,
 				0,
+				null,
 				null,
 				null,
 				null);

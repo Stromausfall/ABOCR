@@ -126,6 +126,7 @@ public class MapView extends ScreenAdapter {
 					unitComponent.y = y;
 					unitComponent.type = choice(UnitType.values());
 					unitComponent.strength = choice(UnitStrength.values());
+					unitComponent.movement = 1 + random.nextInt(3);
 					
 					unit.add(unitComponent);
 					unit.add(new ClickableComponent());

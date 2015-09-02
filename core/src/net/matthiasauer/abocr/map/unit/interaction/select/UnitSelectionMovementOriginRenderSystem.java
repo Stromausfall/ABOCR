@@ -72,7 +72,8 @@ public class UnitSelectionMovementOriginRenderSystem extends IteratingSystem {
 						0,
 						RenderPositionUnit.Tiles,
 						this.texture,
-						RenderLayer.UnitSelection);
+						RenderLayer.UnitSelection,
+						null);
 		 
 		renderEntity.add(selectionOriginRenderComponent);
 		renderEntity.add(
