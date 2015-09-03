@@ -8,6 +8,7 @@ public class TileComponent implements Component, Poolable {
 	public int y;
 	public TileType tileType;
 	public boolean receivesInput;
+	public boolean traversable;
 	
 	@Override
 	public void reset() {
@@ -15,5 +16,6 @@ public class TileComponent implements Component, Poolable {
 		this.y = -1;
 		this.tileType = null;
 		this.receivesInput = false;
+		this.traversable = false;
 	}
 }

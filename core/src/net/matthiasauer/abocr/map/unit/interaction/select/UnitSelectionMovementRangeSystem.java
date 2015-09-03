@@ -12,6 +12,7 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.ashley.utils.ImmutableArray;
+import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop.Target;
 
 import net.matthiasauer.abocr.map.owner.MapElementOwnerComponent;
 import net.matthiasauer.abocr.map.owner.Owner;
@@ -21,6 +22,16 @@ import net.matthiasauer.abocr.map.unit.UnitComponent;
 import net.matthiasauer.abocr.map.unit.UnitFastAccessSystem;
 
 public class UnitSelectionMovementRangeSystem extends IteratingSystem {
+	private static class TargetData {
+		public final UnitSelectionMovementTargetType type;
+		public final Entity tileEntity;
+		
+		public TargetData(UnitSelectionMovementTargetType type, Entity tileEntity) {
+			this.type = type;
+			this.tileEntity = tileEntity;
+		}
+	}
+	
 	@SuppressWarnings("unchecked")
 	private static final Family selectedMovementOriginFamily =
 			Family.all(
@@ -70,35 +81,59 @@ public class UnitSelectionMovementRangeSystem extends IteratingSystem {
 		super.update(deltaTime);
 	}
 	
-	private void addTileEntity(int x, int y, Collection<Entity> result, Owner originEntityOwner) {
+	private void addTileEntity(int x, int y, Collection<TargetData> result, Owner originEntityOwner) {
 		Entity entity =
 				this.tileFastAccessSystem.getTile(x, y);
 		
 		if (entity != null) {
-			Entity unitAtTile =
-					this.unitFastAccessSystem.getUnit(x, y);					
+			TileComponent tileComponent =
+					this.tileComponentMapper.get(entity);
 			
-			if (unitAtTile == null) {
-				// no unit on the tile
-				result.add(entity);
-			} else {
-				// unit on the tile
-				MapElementOwnerComponent mapElementOwner =
-						this.mapElementOwnerComponentMapper.get(unitAtTile);
+			if (tileComponent.traversable) {
+				// only add if the terrain is traversable !
+				Entity unitAtTile =
+						this.unitFastAccessSystem.getUnit(x, y);					
 				
-				if (mapElementOwner.owner != originEntityOwner) {
-					// only add it if the tile is NOT owned by the player 
-					// (for whom the range is drawn)
-					result.add(entity);
+				if (unitAtTile == null) {
+					// no unit on the tile
+					result.add(
+							new TargetData(
+									UnitSelectionMovementTargetType.Move,
+									entity));
+				} else {
+					// unit on the tile
+					MapElementOwnerComponent mapElementOwner =
+							this.mapElementOwnerComponentMapper.get(unitAtTile);
+					
+					if (mapElementOwner.owner != originEntityOwner) {
+						// only add it if the tile is NOT owned by the player 
+						// (for whom the range is drawn)
+						result.add(
+								new TargetData(
+										UnitSelectionMovementTargetType.Attack,
+										entity));
+					} else {
+						result.add(
+								new TargetData(
+										UnitSelectionMovementTargetType.NoMove,
+										entity));
+					}
+							
 				}
-						
+			} else {
+				// not traversable
+				result.add(
+						new TargetData(
+								UnitSelectionMovementTargetType.NoMove,
+								entity));
+				
 			}
 		}
 	}
 	
-	private Collection<Entity> getSurroundingTileEntities(int x, int y, Owner originEntityOwner) {
-		Collection<Entity> entities =
-				new ArrayList<Entity>();
+	private Collection<TargetData> getSurroundingTileEntities(int x, int y, Owner originEntityOwner) {
+		Collection<TargetData> entities =
+				new ArrayList<TargetData>();
 		
 		// display always !
 		this.addTileEntity(x, y+1, entities, originEntityOwner);
@@ -118,39 +153,42 @@ public class UnitSelectionMovementRangeSystem extends IteratingSystem {
 	}
 	
 	private void getSurroundingTileEntities(int x, int y, int range, Owner originEntityOwner) {
-		Set<Entity> tiles =
-				new HashSet<Entity>();
-		Set<Entity> tiles2 =
-				new HashSet<Entity>();
-		tiles.add(this.tileFastAccessSystem.getTile(x, y));
-		Entity originEntity = tiles.iterator().next();
+		Set<TargetData> tiles =
+				new HashSet<TargetData>();
+		Set<TargetData> tiles2 =
+				new HashSet<TargetData>();
+		tiles.add(
+				new TargetData(
+						null,
+						this.tileFastAccessSystem.getTile(x, y)));
+		TargetData originEntity = tiles.iterator().next();
 
 		// for each range unit
 		for (int i = 0; i < range; i++) {
 			
 			// we get the surrounding elements of all tiles we already have
 			// therefore increasing the range by one !
-			for (Entity entity : tiles) {
+			for (TargetData entity : tiles) {
 				TileComponent unitComponent =
-						this.tileComponentMapper.get(entity);
+						this.tileComponentMapper.get(entity.tileEntity);
 				
 				//tiles2.addAll(
-				Collection<Entity> surrounding =
-					this.getSurroundingTileEntities(
-							unitComponent.x,
-							unitComponent.y,
-							originEntityOwner);
+				Collection<TargetData> surrounding =
+						this.getSurroundingTileEntities(
+								unitComponent.x,
+								unitComponent.y,
+								originEntityOwner);
 				
-				for (Entity surroundingEntity : surrounding) {
+				for (TargetData surroundingEntity : surrounding) {
 					
 					// if we don't know about it yet - then we know that the minimum
 					// moves to reach this tile are 'i'
 					if (!tiles.contains(surroundingEntity)
 							&& !tiles2.contains(surroundingEntity)
-							&& (surroundingEntity != originEntity)) {
-						surroundingEntity.add(
+							&& (surroundingEntity.tileEntity != originEntity.tileEntity)) {
+						surroundingEntity.tileEntity.add(
 								this.pooledEngine.createComponent(UnitSelectionMovementTarget.class)
-									.set(i+1));
+									.set(i+1, surroundingEntity.type));
 						
 						tiles2.add(surroundingEntity);
 					}

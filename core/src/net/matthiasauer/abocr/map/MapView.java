@@ -156,6 +156,7 @@ public class MapView extends ScreenAdapter {
 				tileComponent.y = y;
 				tileComponent.tileType = choice(TileType.values());
 				tileComponent.receivesInput = true;
+				tileComponent.traversable = random.nextBoolean();
 
 				tile.add(tileComponent);
 				tile.add(new ClickableComponent());
