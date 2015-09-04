@@ -70,9 +70,12 @@ public class UnitSelectionMovementSystem extends IteratingSystem {
 			UnitComponent unitComponent =
 					this.unitComponentMapper.get(entity);
 			
-			unitComponent.x = tileComponent.x;
-			unitComponent.y = tileComponent.y;
-			unitComponent.movement -= unitSelectionMovementTarget.range;
+			if ((unitSelectionMovementTarget.type == UnitSelectionMovementTargetType.Move)
+					|| (unitSelectionMovementTarget.type == UnitSelectionMovementTargetType.Attack)) {
+				unitComponent.x = tileComponent.x;
+				unitComponent.y = tileComponent.y;
+				unitComponent.movement -= unitSelectionMovementTarget.range;
+			}
 		}
 	}
 

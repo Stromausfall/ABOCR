@@ -15,6 +15,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import net.matthiasauer.abocr.graphics.RenderComponent;
 import net.matthiasauer.abocr.graphics.RenderLayer;
 import net.matthiasauer.abocr.graphics.RenderPositionUnit;
+import net.matthiasauer.abocr.graphics.texture.TextureContainer;
 import net.matthiasauer.abocr.graphics.texture.TextureLoader;
 import net.matthiasauer.abocr.map.tile.TileComponent;
 
@@ -26,15 +27,18 @@ public class UnitSelectionMovementTargetRenderSystem extends IteratingSystem {
 					UnitSelectionMovementTarget.class).get();
 	private final ComponentMapper<TileComponent> tileComponentMapper;
 	private final ComponentMapper<UnitSelectionMovementTarget> unitSelectionMovementTargetMapper;
-	private final AtlasRegion texture;
+	private final TextureContainer<UnitSelectionMovementTargetType> textureContainer;
 	private List<Entity> selectedEntities;
 	private PooledEngine engine;
 	
 	public UnitSelectionMovementTargetRenderSystem() {
 		super(family);
 		
-		this.texture =
-				TextureLoader.getInstance().getTexture("selection");
+		this.textureContainer = 
+				new TextureContainer<UnitSelectionMovementTargetType>();
+		this.textureContainer.add(UnitSelectionMovementTargetType.Attack, "attackTarget");
+		this.textureContainer.add(UnitSelectionMovementTargetType.Move, "moveTarget");
+		this.textureContainer.add(UnitSelectionMovementTargetType.NoMove, "noTarget");
 		this.tileComponentMapper =
 				ComponentMapper.getFor(TileComponent.class);
 		this.unitSelectionMovementTargetMapper =
@@ -75,13 +79,13 @@ public class UnitSelectionMovementTargetRenderSystem extends IteratingSystem {
 		
 		switch (unitSelectionMovementTargetComponent.range) {
 		case 1:
-			tint = Color.YELLOW;
+			tint = null;
 			break;
 		case 2:
-			tint = Color.ORANGE;
+			tint = Color.LIGHT_GRAY;
 			break;
 		case 3:
-			tint = Color.GREEN;
+			tint = Color.DARK_GRAY;
 		default:
 			break;
 		}
@@ -92,7 +96,7 @@ public class UnitSelectionMovementTargetRenderSystem extends IteratingSystem {
 						tileComponent.y,
 						0,
 						RenderPositionUnit.Tiles,
-						this.texture,
+						this.textureContainer.get(unitSelectionMovementTargetComponent.type),
 						RenderLayer.UnitSelection,
 						tint);
 		 

@@ -30,6 +30,25 @@ public class UnitSelectionMovementRangeSystem extends IteratingSystem {
 			this.type = type;
 			this.tileEntity = tileEntity;
 		}
+		
+		@Override
+		public boolean equals(Object obj) {
+			if (obj == null) {
+				return false;
+			}
+			if (!(obj instanceof TargetData)) {
+				return false;
+			}
+			
+			TargetData targetData = (TargetData) obj;
+			
+			return this.tileEntity.equals(targetData.tileEntity);
+		}
+		
+		@Override
+		public int hashCode() {
+			return this.tileEntity.hashCode();
+		}
 	}
 	
 	@SuppressWarnings("unchecked")

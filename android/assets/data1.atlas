@@ -1,40 +1,61 @@
 
 data1.png
-size: 512,256
+size: 1024,256
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-fourUnit
-  rotate: false
-  xy: 392, 164
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: -1
-infantry
-  rotate: false
-  xy: 100, 34
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: -1
-oneUnit
-  rotate: false
-  xy: 166, 34
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: -1
-selection
+attackTarget
   rotate: false
   xy: 2, 2
   size: 96, 96
   orig: 96, 96
   offset: 0, 0
   index: -1
+fourUnit
+  rotate: false
+  xy: 198, 34
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+infantry
+  rotate: false
+  xy: 588, 164
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+moveTarget
+  rotate: false
+  xy: 392, 132
+  size: 96, 96
+  orig: 96, 96
+  offset: 0, 0
+  index: -1
+noTarget
+  rotate: false
+  xy: 100, 2
+  size: 96, 96
+  orig: 96, 96
+  offset: 0, 0
+  index: -1
+oneUnit
+  rotate: false
+  xy: 264, 34
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+selection
+  rotate: false
+  xy: 490, 132
+  size: 96, 96
+  orig: 96, 96
+  offset: 0, 0
+  index: -1
 threeUnit
   rotate: false
-  xy: 232, 34
+  xy: 654, 164
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
@@ -62,7 +83,7 @@ tile_sand
   index: -1
 twoUnit
   rotate: false
-  xy: 298, 34
+  xy: 720, 164
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
