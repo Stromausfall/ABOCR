@@ -35,10 +35,11 @@ import net.matthiasauer.abocr.map.unit.UnitRenderSystem;
 import net.matthiasauer.abocr.map.unit.UnitStrength;
 import net.matthiasauer.abocr.map.unit.UnitType;
 import net.matthiasauer.abocr.map.unit.interaction.select.UnitSelectionMovementOriginRenderSystem;
-import net.matthiasauer.abocr.map.unit.interaction.select.UnitSelectionMovementRangeSystem;
 import net.matthiasauer.abocr.map.unit.interaction.select.UnitSelectionMovementSystem;
 import net.matthiasauer.abocr.map.unit.interaction.select.UnitSelectionMovementTargetRenderSystem;
 import net.matthiasauer.abocr.map.unit.interaction.select.UnitSelectionSystem;
+import net.matthiasauer.abocr.map.unit.range.BasicRangeSystem;
+import net.matthiasauer.abocr.map.unit.range.AdvancedRangeSystem;
 
 public class MapView extends ScreenAdapter {
 	private final PooledEngine engine;
@@ -80,11 +81,13 @@ public class MapView extends ScreenAdapter {
 		this.engine.addSystem(new UnitSelectionSystem());
 		this.engine.addSystem(new UnitSelectionMovementSystem());
 		
-		
+
+		this.engine.addSystem(new BasicRangeSystem());
+		this.engine.addSystem(new AdvancedRangeSystem());
 		
 		this.engine.addSystem(new UnitSelectionMovementOriginRenderSystem());
 		this.engine.addSystem(new UnitSelectionMovementTargetRenderSystem());
-		this.engine.addSystem(new UnitSelectionMovementRangeSystem());
+		
 		
 		
 		

@@ -10,24 +10,24 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 
 import net.matthiasauer.abocr.graphics.RenderComponent;
 import net.matthiasauer.abocr.graphics.RenderLayer;
 import net.matthiasauer.abocr.graphics.RenderPositionUnit;
 import net.matthiasauer.abocr.graphics.texture.TextureContainer;
-import net.matthiasauer.abocr.graphics.texture.TextureLoader;
 import net.matthiasauer.abocr.map.tile.TileComponent;
+import net.matthiasauer.abocr.map.unit.range.TargetComponent;
+import net.matthiasauer.abocr.map.unit.range.TargetType;
 
 public class UnitSelectionMovementTargetRenderSystem extends IteratingSystem { 
 	@SuppressWarnings("unchecked")
 	private static final Family family =
 			Family.all(
 					TileComponent.class,
-					UnitSelectionMovementTarget.class).get();
+					TargetComponent.class).get();
 	private final ComponentMapper<TileComponent> tileComponentMapper;
-	private final ComponentMapper<UnitSelectionMovementTarget> unitSelectionMovementTargetMapper;
-	private final TextureContainer<UnitSelectionMovementTargetType> textureContainer;
+	private final ComponentMapper<TargetComponent> targetComponentMapper;
+	private final TextureContainer<TargetType> textureContainer;
 	private List<Entity> selectedEntities;
 	private PooledEngine engine;
 	
@@ -35,14 +35,14 @@ public class UnitSelectionMovementTargetRenderSystem extends IteratingSystem {
 		super(family);
 		
 		this.textureContainer = 
-				new TextureContainer<UnitSelectionMovementTargetType>();
-		this.textureContainer.add(UnitSelectionMovementTargetType.Attack, "attackTarget");
-		this.textureContainer.add(UnitSelectionMovementTargetType.Move, "moveTarget");
-		this.textureContainer.add(UnitSelectionMovementTargetType.NoMove, "noTarget");
+				new TextureContainer<TargetType>();
+		this.textureContainer.add(TargetType.Attack, "attackTarget");
+		this.textureContainer.add(TargetType.Move, "moveTarget");
+		this.textureContainer.add(TargetType.NoMove, "noTarget");
 		this.tileComponentMapper =
 				ComponentMapper.getFor(TileComponent.class);
-		this.unitSelectionMovementTargetMapper =
-				ComponentMapper.getFor(UnitSelectionMovementTarget.class);
+		this.targetComponentMapper =
+				ComponentMapper.getFor(TargetComponent.class);
 		this.selectedEntities =
 				new ArrayList<Entity>();
 	}
@@ -72,12 +72,12 @@ public class UnitSelectionMovementTargetRenderSystem extends IteratingSystem {
 				this.tileComponentMapper.get(entity);
 		Entity renderTargetEntity =
 				this.engine.createEntity();
-		UnitSelectionMovementTarget unitSelectionMovementTargetComponent =
-				this.unitSelectionMovementTargetMapper.get(entity);
+		TargetComponent targetComponent =
+				this.targetComponentMapper.get(entity);
 		
 		Color tint = Color.RED;
 		
-		switch (unitSelectionMovementTargetComponent.range) {
+		switch (targetComponent.range) {
 		case 1:
 			tint = null;
 			break;
@@ -96,7 +96,7 @@ public class UnitSelectionMovementTargetRenderSystem extends IteratingSystem {
 						tileComponent.y,
 						0,
 						RenderPositionUnit.Tiles,
-						this.textureContainer.get(unitSelectionMovementTargetComponent.type),
+						this.textureContainer.get(targetComponent.type),
 						RenderLayer.UnitSelection,
 						tint);
 		 

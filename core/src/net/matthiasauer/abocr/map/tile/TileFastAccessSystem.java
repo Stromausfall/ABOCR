@@ -1,5 +1,7 @@
 package net.matthiasauer.abocr.map.tile;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,10 +55,42 @@ public class TileFastAccessSystem extends EntitySystem {
 		}
 	}
 	
+	public TileComponent getTileComponent(Entity entity) {
+		return this.tileComponentMapper.get(entity);
+	}
+	
 	public Entity getTile(int x, int y) {
 		Vector2 key =
 				new Vector2(x, y);
 		
 		return this.fastAccessTiles.get(key);
+	}
+	
+	public Collection<Entity> getSurroundingTiles(int x, int y) {
+		Collection<Entity> surrounding =
+				new ArrayList<Entity>();
+		
+		this.addTileEntityToCollection(x, y+1, surrounding);
+		this.addTileEntityToCollection(x, y-1, surrounding);
+		this.addTileEntityToCollection(x-1, y, surrounding);
+		this.addTileEntityToCollection(x+1, y, surrounding);
+		
+		if ((y % 2) == 1) {
+			this.addTileEntityToCollection(x+1, y+1, surrounding);
+			this.addTileEntityToCollection(x+1, y-1, surrounding);
+		} else {
+			this.addTileEntityToCollection(x-1, y-1, surrounding);
+			this.addTileEntityToCollection(x-1, y+1, surrounding);
+		}
+		
+		return surrounding;
+	}
+	
+	private void addTileEntityToCollection(int x, int y, Collection<Entity> entities) {
+		Entity entity = this.getTile(x, y);
+		
+		if (entity != null) {
+			entities.add(entity);
+		}
 	}
 }

@@ -11,6 +11,8 @@ import com.badlogic.ashley.utils.ImmutableArray;
 import net.matthiasauer.abocr.input.click.ClickedComponent;
 import net.matthiasauer.abocr.map.tile.TileComponent;
 import net.matthiasauer.abocr.map.unit.UnitComponent;
+import net.matthiasauer.abocr.map.unit.range.TargetComponent;
+import net.matthiasauer.abocr.map.unit.range.TargetType;
 
 public class UnitSelectionMovementSystem extends IteratingSystem {
 	@SuppressWarnings("unchecked")
@@ -25,19 +27,19 @@ public class UnitSelectionMovementSystem extends IteratingSystem {
 			Family.all(
 					TileComponent.class,
 					ClickedComponent.class,
-					UnitSelectionMovementTarget.class).get();
+					TargetComponent.class).get();
 	
 	private PooledEngine pooledEngine;
 	private ImmutableArray<Entity> clickedTilesEntities;
-	private final ComponentMapper<UnitSelectionMovementTarget> unitSelectionMovementTargetMapper;
+	private final ComponentMapper<TargetComponent> targetComponentMapper;
 	private final ComponentMapper<UnitComponent> unitComponentMapper;
 	private final ComponentMapper<TileComponent> tileComponentMapper;
 	
 	public UnitSelectionMovementSystem() {
 		super(selectedEntitiesFamily);
 		
-		this.unitSelectionMovementTargetMapper =
-				ComponentMapper.getFor(UnitSelectionMovementTarget.class);
+		this.targetComponentMapper =
+				ComponentMapper.getFor(TargetComponent.class);
 		this.unitComponentMapper =
 				ComponentMapper.getFor(UnitComponent.class);
 		this.tileComponentMapper =
@@ -63,18 +65,18 @@ public class UnitSelectionMovementSystem extends IteratingSystem {
 		if (this.clickedTilesEntities.size() == 1) {
 			Entity tileEntity = this.clickedTilesEntities.first();
 			
-			UnitSelectionMovementTarget unitSelectionMovementTarget =
-					this.unitSelectionMovementTargetMapper.get(tileEntity);
+			TargetComponent targetComponent =
+					this.targetComponentMapper.get(tileEntity);
 			TileComponent tileComponent =
 					this.tileComponentMapper.get(tileEntity);
 			UnitComponent unitComponent =
 					this.unitComponentMapper.get(entity);
 			
-			if ((unitSelectionMovementTarget.type == UnitSelectionMovementTargetType.Move)
-					|| (unitSelectionMovementTarget.type == UnitSelectionMovementTargetType.Attack)) {
+			if ((targetComponent.type == TargetType.Move)
+					|| (targetComponent.type == TargetType.Attack)) {
 				unitComponent.x = tileComponent.x;
 				unitComponent.y = tileComponent.y;
-				unitComponent.movement -= unitSelectionMovementTarget.range;
+				unitComponent.movement -= targetComponent.range;
 			}
 		}
 	}
