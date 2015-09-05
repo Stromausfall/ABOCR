@@ -75,19 +75,22 @@ public class UnitSelectionMovementTargetRenderSystem extends IteratingSystem {
 		TargetComponent targetComponent =
 				this.targetComponentMapper.get(entity);
 		
-		Color tint = Color.RED;
+		Color tint = null;
 		
-		switch (targetComponent.range) {
-		case 1:
-			tint = null;
-			break;
-		case 2:
-			tint = Color.LIGHT_GRAY;
-			break;
-		case 3:
-			tint = Color.DARK_GRAY;
-		default:
-			break;
+		// only for move
+		if (targetComponent.type == TargetType.Move) {
+			switch (targetComponent.range) {
+			case 1:
+				tint = null;
+				break;
+			case 2:
+				tint = Color.LIGHT_GRAY;
+				break;
+			case 3:
+				tint = Color.DARK_GRAY;
+			default:
+				break;
+			}
 		}
 
 		RenderComponent selectionTargetRenderComponent =

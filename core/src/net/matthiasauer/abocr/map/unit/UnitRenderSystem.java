@@ -16,12 +16,14 @@ import net.matthiasauer.abocr.graphics.RenderLayer;
 import net.matthiasauer.abocr.graphics.RenderPositionUnit;
 import net.matthiasauer.abocr.graphics.texture.TextureContainer;
 import net.matthiasauer.abocr.input.base.touch.InputTouchTargetComponent;
+import net.matthiasauer.abocr.map.owner.MapElementOwnerComponent;
 
 public class UnitRenderSystem extends IteratingSystem {
 	@SuppressWarnings("unchecked")
 	private static final Family family =
 			Family.all(UnitComponent.class).get();
 	private final ComponentMapper<UnitComponent> unitComponentMapper;
+	private final ComponentMapper<MapElementOwnerComponent> mapElementOwnerComponentMapper;
 	private final TextureContainer<UnitType> unitTypeTextureContainer;
 	private final TextureContainer<UnitStrength> unitStrengthTextureContainer;
 	private PooledEngine engine;
@@ -41,6 +43,8 @@ public class UnitRenderSystem extends IteratingSystem {
 
 		this.unitComponentMapper =
 				ComponentMapper.getFor(UnitComponent.class);
+		this.mapElementOwnerComponentMapper =
+				ComponentMapper.getFor(MapElementOwnerComponent.class);
 		this.renderTargets = new LinkedList<Entity>();
 	}
 	
@@ -75,6 +79,10 @@ public class UnitRenderSystem extends IteratingSystem {
 	private void displayCounterAndMakeItClickable(Entity entity, UnitComponent unitComponent) {
 		AtlasRegion typeTexture =
 				this.unitTypeTextureContainer.get(unitComponent.type);
+		MapElementOwnerComponent ownerComponent =
+				this.mapElementOwnerComponentMapper.get(entity);
+		
+		
 		RenderComponent typeRenderComponent =
 				this.engine.createComponent(RenderComponent.class).set(
 						unitComponent.x,
@@ -83,7 +91,7 @@ public class UnitRenderSystem extends IteratingSystem {
 						RenderPositionUnit.Tiles,
 						typeTexture,
 						RenderLayer.UnitType,
-						null);
+						ownerComponent.owner.color);
 
 		entity.add(typeRenderComponent);
 		

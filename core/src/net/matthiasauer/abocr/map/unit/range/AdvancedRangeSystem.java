@@ -61,10 +61,10 @@ public class AdvancedRangeSystem extends IteratingSystem {
 		MapElementOwnerComponent originEntityOwner =
 				this.mapElementOwnerComponentMapper.get(originEntity);
 		
-		if (tileComponent.traversable) {
+		if (tileComponent.tileType.traversable) {
 			// only add if the terrain is traversable !
 			Entity unitAtTile =
-					this.unitFastAccessSystem.getUnit(tileComponent.x, tileComponent.x);					
+					this.unitFastAccessSystem.getUnit(tileComponent.x, tileComponent.y);					
 			
 			if (unitAtTile == null) {
 				// no unit on the tile
