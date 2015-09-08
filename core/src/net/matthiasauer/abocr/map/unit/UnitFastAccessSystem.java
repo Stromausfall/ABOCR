@@ -58,4 +58,14 @@ public class UnitFastAccessSystem extends EntitySystem {
 		
 		return this.fastAccessUnits.get(key);
 	}
+	
+	public void removeUnit(Entity entity, PooledEngine pooledEngine) {
+		UnitComponent unitComponent =
+				this.unitComponentMapper.get(entity);
+		
+		this.fastAccessUnits.remove(
+				new Vector2(unitComponent.x, unitComponent.y));
+		
+		this.pooledEngine.removeEntity(entity);
+	}
 }

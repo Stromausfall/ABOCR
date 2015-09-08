@@ -11,8 +11,9 @@ import com.badlogic.ashley.utils.ImmutableArray;
 import net.matthiasauer.abocr.input.click.ClickedComponent;
 import net.matthiasauer.abocr.map.tile.TileComponent;
 import net.matthiasauer.abocr.map.unit.UnitComponent;
+import net.matthiasauer.abocr.map.unit.UnitFastAccessSystem;
+import net.matthiasauer.abocr.map.unit.UnitStrength;
 import net.matthiasauer.abocr.map.unit.range.TargetComponent;
-import net.matthiasauer.abocr.map.unit.range.TargetType;
 
 public class UnitSelectionMovementSystem extends IteratingSystem {
 	@SuppressWarnings("unchecked")
@@ -34,6 +35,7 @@ public class UnitSelectionMovementSystem extends IteratingSystem {
 	private final ComponentMapper<TargetComponent> targetComponentMapper;
 	private final ComponentMapper<UnitComponent> unitComponentMapper;
 	private final ComponentMapper<TileComponent> tileComponentMapper;
+	private UnitFastAccessSystem unitFastAccessSystem;
 	
 	public UnitSelectionMovementSystem() {
 		super(selectedEntitiesFamily);
@@ -53,31 +55,66 @@ public class UnitSelectionMovementSystem extends IteratingSystem {
 		this.pooledEngine = (PooledEngine) engine;
 		this.clickedTilesEntities =
 				this.pooledEngine.getEntitiesFor(clickedTilesFamily);
-				
+		this.unitFastAccessSystem =
+				this.pooledEngine.getSystem(UnitFastAccessSystem.class);
 	}
 
 	@Override
-	protected void processEntity(Entity entity, float deltaTime) {
+	protected void processEntity(Entity attackerUnitEntity, float deltaTime) {
 		if (this.clickedTilesEntities.size() > 1) {
 			throw new NullPointerException("more than one clicked tile !");
 		}
 		
 		if (this.clickedTilesEntities.size() == 1) {
-			Entity tileEntity = this.clickedTilesEntities.first();
+			Entity defenderTileEntity = this.clickedTilesEntities.first();
 			
 			TargetComponent targetComponent =
-					this.targetComponentMapper.get(tileEntity);
-			TileComponent tileComponent =
-					this.tileComponentMapper.get(tileEntity);
-			UnitComponent unitComponent =
-					this.unitComponentMapper.get(entity);
+					this.targetComponentMapper.get(defenderTileEntity);
+			TileComponent defenderTileComponent =
+					this.tileComponentMapper.get(defenderTileEntity);
+			UnitComponent attackerUnitComponent =
+					this.unitComponentMapper.get(attackerUnitEntity);			
 			
-			if ((targetComponent.type == TargetType.Move)
-					|| (targetComponent.type == TargetType.Attack)) {
-				unitComponent.x = tileComponent.x;
-				unitComponent.y = tileComponent.y;
-				unitComponent.movement -= targetComponent.range;
+			switch (targetComponent.type) {
+			case Move:
+				attackerUnitComponent.x = defenderTileComponent.x;
+				attackerUnitComponent.y = defenderTileComponent.y;
+				attackerUnitComponent.movement -= targetComponent.range;
+				break;
+			case Attack:
+				Entity defenderUnitEntity =
+						this.unitFastAccessSystem.getUnit(
+								defenderTileComponent.x,
+								defenderTileComponent.y);
+				
+				this.performAttack(attackerUnitEntity, defenderUnitEntity);
+				break;
+			default:
+				break;
 			}
+		}
+	}
+	
+	private void performAttack(Entity attacker, Entity defender) {
+		UnitComponent attackerUnitComponent =
+				this.unitComponentMapper.get(attacker);
+		UnitComponent defenderUnitComponent =
+				this.unitComponentMapper.get(defender);
+		int attackerUnitCount =
+				attackerUnitComponent.strength.count;
+		int defenderUnitCount =
+				defenderUnitComponent.strength.count;
+		
+		if (attackerUnitCount == defenderUnitCount) {
+			this.unitFastAccessSystem.removeUnit(attacker, pooledEngine);
+			this.unitFastAccessSystem.removeUnit(defender, pooledEngine);
+		} else
+		if (attackerUnitCount < defenderUnitCount) {
+			this.unitFastAccessSystem.removeUnit(attacker, pooledEngine);
+			defenderUnitComponent.strength = UnitStrength.One;
+		} else {
+			this.unitFastAccessSystem.removeUnit(defender, pooledEngine);
+			attackerUnitComponent.strength = UnitStrength.One;
 		}
 	}
 

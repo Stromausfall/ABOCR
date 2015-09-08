@@ -148,13 +148,12 @@ public class RangeSystem extends IteratingSystem {
 				return TargetType.Move;
 			} else {				
 				if (this.sameOwner(unitAtTile, centerEntity)) {
+					return TargetType.NoMove;
+				} else {
 					// only add it if the tile is NOT owned by the player 
 					// (for whom the range is drawn)
 					return TargetType.Attack;
-				} else {
-					return TargetType.NoMove;
 				}
-						
 			}
 		} else {
 			// not traversable
