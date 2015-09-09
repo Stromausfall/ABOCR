@@ -76,18 +76,22 @@ public class UnitSelectionMovementSystem extends IteratingSystem {
 					this.unitComponentMapper.get(attackerUnitEntity);			
 			
 			switch (targetComponent.type) {
-			case Move:
-				attackerUnitComponent.x = defenderTileComponent.x;
-				attackerUnitComponent.y = defenderTileComponent.y;
-				attackerUnitComponent.movement -= targetComponent.range;
-				break;
 			case Attack:
 				Entity defenderUnitEntity =
 						this.unitFastAccessSystem.getUnit(
 								defenderTileComponent.x,
 								defenderTileComponent.y);
 				
-				this.performAttack(attackerUnitEntity, defenderUnitEntity);
+				boolean attackSuccessful =
+						this.performAttack(attackerUnitEntity, defenderUnitEntity);
+				
+				if (!attackSuccessful) {
+					break;
+				}
+			case Move:
+				attackerUnitComponent.x = defenderTileComponent.x;
+				attackerUnitComponent.y = defenderTileComponent.y;
+				attackerUnitComponent.movement -= targetComponent.range;
 				break;
 			default:
 				break;
@@ -95,7 +99,7 @@ public class UnitSelectionMovementSystem extends IteratingSystem {
 		}
 	}
 	
-	private void performAttack(Entity attacker, Entity defender) {
+	private boolean performAttack(Entity attacker, Entity defender) {
 		UnitComponent attackerUnitComponent =
 				this.unitComponentMapper.get(attacker);
 		UnitComponent defenderUnitComponent =
@@ -108,13 +112,16 @@ public class UnitSelectionMovementSystem extends IteratingSystem {
 		if (attackerUnitCount == defenderUnitCount) {
 			this.unitFastAccessSystem.removeUnit(attacker, pooledEngine);
 			this.unitFastAccessSystem.removeUnit(defender, pooledEngine);
-		} else
+			return false;
+		}
 		if (attackerUnitCount < defenderUnitCount) {
 			this.unitFastAccessSystem.removeUnit(attacker, pooledEngine);
 			defenderUnitComponent.strength = UnitStrength.One;
+			return false;
 		} else {
 			this.unitFastAccessSystem.removeUnit(defender, pooledEngine);
 			attackerUnitComponent.strength = UnitStrength.One;
+			return true;
 		}
 	}
 
