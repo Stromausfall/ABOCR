@@ -129,7 +129,8 @@ public class MapView extends ScreenAdapter {
 				if (random.nextInt(100) <= unitChancePercentage) {
 					Entity unit =
 							this.engine.createEntity();
-					
+					Owner owner = choice(Owner.values());
+										
 					UnitComponent unitComponent =
 							this.engine.createComponent(UnitComponent.class);
 					unitComponent.x = x;
@@ -140,8 +141,12 @@ public class MapView extends ScreenAdapter {
 					
 					
 					unit.add(unitComponent);
-					unit.add(new ClickableComponent());
-					unit.add(new MapElementOwnerComponent().set(choice(Owner.values())));
+
+					if (owner.interaction) {
+						unit.add(new ClickableComponent());
+					}
+					
+					unit.add(new MapElementOwnerComponent().set(owner));
 					
 					this.engine.addEntity(unit);
 				}

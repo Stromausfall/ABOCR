@@ -95,7 +95,9 @@ public class UnitRenderSystem extends IteratingSystem {
 
 		entity.add(typeRenderComponent);
 		
-		this.makeClickable(entity);
+		if (ownerComponent.owner.interaction) {
+			this.makeClickable(entity);
+		}
 	}
 	
 	private void makeClickable(Entity entity) {

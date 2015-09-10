@@ -121,17 +121,13 @@ public class InputTouchGeneratorSystem extends EntitySystem implements InputProc
 						this.renderComponentMapper.get(targetEntity);
 				RenderedComponent renderedComponent =
 						this.renderedComponentMapper.get(targetEntity);
-				if (renderComponent.layer == RenderLayer.UI) {
-					System.err.println("oi !" + renderComponent.texture.name);
-				}
+				
 				// search for the one that is touched and has the highest order of the layer
 				if (this.touchesVisiblePartOfTarget(targetEntity, renderComponent, renderedComponent)) {
 
 					if (renderComponent.layer.order > orderOfCurrentTarget) {
 						orderOfCurrentTarget = renderComponent.layer.order;
 						this.lastEvent.target = targetEntity;
-System.err.println(
-lastEvent.target.getComponent(RenderComponent.class).texture.name);
 					}
 				}
 			}
@@ -139,10 +135,6 @@ lastEvent.target.getComponent(RenderComponent.class).texture.name);
 			Gdx.app.debug(
 					"InputTouchGeneratorSystem",
 					lastEvent.inputType + " - " + lastEvent.target + " @" + lastEvent.timestamp);
-if (lastEvent.target != null) {
-System.err.println(
-lastEvent.inputType + " - " + lastEvent.target + " @" + lastEvent.target.getComponent(RenderComponent.class).texture.name);
-}
 
 			// save the event
 			this.inputTouchContainerEntity.add(lastEvent);
