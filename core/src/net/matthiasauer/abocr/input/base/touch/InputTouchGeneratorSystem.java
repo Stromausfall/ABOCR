@@ -12,11 +12,11 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 import net.matthiasauer.abocr.graphics.RenderComponent;
-import net.matthiasauer.abocr.graphics.RenderLayer;
 import net.matthiasauer.abocr.graphics.RenderedComponent;
 import net.matthiasauer.abocr.graphics.texture.archive.RenderTextureArchiveSystem;
 
@@ -79,31 +79,72 @@ public class InputTouchGeneratorSystem extends EntitySystem implements InputProc
 		super.removedFromEngine(engine);
 	}
 	
+	private Vector2 getPosition(boolean isProjected) {
+		if (isProjected) {
+			return this.lastEvent.projectedPosition;
+		} else {
+			return this.lastEvent.unprojectedPosition;
+		}
+	}
+	
+	private Rectangle getRectangle(boolean isProjected, RenderedComponent renderedComponent) {
+		if (isProjected) {
+			return renderedComponent.renderedTarget;
+		} else {
+			Rectangle rectangle =
+					new Rectangle(renderedComponent.renderedTarget);
+
+			// 'unzoom' the rendered rectangle - because the 
+			// position is also 'unzoomed' (unprojected)
+			rectangle.x /= renderedComponent.zoomFactor;
+			rectangle.y /= renderedComponent.zoomFactor;
+			
+			return rectangle;
+		}
+	}
+	
 	private boolean touchesVisiblePartOfTarget(
 			Entity targetEntity, RenderComponent renderComponent, RenderedComponent renderedComponent) {
-		Vector2 position = null;
-		
-		if (renderComponent.layer.projected == true) {
-			position = this.lastEvent.unprojectedPosition;
-		} else {
-			position = this.lastEvent.projectedPosition;
-		}
+		boolean isProjected = renderComponent.layer.projected;
+		Vector2 position = this.getPosition(isProjected);
+		Rectangle rectangle = this.getRectangle(isProjected, renderedComponent);
 		
 		// if in the bounding box
-		if (renderedComponent.renderedTarget.contains(position)) {
+		if (rectangle.contains(position)) {
 			if (renderComponent.texture == null) {
 				throw new NullPointerException("targetComponent.texture was null !");
 			}
 
 			InputTouchTargetComponent targetComponent =
 					this.targetComponentMapper.get(targetEntity);
-			
-			if (this.isClickedPixelInvisible(renderedComponent, renderComponent, targetComponent, position)) {
+
+			if (this.isClickedPixelVisible(rectangle, renderComponent, targetComponent, position)) {
 				return true;
-			}					
+			}
 		}
 		
 		return false;
+	}
+	
+	private void iterateOverAllEntitiesToFindTouched() {
+		int orderOfCurrentTarget = -1;
+
+		// go over all entities
+		for (Entity targetEntity : targetEntities) {
+			RenderComponent renderComponent =
+					this.renderComponentMapper.get(targetEntity);
+			RenderedComponent renderedComponent =
+					this.renderedComponentMapper.get(targetEntity);
+			
+			// search for the one that is touched and has the highest order of the layer
+			if (this.touchesVisiblePartOfTarget(targetEntity, renderComponent, renderedComponent)) {
+
+				if (renderComponent.layer.order > orderOfCurrentTarget) {
+					orderOfCurrentTarget = renderComponent.layer.order;
+					this.lastEvent.target = targetEntity;
+				}
+			}
+		}
 	}
 	
 	@Override
@@ -113,24 +154,7 @@ public class InputTouchGeneratorSystem extends EntitySystem implements InputProc
 		
 		// if there is an event that needs to be processsed
 		if (this.lastEvent != null) {
-			int orderOfCurrentTarget = -1;
-
-			// go over all entities
-			for (Entity targetEntity : targetEntities) {
-				RenderComponent renderComponent =
-						this.renderComponentMapper.get(targetEntity);
-				RenderedComponent renderedComponent =
-						this.renderedComponentMapper.get(targetEntity);
-				
-				// search for the one that is touched and has the highest order of the layer
-				if (this.touchesVisiblePartOfTarget(targetEntity, renderComponent, renderedComponent)) {
-
-					if (renderComponent.layer.order > orderOfCurrentTarget) {
-						orderOfCurrentTarget = renderComponent.layer.order;
-						this.lastEvent.target = targetEntity;
-					}
-				}
-			}
+			this.iterateOverAllEntitiesToFindTouched();
 			
 			Gdx.app.debug(
 					"InputTouchGeneratorSystem",
@@ -142,7 +166,7 @@ public class InputTouchGeneratorSystem extends EntitySystem implements InputProc
 		}
 	}
 	
-	private boolean isClickedPixelInvisible(RenderedComponent renderedComponent, RenderComponent renderComponent, InputTouchTargetComponent targetComponent, Vector2 position) {
+	private boolean isClickedPixelVisible(Rectangle renderedRectangle, RenderComponent renderComponent, InputTouchTargetComponent targetComponent, Vector2 position) {
 		// http://gamedev.stackexchange.com/questions/43943/how-to-detect-a-touch-on-transparent-area-of-an-image-in-a-libgdx-stage
 		Pixmap pixmap =
 				this.archive.getPixmap(renderComponent.texture.getTexture());
@@ -151,14 +175,14 @@ public class InputTouchGeneratorSystem extends EntitySystem implements InputProc
 		// first add the offset of the region inside the texture, then add the position inside the texture !
 		// -> because we need the position inside the texture
 		int pixelX =
-				(int)(renderComponent.texture.getRegionX() + position.x - renderedComponent.renderedTarget.x);
+				(int)(renderComponent.texture.getRegionX() + position.x - renderedRectangle.x);
 		
 		// the same goes for the Y component, BUT the Y axis is inverted, therefore
 		// we need to invert the position INSIDE the texture !
 		// --> that's why we use regionHeigth - positionInsideTexture
 		int pixelY =
-				(int)(renderComponent.texture.getRegionY() + renderComponent.texture.getRegionHeight() - (position.y - renderedComponent.renderedTarget.y));
-		
+				(int)(renderComponent.texture.getRegionY() + renderComponent.texture.getRegionHeight() - (position.y - renderedRectangle.y));
+
 		int pixel =
 				pixmap.getPixel(pixelX, pixelY);
 
@@ -192,10 +216,10 @@ public class InputTouchGeneratorSystem extends EntitySystem implements InputProc
 		this.lastEvent.target = null;
 		this.lastEvent.inputType = inputType;
 		this.lastEvent.timestamp = System.currentTimeMillis();
-		this.lastEvent.unprojectedPosition.x = unprojected.x;
-		this.lastEvent.unprojectedPosition.y = unprojected.y;
-		this.lastEvent.projectedPosition.x = screenX - (Gdx.graphics.getWidth() / 2);
-		this.lastEvent.projectedPosition.y = (Gdx.graphics.getHeight() / 2) - screenY;
+		this.lastEvent.projectedPosition.x = unprojected.x;
+		this.lastEvent.projectedPosition.y = unprojected.y;
+		this.lastEvent.unprojectedPosition.x = screenX - (Gdx.graphics.getWidth() / 2);
+		this.lastEvent.unprojectedPosition.y = (Gdx.graphics.getHeight() / 2) - screenY;
 	}
 
 	@Override

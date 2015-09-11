@@ -9,8 +9,8 @@ public class InputTouchEventComponent implements Component, Poolable {
 	public Entity target;
 	public InputTouchEventType inputType;
 	public long timestamp;
-	public final Vector2 projectedPosition = new Vector2();
 	public final Vector2 unprojectedPosition = new Vector2();
+	public final Vector2 projectedPosition = new Vector2();
 	public int argument;
 	
 	@Override
@@ -19,9 +19,9 @@ public class InputTouchEventComponent implements Component, Poolable {
 		this.inputType = null;
 		this.argument = 0;
 		this.timestamp = -1;
-		this.unprojectedPosition.x = 0;
-		this.unprojectedPosition.y = 0;
 		this.projectedPosition.x = 0;
 		this.projectedPosition.y = 0;
+		this.unprojectedPosition.x = 0;
+		this.unprojectedPosition.y = 0;
 	}
 }

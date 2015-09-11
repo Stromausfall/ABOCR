@@ -147,7 +147,8 @@ public class RenderSystem extends EntitySystem {
 						actualPositionX,
 						actualPositionY,
 						renderComponent.texture.getRegionWidth(),
-						renderComponent.texture.getRegionHeight()));
+						renderComponent.texture.getRegionHeight(),
+						this.camera.zoom));
 	}
 	
 	private void orderRenderComponents() {
