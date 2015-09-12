@@ -16,6 +16,7 @@ import net.matthiasauer.abocr.graphics.RenderLayer;
 import net.matthiasauer.abocr.graphics.RenderPositionUnit;
 import net.matthiasauer.abocr.graphics.texture.TextureContainer;
 import net.matthiasauer.abocr.input.base.touch.InputTouchTargetComponent;
+import net.matthiasauer.abocr.input.click.ClickableComponent;
 import net.matthiasauer.abocr.map.owner.MapElementOwnerComponent;
 
 public class UnitRenderSystem extends IteratingSystem {
@@ -95,17 +96,21 @@ public class UnitRenderSystem extends IteratingSystem {
 
 		entity.add(typeRenderComponent);
 		
-		if (ownerComponent.owner.interaction) {
-			this.makeClickable(entity);
-		}
+		this.makeClickable(entity, ownerComponent);
 	}
 	
-	private void makeClickable(Entity entity) {
+	private void makeClickable(Entity entity, MapElementOwnerComponent ownerComponent) {
 		// also make the counter clickable !
 		InputTouchTargetComponent inputTouchTargetComponent =
 				this.engine.createComponent(InputTouchTargetComponent.class);
-		
-		entity.add(inputTouchTargetComponent);
+
+		if (ownerComponent.owner.interaction && ownerComponent.active) {
+			entity.add(new ClickableComponent());
+			entity.add(inputTouchTargetComponent);
+		} else {
+			entity.remove(ClickableComponent.class);
+			entity.remove(InputTouchTargetComponent.class);
+		}
 	}
 	
 	private void displayStrength(Entity entity, UnitComponent unitComponent) {

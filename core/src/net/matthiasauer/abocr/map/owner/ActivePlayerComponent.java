@@ -3,18 +3,16 @@ package net.matthiasauer.abocr.map.owner;
 import com.badlogic.ashley.core.Component;
 import com.badlogic.gdx.utils.Pool.Poolable;
 
-public class MapElementOwnerComponent implements Component, Poolable {
+public class ActivePlayerComponent implements Component, Poolable {
 	public Owner owner;
-	public boolean active;
-
+	
 	@Override
 	public void reset() {
-		this.set(Owner.Neutral, false);
+		this.set(Owner.Neutral);
 	}
-
-	public MapElementOwnerComponent set(Owner owner, boolean active) {
+	
+	public ActivePlayerComponent set(Owner owner) {
 		this.owner = owner;
-		this.active = active;
 		
 		return this;
 	}
