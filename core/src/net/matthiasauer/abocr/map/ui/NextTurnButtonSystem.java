@@ -14,10 +14,12 @@ import net.matthiasauer.abocr.graphics.texture.TextureLoader;
 import net.matthiasauer.abocr.input.base.touch.InputTouchTargetComponent;
 import net.matthiasauer.abocr.input.click.ClickableComponent;
 import net.matthiasauer.abocr.input.click.ClickedComponent;
+import net.matthiasauer.abocr.map.owner.OwnerManagementSystem;
 
 public class NextTurnButtonSystem extends EntitySystem {
-	private final AtlasRegion texture;
 	private ComponentMapper<ClickedComponent> clickedComponentMapper;
+	private OwnerManagementSystem ownerManagementSystem;
+	private final AtlasRegion texture;
 	private PooledEngine pooledEngine;
 	private Entity buttonEntity;
 	
@@ -33,6 +35,8 @@ public class NextTurnButtonSystem extends EntitySystem {
 		this.pooledEngine = (PooledEngine) engine;
 		this.buttonEntity = this.pooledEngine.createEntity();
 		this.pooledEngine.addEntity(this.buttonEntity);
+		this.ownerManagementSystem =
+				this.pooledEngine.getSystem(OwnerManagementSystem.class);
 	}
 	
 	@Override
@@ -55,7 +59,12 @@ public class NextTurnButtonSystem extends EntitySystem {
 				this.clickedComponentMapper.get(this.buttonEntity);
 		
 		if (clickedComponent != null) {
-			System.err.println("oi ! next turn now :)");
+			// button clicked
+			// only works if the current player is interactable !
+			if (this.ownerManagementSystem.getPlayer().interaction) {
+				System.err.println("oi ! next turn now :) was : " + this.ownerManagementSystem.getPlayer());
+				this.ownerManagementSystem.nextPlayer();
+			}
 		}
 	}
 }

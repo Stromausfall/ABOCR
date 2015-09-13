@@ -23,10 +23,11 @@ import net.matthiasauer.abocr.input.base.gestures.InputGestureEventGenerator;
 import net.matthiasauer.abocr.input.base.simple.InputSimpleEventGenerator;
 import net.matthiasauer.abocr.input.base.touch.InputTouchGeneratorSystem;
 import net.matthiasauer.abocr.input.click.ClickGeneratorSystem;
-import net.matthiasauer.abocr.map.owner.ActivePlayerComponent;
 import net.matthiasauer.abocr.map.owner.MapElementOwnerComponent;
 import net.matthiasauer.abocr.map.owner.Owner;
 import net.matthiasauer.abocr.map.owner.OwnerManagementSystem;
+import net.matthiasauer.abocr.map.owner.player.AIPlayerSystem;
+import net.matthiasauer.abocr.map.owner.player.NeutralPlayerSystem;
 import net.matthiasauer.abocr.map.tile.TileComponent;
 import net.matthiasauer.abocr.map.tile.TileFastAccessSystem;
 import net.matthiasauer.abocr.map.tile.TileRenderSystem;
@@ -50,8 +51,6 @@ public class MapView extends ScreenAdapter {
 	private final InputMultiplexer inputMultiplexer;
 	private final Viewport viewport;
 	
-	private final Entity entity;
-
 	public MapView() {
 		this.engine = new PooledEngine();
 		this.camera = new OrthographicCamera(800, 600);
@@ -63,14 +62,12 @@ public class MapView extends ScreenAdapter {
 		this.createMap();
 		this.createUnits();
 		
-		this.entity = this.engine.createEntity();
-		this.engine.addEntity(this.entity);
-		this.entity.add(
-				this.engine.createComponent(ActivePlayerComponent.class).set(Owner.Player1));
-		
-		this.engine.addSystem(new NextTurnButtonSystem());
 		this.engine.addSystem(new OwnerManagementSystem());
+
+		this.engine.addSystem(new NextTurnButtonSystem());
 		
+		this.engine.addSystem(new NeutralPlayerSystem());
+		this.engine.addSystem(new AIPlayerSystem());
 		
 		this.engine.addSystem(new TileFastAccessSystem());
 		this.engine.addSystem(new UnitFastAccessSystem());
