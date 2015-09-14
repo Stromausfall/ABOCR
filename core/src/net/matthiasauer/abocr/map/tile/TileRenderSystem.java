@@ -1,6 +1,5 @@
  package net.matthiasauer.abocr.map.tile;
 
-import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
@@ -13,13 +12,13 @@ import net.matthiasauer.abocr.graphics.RenderLayer;
 import net.matthiasauer.abocr.graphics.RenderPositionUnit;
 import net.matthiasauer.abocr.graphics.texture.TextureContainer;
 import net.matthiasauer.abocr.input.base.touch.InputTouchTargetComponent;
+import net.matthiasauer.abocr.utils.Mappers;
 
 public class TileRenderSystem extends IteratingSystem {
 	public static final int TILE_SIZE = 128;
 	@SuppressWarnings("unchecked")
 	private static final Family family =
 			Family.all(TileComponent.class).get();
-	private final ComponentMapper<TileComponent> tileComponentMapper; 
 	private final TextureContainer<TileType> tileTextureContainer;
 	private PooledEngine engine;
 	
@@ -30,9 +29,6 @@ public class TileRenderSystem extends IteratingSystem {
 		this.tileTextureContainer.add(TileType.Grass, "tile_grass");
 		this.tileTextureContainer.add(TileType.Dirt, "tile_dirt");
 		this.tileTextureContainer.add(TileType.Sand, "tile_sand");
-
-		this.tileComponentMapper =
-				ComponentMapper.getFor(TileComponent.class);
 	}
 	
 	@Override
@@ -44,8 +40,8 @@ public class TileRenderSystem extends IteratingSystem {
 
 	@Override
 	protected void processEntity(Entity entity, float deltaTime) {
-		TileComponent tileComponent = 
-				this.tileComponentMapper.get(entity);
+		TileComponent tileComponent =
+				Mappers.tileComponent.get(entity);
 		AtlasRegion texture =
 				this.tileTextureContainer.get(tileComponent.tileType);
 		RenderComponent renderComponent =

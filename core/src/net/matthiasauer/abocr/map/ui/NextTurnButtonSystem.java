@@ -1,6 +1,5 @@
 package net.matthiasauer.abocr.map.ui;
 
-import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
@@ -15,9 +14,9 @@ import net.matthiasauer.abocr.input.base.touch.InputTouchTargetComponent;
 import net.matthiasauer.abocr.input.click.ClickableComponent;
 import net.matthiasauer.abocr.input.click.ClickedComponent;
 import net.matthiasauer.abocr.map.owner.OwnerManagementSystem;
+import net.matthiasauer.abocr.utils.Mappers;
 
 public class NextTurnButtonSystem extends EntitySystem {
-	private ComponentMapper<ClickedComponent> clickedComponentMapper;
 	private OwnerManagementSystem ownerManagementSystem;
 	private final AtlasRegion texture;
 	private PooledEngine pooledEngine;
@@ -26,8 +25,6 @@ public class NextTurnButtonSystem extends EntitySystem {
 	public NextTurnButtonSystem() {
 		this.texture =
 				TextureLoader.getInstance().getTexture("nextTurn");
-		this.clickedComponentMapper =
-				ComponentMapper.getFor(ClickedComponent.class);
 	}
 	
 	@Override
@@ -56,7 +53,7 @@ public class NextTurnButtonSystem extends EntitySystem {
 				this.pooledEngine.createComponent(InputTouchTargetComponent.class));
 		
 		ClickedComponent clickedComponent =
-				this.clickedComponentMapper.get(this.buttonEntity);
+				Mappers.clickedComponent.get(this.buttonEntity);
 		
 		if (clickedComponent != null) {
 			// button clicked

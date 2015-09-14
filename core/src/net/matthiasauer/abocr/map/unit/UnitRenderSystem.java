@@ -3,7 +3,6 @@ package net.matthiasauer.abocr.map.unit;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
@@ -18,13 +17,12 @@ import net.matthiasauer.abocr.graphics.texture.TextureContainer;
 import net.matthiasauer.abocr.input.base.touch.InputTouchTargetComponent;
 import net.matthiasauer.abocr.input.click.ClickableComponent;
 import net.matthiasauer.abocr.map.owner.MapElementOwnerComponent;
+import net.matthiasauer.abocr.utils.Mappers;
 
 public class UnitRenderSystem extends IteratingSystem {
 	@SuppressWarnings("unchecked")
 	private static final Family family =
 			Family.all(UnitComponent.class).get();
-	private final ComponentMapper<UnitComponent> unitComponentMapper;
-	private final ComponentMapper<MapElementOwnerComponent> mapElementOwnerComponentMapper;
 	private final TextureContainer<UnitType> unitTypeTextureContainer;
 	private final TextureContainer<UnitStrength> unitStrengthTextureContainer;
 	private PooledEngine engine;
@@ -42,10 +40,6 @@ public class UnitRenderSystem extends IteratingSystem {
 		this.unitStrengthTextureContainer.add(UnitStrength.Three, "threeUnit");
 		this.unitStrengthTextureContainer.add(UnitStrength.Four, "fourUnit");
 
-		this.unitComponentMapper =
-				ComponentMapper.getFor(UnitComponent.class);
-		this.mapElementOwnerComponentMapper =
-				ComponentMapper.getFor(MapElementOwnerComponent.class);
 		this.renderTargets = new LinkedList<Entity>();
 	}
 	
@@ -71,7 +65,7 @@ public class UnitRenderSystem extends IteratingSystem {
 	@Override
 	protected void processEntity(Entity entity, float deltaTime) {
 		UnitComponent unitComponent = 
-				this.unitComponentMapper.get(entity);
+				Mappers.unitComponent.get(entity);
 		
 		this.displayCounterAndMakeItClickable(entity, unitComponent);
 		this.displayStrength(entity, unitComponent);
@@ -81,7 +75,7 @@ public class UnitRenderSystem extends IteratingSystem {
 		AtlasRegion typeTexture =
 				this.unitTypeTextureContainer.get(unitComponent.type);
 		MapElementOwnerComponent ownerComponent =
-				this.mapElementOwnerComponentMapper.get(entity);
+				Mappers.mapElementOwnerComponent.get(entity);
 		
 		
 		RenderComponent typeRenderComponent =

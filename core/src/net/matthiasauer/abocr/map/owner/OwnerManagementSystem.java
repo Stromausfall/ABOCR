@@ -1,12 +1,13 @@
 package net.matthiasauer.abocr.map.owner;
 
-import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.ashley.utils.ImmutableArray;
+
+import net.matthiasauer.abocr.utils.Mappers;
 
 public class OwnerManagementSystem extends EntitySystem {
 	@SuppressWarnings("unchecked")
@@ -17,17 +18,8 @@ public class OwnerManagementSystem extends EntitySystem {
 			Family.all(MapElementOwnerComponent.class).get();
 	private ImmutableArray<Entity> activePlayerEntities;
 	private ImmutableArray<Entity> mapElementOwnerEntities;
-	private final ComponentMapper<MapElementOwnerComponent> mapElementOwnerComponentMapper;
-	private final ComponentMapper<ActivePlayerComponent> activePlayerComponentMapper;
 	private PooledEngine pooledEngine;
 	private Entity entity;
-	
-	public OwnerManagementSystem() {
-		this.mapElementOwnerComponentMapper =
-				ComponentMapper.getFor(MapElementOwnerComponent.class);
-		this.activePlayerComponentMapper =
-				ComponentMapper.getFor(ActivePlayerComponent.class);
-	}
 	
 	@Override
 	public void addedToEngine(Engine engine) {
@@ -92,7 +84,7 @@ public class OwnerManagementSystem extends EntitySystem {
 		
 		Entity entity = this.activePlayerEntities.first();
 		ActivePlayerComponent activePlayerComponent =
-				this.activePlayerComponentMapper.get(entity);
+				Mappers.activePlayerComponent.get(entity);
 		
 		return activePlayerComponent.owner;
 	}
@@ -103,7 +95,7 @@ public class OwnerManagementSystem extends EntitySystem {
 		
 		for (Entity entity : this.mapElementOwnerEntities) {
 			MapElementOwnerComponent mapElementOwnerComponent =
-					this.mapElementOwnerComponentMapper.get(entity);
+					Mappers.mapElementOwnerComponent.get(entity);
 			
 			if (mapElementOwnerComponent.owner == activeOwner) {
 				mapElementOwnerComponent.active = true;

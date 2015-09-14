@@ -43,6 +43,7 @@ import net.matthiasauer.abocr.map.unit.interaction.select.UnitSelectionMovementS
 import net.matthiasauer.abocr.map.unit.interaction.select.UnitSelectionMovementTargetRenderSystem;
 import net.matthiasauer.abocr.map.unit.interaction.select.UnitSelectionSystem;
 import net.matthiasauer.abocr.map.unit.range.RangeSystem;
+import net.matthiasauer.abocr.utils.Systems;
 
 public class MapView extends ScreenAdapter {
 	private final PooledEngine engine;
@@ -115,6 +116,7 @@ public class MapView extends ScreenAdapter {
 		
 		this.engine.addSystem(new RenderSystem(this.camera));
 		
+		this.engine.addSystem(new Systems(this.engine));
 		//Gdx.app.setLogLevel(Gdx.app.LOG_ERROR);
 	}
 	
