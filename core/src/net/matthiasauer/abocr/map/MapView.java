@@ -28,6 +28,9 @@ import net.matthiasauer.abocr.map.owner.Owner;
 import net.matthiasauer.abocr.map.owner.OwnerManagementSystem;
 import net.matthiasauer.abocr.map.owner.player.AIPlayerSystem;
 import net.matthiasauer.abocr.map.owner.player.NeutralPlayerSystem;
+import net.matthiasauer.abocr.map.supply.CityComponent;
+import net.matthiasauer.abocr.map.supply.CityRenderSystem;
+import net.matthiasauer.abocr.map.supply.CityType;
 import net.matthiasauer.abocr.map.tile.TileComponent;
 import net.matthiasauer.abocr.map.tile.TileFastAccessSystem;
 import net.matthiasauer.abocr.map.tile.TileRenderSystem;
@@ -62,6 +65,7 @@ public class MapView extends ScreenAdapter {
 		
 		this.createMap();
 		this.createUnits();
+		this.createCities();
 		
 		this.engine.addSystem(new OwnerManagementSystem());
 
@@ -77,6 +81,7 @@ public class MapView extends ScreenAdapter {
 
 		this.engine.addSystem(new TileRenderSystem());
 		this.engine.addSystem(new UnitRenderSystem());
+		this.engine.addSystem(new CityRenderSystem());
 
 		this.engine.addSystem(new InputGestureEventGenerator(this.inputMultiplexer));
 		this.engine.addSystem(new InputTouchGeneratorSystem(this.inputMultiplexer, this.camera));
@@ -123,6 +128,7 @@ public class MapView extends ScreenAdapter {
 	private static final int xSize = 8;
 	private static final int ySize = 8;
 	private static final double unitChancePercentage = 25;
+	private static final double cityChancePercentage = 15;
 	
 	private static <T> T choice(T ... elements) {
 		int randomIndex = random.nextInt(elements.length);
@@ -149,6 +155,32 @@ public class MapView extends ScreenAdapter {
 					
 					
 					unit.add(unitComponent);
+					
+					unit.add(new MapElementOwnerComponent().set(owner, false));
+					
+					this.engine.addEntity(unit);
+				}
+			}
+		}
+		
+	}
+	
+	private void createCities() {
+		
+		for (int x = 0; x < xSize; x++) {
+			for (int y = 0; y < ySize; y++) {
+				if (random.nextInt(100) <= cityChancePercentage) {
+					Entity unit =
+							this.engine.createEntity();
+					Owner owner = choice(Owner.values());
+										
+					CityComponent cityComponent =
+							this.engine.createComponent(CityComponent.class);
+					cityComponent.x = x;
+					cityComponent.y = y;
+					cityComponent.type = choice(CityType.values());
+					
+					unit.add(cityComponent);
 					
 					unit.add(new MapElementOwnerComponent().set(owner, false));
 					

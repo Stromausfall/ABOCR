@@ -13,14 +13,14 @@ attackTarget
   index: -1
 fourUnit
   rotate: false
-  xy: 588, 164
+  xy: 296, 34
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 infantry
   rotate: false
-  xy: 296, 34
+  xy: 686, 164
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
@@ -46,23 +46,30 @@ noTarget
   orig: 96, 96
   offset: 0, 0
   index: -1
-oneUnit
-  rotate: false
-  xy: 654, 164
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: -1
-selection
+normalCity
   rotate: false
   xy: 198, 2
   size: 96, 96
   orig: 96, 96
   offset: 0, 0
   index: -1
+oneUnit
+  rotate: false
+  xy: 752, 164
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+selection
+  rotate: false
+  xy: 588, 132
+  size: 96, 96
+  orig: 96, 96
+  offset: 0, 0
+  index: -1
 threeUnit
   rotate: false
-  xy: 720, 164
+  xy: 818, 164
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
@@ -90,7 +97,7 @@ tile_sand
   index: -1
 twoUnit
   rotate: false
-  xy: 786, 164
+  xy: 884, 164
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
