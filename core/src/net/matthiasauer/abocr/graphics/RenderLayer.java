@@ -2,6 +2,7 @@ package net.matthiasauer.abocr.graphics;
 
 public enum RenderLayer {
 	Tiles(1, true),
+	TileOwner(25, true),
 	Cities(85, true),
 	UnitType(100, true),
 	UnitSelection(150, true),

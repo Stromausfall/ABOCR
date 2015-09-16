@@ -3,7 +3,6 @@ package net.matthiasauer.abocr.map.unit.interaction.select;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
@@ -18,6 +17,7 @@ import net.matthiasauer.abocr.graphics.texture.TextureContainer;
 import net.matthiasauer.abocr.map.tile.TileComponent;
 import net.matthiasauer.abocr.map.unit.range.TargetComponent;
 import net.matthiasauer.abocr.map.unit.range.TargetType;
+import net.matthiasauer.abocr.utils.Mappers;
 
 public class UnitSelectionMovementTargetRenderSystem extends IteratingSystem { 
 	@SuppressWarnings("unchecked")
@@ -25,8 +25,6 @@ public class UnitSelectionMovementTargetRenderSystem extends IteratingSystem {
 			Family.all(
 					TileComponent.class,
 					TargetComponent.class).get();
-	private final ComponentMapper<TileComponent> tileComponentMapper;
-	private final ComponentMapper<TargetComponent> targetComponentMapper;
 	private final TextureContainer<TargetType> textureContainer;
 	private List<Entity> selectedEntities;
 	private PooledEngine engine;
@@ -39,10 +37,6 @@ public class UnitSelectionMovementTargetRenderSystem extends IteratingSystem {
 		this.textureContainer.add(TargetType.Attack, "attackTarget");
 		this.textureContainer.add(TargetType.Move, "moveTarget");
 		this.textureContainer.add(TargetType.NoMove, "noTarget");
-		this.tileComponentMapper =
-				ComponentMapper.getFor(TileComponent.class);
-		this.targetComponentMapper =
-				ComponentMapper.getFor(TargetComponent.class);
 		this.selectedEntities =
 				new ArrayList<Entity>();
 	}
@@ -69,11 +63,11 @@ public class UnitSelectionMovementTargetRenderSystem extends IteratingSystem {
 	@Override
 	protected void processEntity(Entity entity, float deltaTime) {
 		TileComponent tileComponent =
-				this.tileComponentMapper.get(entity);
+				Mappers.tileComponent.get(entity);
 		Entity renderTargetEntity =
 				this.engine.createEntity();
 		TargetComponent targetComponent =
-				this.targetComponentMapper.get(entity);
+				Mappers.targetComponent.get(entity);
 		
 		Color tint = null;
 		

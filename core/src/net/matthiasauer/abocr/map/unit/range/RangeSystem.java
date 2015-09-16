@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
-import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
@@ -20,6 +19,7 @@ import net.matthiasauer.abocr.map.tile.TileFastAccessSystem;
 import net.matthiasauer.abocr.map.unit.UnitComponent;
 import net.matthiasauer.abocr.map.unit.UnitFastAccessSystem;
 import net.matthiasauer.abocr.map.unit.interaction.select.UnitSelectionMovementOrigin;
+import net.matthiasauer.abocr.utils.Mappers;
 
 public class RangeSystem extends IteratingSystem {
 	@SuppressWarnings("unchecked")
@@ -30,22 +30,12 @@ public class RangeSystem extends IteratingSystem {
 	private static final Family targetTileFamily =
 			Family.all(TargetComponent.class).get();
 	private ImmutableArray<Entity> targetTileEntities;
-	private final ComponentMapper<MapElementOwnerComponent> mapElementOwnerComponentMapper;
-	private final ComponentMapper<UnitComponent> unitComponentMapper;
-	private final ComponentMapper<TargetComponent> targetComponentMapper;
 	private TileFastAccessSystem tileFastAccessSystem;
 	private UnitFastAccessSystem unitFastAccessSystem;
 	private PooledEngine pooledEngine;
 	
 	public RangeSystem() {
 		super(selectedUnits);
-		
-		this.unitComponentMapper =
-				ComponentMapper.getFor(UnitComponent.class);
-		this.mapElementOwnerComponentMapper =
-				ComponentMapper.getFor(MapElementOwnerComponent.class);
-		this.targetComponentMapper =
-				ComponentMapper.getFor(TargetComponent.class);
 	}
 	
 	@Override
@@ -73,7 +63,7 @@ public class RangeSystem extends IteratingSystem {
 	@Override
 	protected void processEntity(final Entity center, float deltaTime) {
 		UnitComponent unitComponent =
-				this.unitComponentMapper.get(center);
+				Mappers.unitComponent.get(center);
 		Entity centerTile =
 				this.tileFastAccessSystem.getTile(unitComponent.x, unitComponent.y);
 		
@@ -95,7 +85,7 @@ public class RangeSystem extends IteratingSystem {
 		TileComponent tileComponent =
 				this.tileFastAccessSystem.getTileComponent(tileEntity);
 		TargetComponent centerTargetComponent =
-				this.targetComponentMapper.get(tileEntity);
+				Mappers.targetComponent.get(tileEntity);
 		
 		if (centerTargetComponent != null) {
 			if (centerTargetComponent.type != TargetType.Move) {
@@ -164,9 +154,9 @@ public class RangeSystem extends IteratingSystem {
 	private boolean sameOwner(Entity locationA, Entity locationB) {
 		// unit on the tile
 		MapElementOwnerComponent locationAOwner =
-				this.mapElementOwnerComponentMapper.get(locationA);
+				Mappers.mapElementOwnerComponent.get(locationA);
 		MapElementOwnerComponent locationBOwner =
-				this.mapElementOwnerComponentMapper.get(locationB);
+				Mappers.mapElementOwnerComponent.get(locationB);
 		
 		if (locationAOwner.owner != locationBOwner.owner) {
 			return false;

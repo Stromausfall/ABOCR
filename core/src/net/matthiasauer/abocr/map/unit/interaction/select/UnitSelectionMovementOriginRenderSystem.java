@@ -3,7 +3,6 @@ package net.matthiasauer.abocr.map.unit.interaction.select;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
@@ -16,6 +15,7 @@ import net.matthiasauer.abocr.graphics.RenderLayer;
 import net.matthiasauer.abocr.graphics.RenderPositionUnit;
 import net.matthiasauer.abocr.graphics.texture.TextureLoader;
 import net.matthiasauer.abocr.map.unit.UnitComponent;
+import net.matthiasauer.abocr.utils.Mappers;
 
 public class UnitSelectionMovementOriginRenderSystem extends IteratingSystem { 
 	@SuppressWarnings("unchecked")
@@ -23,7 +23,6 @@ public class UnitSelectionMovementOriginRenderSystem extends IteratingSystem {
 			Family.all(
 					UnitComponent.class,
 					UnitSelectionMovementOrigin.class).get();
-	private final ComponentMapper<UnitComponent> unitComponentMapper;
 	private final AtlasRegion texture;
 	private List<Entity> selectedEntities;
 	private PooledEngine engine;
@@ -33,8 +32,6 @@ public class UnitSelectionMovementOriginRenderSystem extends IteratingSystem {
 		
 		this.texture =
 				TextureLoader.getInstance().getTexture("selection");
-		this.unitComponentMapper =
-				ComponentMapper.getFor(UnitComponent.class);
 		this.selectedEntities =
 				new ArrayList<Entity>();
 	}
@@ -61,7 +58,7 @@ public class UnitSelectionMovementOriginRenderSystem extends IteratingSystem {
 	@Override
 	protected void processEntity(Entity entity, float deltaTime) {
 		UnitComponent unitComponent =
-				this.unitComponentMapper.get(entity);
+				Mappers.unitComponent.get(entity);
 		Entity renderEntity =
 				this.engine.createEntity();
 

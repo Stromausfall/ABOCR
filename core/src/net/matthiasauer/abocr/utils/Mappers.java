@@ -8,6 +8,7 @@ import net.matthiasauer.abocr.map.owner.MapElementOwnerComponent;
 import net.matthiasauer.abocr.map.supply.CityComponent;
 import net.matthiasauer.abocr.map.tile.TileComponent;
 import net.matthiasauer.abocr.map.unit.UnitComponent;
+import net.matthiasauer.abocr.map.unit.range.TargetComponent;
 
 public class Mappers {
 	public static final ComponentMapper<UnitComponent> unitComponent = 
@@ -22,6 +23,8 @@ public class Mappers {
 			ComponentMapper.getFor(TileComponent.class);
 	public static final ComponentMapper<ClickedComponent> clickedComponent =
 			ComponentMapper.getFor(ClickedComponent.class);
+	public static final ComponentMapper<TargetComponent> targetComponent =
+			ComponentMapper.getFor(TargetComponent.class);
 	
 	private Mappers() {
 	}

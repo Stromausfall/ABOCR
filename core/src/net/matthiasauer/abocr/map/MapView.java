@@ -33,6 +33,7 @@ import net.matthiasauer.abocr.map.supply.CityRenderSystem;
 import net.matthiasauer.abocr.map.supply.CityType;
 import net.matthiasauer.abocr.map.tile.TileComponent;
 import net.matthiasauer.abocr.map.tile.TileFastAccessSystem;
+import net.matthiasauer.abocr.map.tile.TileOwnerRenderSystem;
 import net.matthiasauer.abocr.map.tile.TileRenderSystem;
 import net.matthiasauer.abocr.map.tile.TileType;
 import net.matthiasauer.abocr.map.ui.NextTurnButtonSystem;
@@ -79,6 +80,7 @@ public class MapView extends ScreenAdapter {
 		
 		this.engine.addSystem(new RenderTextureArchiveSystem());
 
+		this.engine.addSystem(new TileOwnerRenderSystem());
 		this.engine.addSystem(new TileRenderSystem());
 		this.engine.addSystem(new UnitRenderSystem());
 		this.engine.addSystem(new CityRenderSystem());
@@ -206,6 +208,7 @@ public class MapView extends ScreenAdapter {
 
 				tile.add(tileComponent);
 				tile.add(new ClickableComponent());
+				tile.add(new MapElementOwnerComponent().set(choice(Owner.values()), false));
 				
 				this.engine.addEntity(tile);
 			}

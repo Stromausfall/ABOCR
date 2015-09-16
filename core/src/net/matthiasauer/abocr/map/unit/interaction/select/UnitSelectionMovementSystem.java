@@ -1,6 +1,5 @@
 package net.matthiasauer.abocr.map.unit.interaction.select;
 
-import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
@@ -14,6 +13,7 @@ import net.matthiasauer.abocr.map.unit.UnitComponent;
 import net.matthiasauer.abocr.map.unit.UnitFastAccessSystem;
 import net.matthiasauer.abocr.map.unit.UnitStrength;
 import net.matthiasauer.abocr.map.unit.range.TargetComponent;
+import net.matthiasauer.abocr.utils.Mappers;
 
 public class UnitSelectionMovementSystem extends IteratingSystem {
 	@SuppressWarnings("unchecked")
@@ -32,20 +32,10 @@ public class UnitSelectionMovementSystem extends IteratingSystem {
 	
 	private PooledEngine pooledEngine;
 	private ImmutableArray<Entity> clickedTilesEntities;
-	private final ComponentMapper<TargetComponent> targetComponentMapper;
-	private final ComponentMapper<UnitComponent> unitComponentMapper;
-	private final ComponentMapper<TileComponent> tileComponentMapper;
 	private UnitFastAccessSystem unitFastAccessSystem;
 	
 	public UnitSelectionMovementSystem() {
 		super(selectedEntitiesFamily);
-		
-		this.targetComponentMapper =
-				ComponentMapper.getFor(TargetComponent.class);
-		this.unitComponentMapper =
-				ComponentMapper.getFor(UnitComponent.class);
-		this.tileComponentMapper =
-				ComponentMapper.getFor(TileComponent.class);
 	}
 	
 	@Override
@@ -69,11 +59,11 @@ public class UnitSelectionMovementSystem extends IteratingSystem {
 			Entity defenderTileEntity = this.clickedTilesEntities.first();
 			
 			TargetComponent targetComponent =
-					this.targetComponentMapper.get(defenderTileEntity);
+					Mappers.targetComponent.get(defenderTileEntity);
 			TileComponent defenderTileComponent =
-					this.tileComponentMapper.get(defenderTileEntity);
+					Mappers.tileComponent.get(defenderTileEntity);
 			UnitComponent attackerUnitComponent =
-					this.unitComponentMapper.get(attackerUnitEntity);			
+					Mappers.unitComponent.get(attackerUnitEntity);			
 			
 			switch (targetComponent.type) {
 			case Attack:
@@ -101,9 +91,9 @@ public class UnitSelectionMovementSystem extends IteratingSystem {
 	
 	private boolean performAttack(Entity attacker, Entity defender) {
 		UnitComponent attackerUnitComponent =
-				this.unitComponentMapper.get(attacker);
+				Mappers.unitComponent.get(attacker);
 		UnitComponent defenderUnitComponent =
-				this.unitComponentMapper.get(defender);
+				Mappers.unitComponent.get(defender);
 		int attackerUnitCount =
 				attackerUnitComponent.strength.count;
 		int defenderUnitCount =

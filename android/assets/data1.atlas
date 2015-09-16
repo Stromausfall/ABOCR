@@ -20,14 +20,14 @@ fourUnit
   index: -1
 infantry
   rotate: false
-  xy: 686, 164
+  xy: 816, 164
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 moveTarget
   rotate: false
-  xy: 392, 132
+  xy: 522, 132
   size: 96, 96
   orig: 96, 96
   offset: 0, 0
@@ -41,7 +41,7 @@ nextTurn
   index: -1
 noTarget
   rotate: false
-  xy: 490, 132
+  xy: 620, 132
   size: 96, 96
   orig: 96, 96
   offset: 0, 0
@@ -55,21 +55,21 @@ normalCity
   index: -1
 oneUnit
   rotate: false
-  xy: 752, 164
+  xy: 362, 34
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 selection
   rotate: false
-  xy: 588, 132
+  xy: 718, 132
   size: 96, 96
   orig: 96, 96
   offset: 0, 0
   index: -1
 threeUnit
   rotate: false
-  xy: 818, 164
+  xy: 882, 164
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
@@ -88,16 +88,23 @@ tile_grass
   orig: 128, 128
   offset: 0, 0
   index: -1
-tile_sand
+tile_owner
   rotate: false
   xy: 262, 100
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: -1
+tile_sand
+  rotate: false
+  xy: 392, 100
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
 twoUnit
   rotate: false
-  xy: 884, 164
+  xy: 428, 34
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
