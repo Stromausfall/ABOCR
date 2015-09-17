@@ -65,8 +65,6 @@ public class MapView extends ScreenAdapter {
 		Gdx.input.setInputProcessor(this.inputMultiplexer);
 		
 		this.createMap();
-		this.createUnits();
-		this.createCities();
 		
 		this.engine.addSystem(new OwnerManagementSystem());
 
@@ -138,59 +136,42 @@ public class MapView extends ScreenAdapter {
 				elements[randomIndex];
 	}
 	
-	private void createUnits() {
-		
-		for (int x = 0; x < xSize; x++) {
-			for (int y = 0; y < ySize; y++) {
-				if (random.nextInt(100) <= unitChancePercentage) {
-					Entity unit =
-							this.engine.createEntity();
-					Owner owner = choice(Owner.values());
-										
-					UnitComponent unitComponent =
-							this.engine.createComponent(UnitComponent.class);
-					unitComponent.x = x;
-					unitComponent.y = y;
-					unitComponent.type = choice(UnitType.values());
-					unitComponent.strength = choice(UnitStrength.values());
-					unitComponent.movement = 1 + random.nextInt(3);
-					
-					
-					unit.add(unitComponent);
-					
-					unit.add(new MapElementOwnerComponent().set(owner, false));
-					
-					this.engine.addEntity(unit);
-				}
-			}
+	private void createUnits(int x, int y, Owner owner) {
+		if (random.nextInt(100) <= unitChancePercentage) {
+			Entity unit =
+					this.engine.createEntity();
+			
+			UnitComponent unitComponent =
+					this.engine.createComponent(UnitComponent.class);
+			unitComponent.x = x;
+			unitComponent.y = y;
+			unitComponent.type = choice(UnitType.values());
+			unitComponent.strength = choice(UnitStrength.values());
+			unitComponent.movement = 1 + random.nextInt(3);
+			
+			unit.add(unitComponent);			
+			unit.add(new MapElementOwnerComponent().set(owner, false));
+			
+			this.engine.addEntity(unit);
 		}
-		
 	}
 	
-	private void createCities() {
-		
-		for (int x = 0; x < xSize; x++) {
-			for (int y = 0; y < ySize; y++) {
-				if (random.nextInt(100) <= cityChancePercentage) {
-					Entity unit =
-							this.engine.createEntity();
-					Owner owner = choice(Owner.values());
-										
-					CityComponent cityComponent =
-							this.engine.createComponent(CityComponent.class);
-					cityComponent.x = x;
-					cityComponent.y = y;
-					cityComponent.type = choice(CityType.values());
-					
-					unit.add(cityComponent);
-					
-					unit.add(new MapElementOwnerComponent().set(owner, false));
-					
-					this.engine.addEntity(unit);
-				}
-			}
+	private void createCities(int x, int y, Owner owner) {
+		if (random.nextInt(100) <= cityChancePercentage) {
+			Entity unit =
+					this.engine.createEntity();
+			
+			CityComponent cityComponent =
+					this.engine.createComponent(CityComponent.class);
+			cityComponent.x = x;
+			cityComponent.y = y;
+			cityComponent.type = choice(CityType.values());
+			
+			unit.add(cityComponent);			
+			unit.add(new MapElementOwnerComponent().set(owner, false));
+			
+			this.engine.addEntity(unit);
 		}
-		
 	}
 	
 	private void createMap() {		
@@ -198,6 +179,7 @@ public class MapView extends ScreenAdapter {
 			for (int y = 0; y < ySize; y++) {
 				Entity tile =
 						this.engine.createEntity();
+				Owner owner = choice(Owner.values());
 				
 				TileComponent tileComponent =
 						this.engine.createComponent(TileComponent.class);
@@ -208,7 +190,10 @@ public class MapView extends ScreenAdapter {
 
 				tile.add(tileComponent);
 				tile.add(new ClickableComponent());
-				tile.add(new MapElementOwnerComponent().set(choice(Owner.values()), false));
+				tile.add(new MapElementOwnerComponent().set(owner, false));
+				
+				this.createUnits(x, y, owner);
+				this.createCities(x, y, owner);
 				
 				this.engine.addEntity(tile);
 			}

@@ -8,7 +8,9 @@ import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.ashley.utils.ImmutableArray;
 
 import net.matthiasauer.abocr.input.click.ClickedComponent;
+import net.matthiasauer.abocr.map.owner.MapElementOwnerComponent;
 import net.matthiasauer.abocr.map.tile.TileComponent;
+import net.matthiasauer.abocr.map.tile.TileFastAccessSystem;
 import net.matthiasauer.abocr.map.unit.UnitComponent;
 import net.matthiasauer.abocr.map.unit.UnitFastAccessSystem;
 import net.matthiasauer.abocr.map.unit.UnitStrength;
@@ -82,11 +84,23 @@ public class UnitSelectionMovementSystem extends IteratingSystem {
 				attackerUnitComponent.x = defenderTileComponent.x;
 				attackerUnitComponent.y = defenderTileComponent.y;
 				attackerUnitComponent.movement -= targetComponent.range;
+				
+				this.changeTileOwner(defenderTileEntity, attackerUnitEntity);
+				
 				break;
 			default:
 				break;
 			}
 		}
+	}
+	
+	public void changeTileOwner(Entity targetTileEntity, Entity attackerUnitEntity) {
+		MapElementOwnerComponent targetTileOwner =
+				Mappers.mapElementOwnerComponent.get(targetTileEntity);
+		MapElementOwnerComponent attackerUnitOwner =
+				Mappers.mapElementOwnerComponent.get(attackerUnitEntity);
+		
+		targetTileOwner.set(attackerUnitOwner);
 	}
 	
 	private boolean performAttack(Entity attacker, Entity defender) {

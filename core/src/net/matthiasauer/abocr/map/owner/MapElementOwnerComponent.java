@@ -18,4 +18,11 @@ public class MapElementOwnerComponent implements Component, Poolable {
 		
 		return this;
 	}
+	
+	public MapElementOwnerComponent set(MapElementOwnerComponent toCopy) {
+		return
+				this.set(
+						toCopy.owner,
+						toCopy.active);
+	}
 }
