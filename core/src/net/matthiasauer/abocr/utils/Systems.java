@@ -3,14 +3,14 @@ package net.matthiasauer.abocr.utils;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.EntitySystem;
 
-import net.matthiasauer.abocr.map.owner.OwnerManagementSystem;
+import net.matthiasauer.abocr.map.player.PlayerManagementSystem;
 import net.matthiasauer.abocr.map.tile.TileFastAccessSystem;
 import net.matthiasauer.abocr.map.unit.UnitFastAccessSystem;
 
 public class Systems extends EntitySystem {
 	public final UnitFastAccessSystem unitFastAccess;
 	public final TileFastAccessSystem tileFastAccess;
-	public final OwnerManagementSystem ownerManagement;
+	public final PlayerManagementSystem ownerManagement;
 	
 	public Systems(Engine engine) {
 		this.unitFastAccess =
@@ -18,7 +18,7 @@ public class Systems extends EntitySystem {
 		this.tileFastAccess =
 				engine.getSystem(TileFastAccessSystem.class);
 		this.ownerManagement =
-				engine.getSystem(OwnerManagementSystem.class);
+				engine.getSystem(PlayerManagementSystem.class);
 	}
 	
 	@Override

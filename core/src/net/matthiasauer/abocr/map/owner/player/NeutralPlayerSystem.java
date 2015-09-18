@@ -4,11 +4,11 @@ import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.PooledEngine;
 
-import net.matthiasauer.abocr.map.owner.Owner;
-import net.matthiasauer.abocr.map.owner.OwnerManagementSystem;
+import net.matthiasauer.abocr.map.player.Player;
+import net.matthiasauer.abocr.map.player.PlayerManagementSystem;
 
 public class NeutralPlayerSystem extends EntitySystem {
-	private OwnerManagementSystem ownerManagementSystem;
+	private PlayerManagementSystem ownerManagementSystem;
 	private PooledEngine pooledEngine;
 	
 	public NeutralPlayerSystem() {
@@ -18,15 +18,15 @@ public class NeutralPlayerSystem extends EntitySystem {
 	public void addedToEngine(Engine engine) {
 		this.pooledEngine = (PooledEngine) engine;
 		this.ownerManagementSystem =
-				this.pooledEngine.getSystem(OwnerManagementSystem.class);
+				this.pooledEngine.getSystem(PlayerManagementSystem.class);
 	}
 	
 	@Override
 	public void update(float deltaTime) {
-		Owner owner =
+		Player owner =
 				this.ownerManagementSystem.getPlayer();
 		
-		if (owner == Owner.Neutral) {
+		if (owner == Player.Neutral) {
 			// we only want to process the neutral player
 			
 			System.err.println("Neutral Player System's turn");

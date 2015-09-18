@@ -8,9 +8,8 @@ import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.ashley.utils.ImmutableArray;
 
 import net.matthiasauer.abocr.input.click.ClickedComponent;
-import net.matthiasauer.abocr.map.owner.MapElementOwnerComponent;
+import net.matthiasauer.abocr.map.player.MapElementOwnerComponent;
 import net.matthiasauer.abocr.map.tile.TileComponent;
-import net.matthiasauer.abocr.map.tile.TileFastAccessSystem;
 import net.matthiasauer.abocr.map.unit.UnitComponent;
 import net.matthiasauer.abocr.map.unit.UnitFastAccessSystem;
 import net.matthiasauer.abocr.map.unit.UnitStrength;
@@ -65,31 +64,33 @@ public class UnitSelectionMovementSystem extends IteratingSystem {
 			TileComponent defenderTileComponent =
 					Mappers.tileComponent.get(defenderTileEntity);
 			UnitComponent attackerUnitComponent =
-					Mappers.unitComponent.get(attackerUnitEntity);			
+					Mappers.unitComponent.get(attackerUnitEntity);
 			
-			switch (targetComponent.type) {
-			case Attack:
-				Entity defenderUnitEntity =
-						this.unitFastAccessSystem.getUnit(
-								defenderTileComponent.x,
-								defenderTileComponent.y);
-				
-				boolean attackSuccessful =
-						this.performAttack(attackerUnitEntity, defenderUnitEntity);
-				
-				if (!attackSuccessful) {
+			if (targetComponent.inRange) {
+				switch (targetComponent.type) {
+				case Attack:
+					Entity defenderUnitEntity =
+							this.unitFastAccessSystem.getUnit(
+									defenderTileComponent.x,
+									defenderTileComponent.y);
+					
+					boolean attackSuccessful =
+							this.performAttack(attackerUnitEntity, defenderUnitEntity);
+					
+					if (!attackSuccessful) {
+						break;
+					}
+				case Move:
+					attackerUnitComponent.x = defenderTileComponent.x;
+					attackerUnitComponent.y = defenderTileComponent.y;
+					attackerUnitComponent.movement -= targetComponent.range;
+					
+					this.changeTileOwner(defenderTileEntity, attackerUnitEntity);
+					
+					break;
+				default:
 					break;
 				}
-			case Move:
-				attackerUnitComponent.x = defenderTileComponent.x;
-				attackerUnitComponent.y = defenderTileComponent.y;
-				attackerUnitComponent.movement -= targetComponent.range;
-				
-				this.changeTileOwner(defenderTileEntity, attackerUnitEntity);
-				
-				break;
-			default:
-				break;
 			}
 		}
 	}

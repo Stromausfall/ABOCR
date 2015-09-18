@@ -16,7 +16,7 @@ import net.matthiasauer.abocr.graphics.RenderPositionUnit;
 import net.matthiasauer.abocr.graphics.texture.TextureContainer;
 import net.matthiasauer.abocr.input.base.touch.InputTouchTargetComponent;
 import net.matthiasauer.abocr.input.click.ClickableComponent;
-import net.matthiasauer.abocr.map.owner.MapElementOwnerComponent;
+import net.matthiasauer.abocr.map.player.MapElementOwnerComponent;
 import net.matthiasauer.abocr.utils.Mappers;
 
 public class UnitRenderSystem extends IteratingSystem {
@@ -77,7 +77,6 @@ public class UnitRenderSystem extends IteratingSystem {
 		MapElementOwnerComponent ownerComponent =
 				Mappers.mapElementOwnerComponent.get(entity);
 		
-		
 		RenderComponent typeRenderComponent =
 				this.engine.createComponent(RenderComponent.class).set(
 						unitComponent.x,
@@ -86,7 +85,7 @@ public class UnitRenderSystem extends IteratingSystem {
 						RenderPositionUnit.Tiles,
 						typeTexture,
 						RenderLayer.UnitType,
-						ownerComponent.owner.color);
+						null);
 
 		entity.add(typeRenderComponent);
 		

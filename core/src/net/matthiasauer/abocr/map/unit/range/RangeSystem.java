@@ -13,7 +13,7 @@ import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.ashley.utils.ImmutableArray;
 
-import net.matthiasauer.abocr.map.owner.MapElementOwnerComponent;
+import net.matthiasauer.abocr.map.player.MapElementOwnerComponent;
 import net.matthiasauer.abocr.map.tile.TileComponent;
 import net.matthiasauer.abocr.map.tile.TileFastAccessSystem;
 import net.matthiasauer.abocr.map.unit.UnitComponent;
@@ -113,11 +113,13 @@ public class RangeSystem extends IteratingSystem {
 				TargetType targetType =
 						this.calculateTargetType(centerEntity, surroundingEntity);
 				
+				boolean inDirectRange = (currentRange == 1);
+				
 				// if we haven't found the entity yet - it must be
 				// exactly 'currentRange' from the centre
 				surroundingEntity.add(
 						this.pooledEngine.createComponent(TargetComponent.class)
-								.set(currentRange, targetType));
+								.set(currentRange, inDirectRange, targetType));
 				
 				total.add(surroundingEntity);
 			}

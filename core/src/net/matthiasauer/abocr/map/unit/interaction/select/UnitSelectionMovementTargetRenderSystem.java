@@ -72,19 +72,10 @@ public class UnitSelectionMovementTargetRenderSystem extends IteratingSystem {
 		Color tint = null;
 		
 		// only for move
-		if (targetComponent.type == TargetType.Move) {
-			switch (targetComponent.range) {
-			case 1:
-				tint = null;
-				break;
-			case 2:
-				tint = Color.LIGHT_GRAY;
-				break;
-			case 3:
-				tint = Color.DARK_GRAY;
-			default:
-				break;
-			}
+		if (targetComponent.inRange) {
+			tint = null;
+		} else {
+			tint = Color.DARK_GRAY;
 		}
 
 		RenderComponent selectionTargetRenderComponent =

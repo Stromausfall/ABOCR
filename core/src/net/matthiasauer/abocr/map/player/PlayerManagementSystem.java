@@ -1,4 +1,4 @@
-package net.matthiasauer.abocr.map.owner;
+package net.matthiasauer.abocr.map.player;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
@@ -7,9 +7,11 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.ashley.utils.ImmutableArray;
 
+import net.matthiasauer.abocr.map.supply.AboutToNextTurnComponent;
+import net.matthiasauer.abocr.map.supply.NextTurnComponent;
 import net.matthiasauer.abocr.utils.Mappers;
 
-public class OwnerManagementSystem extends EntitySystem {
+public class PlayerManagementSystem extends EntitySystem {
 	@SuppressWarnings("unchecked")
 	private static final Family activePlayerFamily =
 			Family.all(ActivePlayerComponent.class).get();
@@ -33,20 +35,20 @@ public class OwnerManagementSystem extends EntitySystem {
 				this.pooledEngine.createEntity();
 		this.pooledEngine.addEntity(this.entity);
 		
-		this.setPlayer(Owner.Neutral);
+		this.setPlayer(Player.Neutral);
 	}
 	
-	public void setPlayer(Owner owner) {
+	public void setPlayer(Player owner) {
 		this.entity.add(
 				this.pooledEngine.createComponent(ActivePlayerComponent.class).set(owner));
 	}
 	
 	public void nextPlayer() {
-		Owner firstPlayer = Owner.Neutral;
-		Owner currentPlayer = this.getPlayer();
-		Owner nextHigherPlayer = null;
+		Player firstPlayer = Player.Neutral;
+		Player currentPlayer = this.getPlayer();
+		Player nextHigherPlayer = null;
 		
-		for (Owner owner : Owner.values()) {
+		for (Player owner : Player.values()) {
 			if (owner.order < firstPlayer.order) {
 				firstPlayer = owner;
 			}
@@ -70,12 +72,16 @@ public class OwnerManagementSystem extends EntitySystem {
 		if (nextHigherPlayer == null) {
 			// no higher - use the first one
 			this.setPlayer(firstPlayer);
+			
+			// this also means that we are now in a new turn !
+			this.entity.add(
+					this.pooledEngine.createComponent(AboutToNextTurnComponent.class));
 		} else {
 			this.setPlayer(nextHigherPlayer);
 		}
 	}
 	
-	public Owner getPlayer() {
+	public Player getPlayer() {
 		if (activePlayerEntities.size() != 1) {
 			throw new NullPointerException(
 					"There must only ever be exactly one active player ! But there were : "
@@ -91,7 +97,7 @@ public class OwnerManagementSystem extends EntitySystem {
 	
 	@Override
 	public void update(float deltaTime) {
-		Owner activeOwner = this.getPlayer();
+		Player activeOwner = this.getPlayer();
 		
 		for (Entity entity : this.mapElementOwnerEntities) {
 			MapElementOwnerComponent mapElementOwnerComponent =
@@ -102,6 +108,17 @@ public class OwnerManagementSystem extends EntitySystem {
 			} else {
 				mapElementOwnerComponent.active = false;
 			}
+		}
+		
+		// remove the next turn component
+		this.entity.remove(NextTurnComponent.class);
+		
+		// create a next turn component (if necessary)
+		if (this.entity.getComponent(AboutToNextTurnComponent.class) != null) {
+
+			this.entity.remove(AboutToNextTurnComponent.class);
+			this.entity.add(
+					this.pooledEngine.createComponent(NextTurnComponent.class));
 		}
 		
 		super.update(deltaTime);

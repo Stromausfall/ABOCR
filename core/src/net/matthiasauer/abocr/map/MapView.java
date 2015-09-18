@@ -23,14 +23,15 @@ import net.matthiasauer.abocr.input.base.gestures.InputGestureEventGenerator;
 import net.matthiasauer.abocr.input.base.simple.InputSimpleEventGenerator;
 import net.matthiasauer.abocr.input.base.touch.InputTouchGeneratorSystem;
 import net.matthiasauer.abocr.input.click.ClickGeneratorSystem;
-import net.matthiasauer.abocr.map.owner.MapElementOwnerComponent;
-import net.matthiasauer.abocr.map.owner.Owner;
-import net.matthiasauer.abocr.map.owner.OwnerManagementSystem;
 import net.matthiasauer.abocr.map.owner.player.AIPlayerSystem;
 import net.matthiasauer.abocr.map.owner.player.NeutralPlayerSystem;
+import net.matthiasauer.abocr.map.player.MapElementOwnerComponent;
+import net.matthiasauer.abocr.map.player.Player;
+import net.matthiasauer.abocr.map.player.PlayerManagementSystem;
 import net.matthiasauer.abocr.map.supply.CityComponent;
 import net.matthiasauer.abocr.map.supply.CityRenderSystem;
 import net.matthiasauer.abocr.map.supply.CityType;
+import net.matthiasauer.abocr.map.supply.SupplySystem;
 import net.matthiasauer.abocr.map.tile.TileComponent;
 import net.matthiasauer.abocr.map.tile.TileFastAccessSystem;
 import net.matthiasauer.abocr.map.tile.TileOwnerRenderSystem;
@@ -66,9 +67,9 @@ public class MapView extends ScreenAdapter {
 		
 		this.createMap();
 		
-		this.engine.addSystem(new OwnerManagementSystem());
-
-		this.engine.addSystem(new NextTurnButtonSystem());
+		this.engine.addSystem(new PlayerManagementSystem());
+		this.engine.addSystem(new SupplySystem());
+		
 		
 		this.engine.addSystem(new NeutralPlayerSystem());
 		this.engine.addSystem(new AIPlayerSystem());
@@ -117,7 +118,9 @@ public class MapView extends ScreenAdapter {
 		this.engine.addSystem(new CameraMoveSystem(this.camera));
 		
 
-		
+
+
+		this.engine.addSystem(new NextTurnButtonSystem());
 		
 		this.engine.addSystem(new RenderSystem(this.camera));
 		
@@ -136,7 +139,7 @@ public class MapView extends ScreenAdapter {
 				elements[randomIndex];
 	}
 	
-	private void createUnits(int x, int y, Owner owner) {
+	private void createUnits(int x, int y, Player owner) {
 		if (random.nextInt(100) <= unitChancePercentage) {
 			Entity unit =
 					this.engine.createEntity();
@@ -156,7 +159,7 @@ public class MapView extends ScreenAdapter {
 		}
 	}
 	
-	private void createCities(int x, int y, Owner owner) {
+	private void createCities(int x, int y, Player owner) {
 		if (random.nextInt(100) <= cityChancePercentage) {
 			Entity unit =
 					this.engine.createEntity();
@@ -179,7 +182,7 @@ public class MapView extends ScreenAdapter {
 			for (int y = 0; y < ySize; y++) {
 				Entity tile =
 						this.engine.createEntity();
-				Owner owner = choice(Owner.values());
+				Player owner = choice(Player.values());
 				
 				TileComponent tileComponent =
 						this.engine.createComponent(TileComponent.class);

@@ -1,8 +1,8 @@
-package net.matthiasauer.abocr.map.owner;
+package net.matthiasauer.abocr.map.player;
 
 import com.badlogic.gdx.graphics.Color;
 
-public enum Owner {
+public enum Player {
 	Player1(Color.BLUE, true, 2),
 	Player2(Color.RED, true, 5),
 	Player3(Color.YELLOW, false, 9),
@@ -12,7 +12,7 @@ public enum Owner {
 	public final boolean interaction;
 	public final int order;
 	
-	Owner(Color color, boolean interaction, int order) {
+	Player(Color color, boolean interaction, int order) {
 		this.order = order;
 		this.color = color;
 		this.interaction = interaction;

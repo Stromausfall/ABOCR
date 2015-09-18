@@ -12,7 +12,7 @@ import net.matthiasauer.abocr.graphics.RenderComponent;
 import net.matthiasauer.abocr.graphics.RenderLayer;
 import net.matthiasauer.abocr.graphics.RenderPositionUnit;
 import net.matthiasauer.abocr.graphics.texture.TextureLoader;
-import net.matthiasauer.abocr.map.owner.MapElementOwnerComponent;
+import net.matthiasauer.abocr.map.player.MapElementOwnerComponent;
 import net.matthiasauer.abocr.utils.Mappers;
 
 public class TileOwnerRenderSystem extends IteratingSystem {

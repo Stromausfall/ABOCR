@@ -8,8 +8,8 @@ import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.ashley.utils.ImmutableArray;
 
 import net.matthiasauer.abocr.input.click.ClickedComponent;
-import net.matthiasauer.abocr.map.owner.MapElementOwnerComponent;
-import net.matthiasauer.abocr.map.owner.Owner;
+import net.matthiasauer.abocr.map.player.MapElementOwnerComponent;
+import net.matthiasauer.abocr.map.player.Player;
 import net.matthiasauer.abocr.map.unit.UnitComponent;
 import net.matthiasauer.abocr.utils.ILateInitialization;
 import net.matthiasauer.abocr.utils.Mappers;
@@ -61,7 +61,7 @@ public class UnitSelectionSystem extends IteratingSystem implements ILateInitial
 		for (Entity entity : this.selectedOriginEntities) {
 			MapElementOwnerComponent mapElementOwner =
 					Mappers.mapElementOwnerComponent.get(entity);
-			Owner currentPlayer =
+			Player currentPlayer =
 					this.systems.ownerManagement.getPlayer();
 			
 			if (mapElementOwner.owner != currentPlayer) {

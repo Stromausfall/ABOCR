@@ -13,11 +13,11 @@ import net.matthiasauer.abocr.graphics.texture.TextureLoader;
 import net.matthiasauer.abocr.input.base.touch.InputTouchTargetComponent;
 import net.matthiasauer.abocr.input.click.ClickableComponent;
 import net.matthiasauer.abocr.input.click.ClickedComponent;
-import net.matthiasauer.abocr.map.owner.OwnerManagementSystem;
+import net.matthiasauer.abocr.map.player.PlayerManagementSystem;
 import net.matthiasauer.abocr.utils.Mappers;
 
 public class NextTurnButtonSystem extends EntitySystem {
-	private OwnerManagementSystem ownerManagementSystem;
+	private PlayerManagementSystem ownerManagementSystem;
 	private final AtlasRegion texture;
 	private PooledEngine pooledEngine;
 	private Entity buttonEntity;
@@ -33,7 +33,7 @@ public class NextTurnButtonSystem extends EntitySystem {
 		this.buttonEntity = this.pooledEngine.createEntity();
 		this.pooledEngine.addEntity(this.buttonEntity);
 		this.ownerManagementSystem =
-				this.pooledEngine.getSystem(OwnerManagementSystem.class);
+				this.pooledEngine.getSystem(PlayerManagementSystem.class);
 	}
 	
 	@Override

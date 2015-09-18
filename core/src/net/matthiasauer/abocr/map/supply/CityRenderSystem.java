@@ -16,7 +16,7 @@ import net.matthiasauer.abocr.graphics.RenderPositionUnit;
 import net.matthiasauer.abocr.graphics.texture.TextureContainer;
 import net.matthiasauer.abocr.input.base.touch.InputTouchTargetComponent;
 import net.matthiasauer.abocr.input.click.ClickableComponent;
-import net.matthiasauer.abocr.map.owner.MapElementOwnerComponent;
+import net.matthiasauer.abocr.map.player.MapElementOwnerComponent;
 import net.matthiasauer.abocr.utils.Mappers;
 
 public class CityRenderSystem extends IteratingSystem {
@@ -78,7 +78,7 @@ public class CityRenderSystem extends IteratingSystem {
 						RenderPositionUnit.Tiles,
 						typeTexture,
 						RenderLayer.Cities,
-						ownerComponent.owner.color);
+						null);
 
 		entity.add(typeRenderComponent);
 		
