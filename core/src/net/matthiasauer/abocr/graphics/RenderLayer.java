@@ -5,6 +5,7 @@ public enum RenderLayer {
 	TileOwner(25, true),
 	Cities(85, true),
 	UnitType(100, true),
+	Unsupplied(125, true),
 	UnitSelection(150, true),
 	UI(1000, false);
 

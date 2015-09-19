@@ -32,6 +32,7 @@ import net.matthiasauer.abocr.map.supply.CityComponent;
 import net.matthiasauer.abocr.map.supply.CityRenderSystem;
 import net.matthiasauer.abocr.map.supply.CityType;
 import net.matthiasauer.abocr.map.supply.SupplySystem;
+import net.matthiasauer.abocr.map.supply.UnsuppliedRenderSystem;
 import net.matthiasauer.abocr.map.tile.TileComponent;
 import net.matthiasauer.abocr.map.tile.TileFastAccessSystem;
 import net.matthiasauer.abocr.map.tile.TileOwnerRenderSystem;
@@ -52,12 +53,18 @@ import net.matthiasauer.abocr.utils.Systems;
 
 public class MapView extends ScreenAdapter {
 	private final PooledEngine engine;
-	private static final Random random = new Random();
+	private final Random random;
 	private final OrthographicCamera camera;
 	private final InputMultiplexer inputMultiplexer;
 	private final Viewport viewport;
 	
 	public MapView() {
+		Random xxx = new Random();
+		long seed = xxx.nextLong();
+		this.random = new Random(seed);
+		System.err.println("seed : " + seed);
+		
+		
 		this.engine = new PooledEngine();
 		this.camera = new OrthographicCamera(800, 600);
 		this.viewport = new ScreenViewport(this.camera);
@@ -69,6 +76,7 @@ public class MapView extends ScreenAdapter {
 		
 		this.engine.addSystem(new PlayerManagementSystem());
 		this.engine.addSystem(new SupplySystem());
+		this.engine.addSystem(new UnsuppliedRenderSystem());
 		
 		
 		this.engine.addSystem(new NeutralPlayerSystem());
@@ -133,7 +141,7 @@ public class MapView extends ScreenAdapter {
 	private static final double unitChancePercentage = 25;
 	private static final double cityChancePercentage = 15;
 	
-	private static <T> T choice(T ... elements) {
+	private <T> T choice(T ... elements) {
 		int randomIndex = random.nextInt(elements.length);
 		return
 				elements[randomIndex];

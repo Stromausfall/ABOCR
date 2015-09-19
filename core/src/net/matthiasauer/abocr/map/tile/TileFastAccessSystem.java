@@ -66,6 +66,12 @@ public class TileFastAccessSystem extends EntitySystem {
 		return this.fastAccessTiles.get(key);
 	}
 	
+	public Collection<Entity> getSurroundingTiles(Vector2 position) {
+		return this.getSurroundingTiles(
+				(int)position.x,
+				(int)position.y);
+	}
+	
 	public Collection<Entity> getSurroundingTiles(int x, int y) {
 		Collection<Entity> surrounding =
 				new ArrayList<Entity>();
