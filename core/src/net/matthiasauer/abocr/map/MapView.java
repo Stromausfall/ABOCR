@@ -48,6 +48,7 @@ import net.matthiasauer.abocr.map.unit.interaction.select.UnitSelectionMovementO
 import net.matthiasauer.abocr.map.unit.interaction.select.UnitSelectionMovementSystem;
 import net.matthiasauer.abocr.map.unit.interaction.select.UnitSelectionMovementTargetRenderSystem;
 import net.matthiasauer.abocr.map.unit.interaction.select.UnitSelectionSystem;
+import net.matthiasauer.abocr.map.unit.movement.MovementSystem;
 import net.matthiasauer.abocr.map.unit.range.RangeSystem;
 import net.matthiasauer.abocr.utils.Systems;
 
@@ -61,6 +62,7 @@ public class MapView extends ScreenAdapter {
 	public MapView() {
 		Random xxx = new Random();
 		long seed = xxx.nextLong();
+		seed = 2617083260353271239L;
 		this.random = new Random(seed);
 		System.err.println("seed : " + seed);
 		
@@ -108,6 +110,8 @@ public class MapView extends ScreenAdapter {
 		
 
 		this.engine.addSystem(new RangeSystem());
+		
+		this.engine.addSystem(new MovementSystem());
 		
 		this.engine.addSystem(new UnitSelectionMovementOriginRenderSystem());
 		this.engine.addSystem(new UnitSelectionMovementTargetRenderSystem());
@@ -167,21 +171,15 @@ public class MapView extends ScreenAdapter {
 		}
 	}
 	
-	private void createCities(int x, int y, Player owner) {
+	private void createCities(int x, int y, Player owner, Entity tileEntity) {
 		if (random.nextInt(100) <= cityChancePercentage) {
-			Entity unit =
-					this.engine.createEntity();
-			
 			CityComponent cityComponent =
 					this.engine.createComponent(CityComponent.class);
 			cityComponent.x = x;
 			cityComponent.y = y;
 			cityComponent.type = choice(CityType.values());
 			
-			unit.add(cityComponent);			
-			unit.add(new MapElementOwnerComponent().set(owner, false));
-			
-			this.engine.addEntity(unit);
+			tileEntity.add(cityComponent);
 		}
 	}
 	
@@ -204,7 +202,7 @@ public class MapView extends ScreenAdapter {
 				tile.add(new MapElementOwnerComponent().set(owner, false));
 				
 				this.createUnits(x, y, owner);
-				this.createCities(x, y, owner);
+				this.createCities(x, y, owner, tile);
 				
 				this.engine.addEntity(tile);
 			}

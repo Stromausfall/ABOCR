@@ -14,9 +14,6 @@ import net.matthiasauer.abocr.graphics.RenderComponent;
 import net.matthiasauer.abocr.graphics.RenderLayer;
 import net.matthiasauer.abocr.graphics.RenderPositionUnit;
 import net.matthiasauer.abocr.graphics.texture.TextureContainer;
-import net.matthiasauer.abocr.input.base.touch.InputTouchTargetComponent;
-import net.matthiasauer.abocr.input.click.ClickableComponent;
-import net.matthiasauer.abocr.map.player.MapElementOwnerComponent;
 import net.matthiasauer.abocr.utils.Mappers;
 
 public class CityRenderSystem extends IteratingSystem {
@@ -24,7 +21,7 @@ public class CityRenderSystem extends IteratingSystem {
 	private static final Family family =
 			Family.all(CityComponent.class).get();
 	private final TextureContainer<CityType> unitTypeTextureContainer;
-	private PooledEngine engine;
+	private PooledEngine pooledEngine;
 	private final List<Entity> renderTargets;
 
 	public CityRenderSystem() {
@@ -38,16 +35,16 @@ public class CityRenderSystem extends IteratingSystem {
 	
 	@Override
 	public void addedToEngine(Engine engine) {
-		this.engine = (PooledEngine)engine;
+		this.pooledEngine = (PooledEngine)engine;
 		
-		super.addedToEngine(this.engine);
+		super.addedToEngine(this.pooledEngine);
 	};
 	
 	@Override
 	public void update(float deltaTime) {
 		for (Entity entity : this.renderTargets) {
 			entity.removeAll();
-			this.engine.removeEntity(entity);
+			this.pooledEngine.removeEntity(entity);
 		}
 		
 		this.renderTargets.clear();
@@ -66,12 +63,10 @@ public class CityRenderSystem extends IteratingSystem {
 	private void displayCounterAndMakeItClickable(Entity entity, CityComponent cityComponent) {
 		AtlasRegion typeTexture =
 				this.unitTypeTextureContainer.get(cityComponent.type);
-		MapElementOwnerComponent ownerComponent =
-				Mappers.mapElementOwnerComponent.get(entity);
-		
-		
+		Entity renderEntity = this.pooledEngine.createEntity();
+
 		RenderComponent typeRenderComponent =
-				this.engine.createComponent(RenderComponent.class).set(
+				this.pooledEngine.createComponent(RenderComponent.class).set(
 						cityComponent.x,
 						cityComponent.y,
 						0,
@@ -80,22 +75,9 @@ public class CityRenderSystem extends IteratingSystem {
 						RenderLayer.Cities,
 						null);
 
-		entity.add(typeRenderComponent);
+		renderEntity.add(typeRenderComponent);
 		
-		this.makeClickable(entity, ownerComponent);
-	}
-	
-	private void makeClickable(Entity entity, MapElementOwnerComponent ownerComponent) {
-		// also make the counter clickable !
-		InputTouchTargetComponent inputTouchTargetComponent =
-				this.engine.createComponent(InputTouchTargetComponent.class);
-
-		if (ownerComponent.owner.interaction && ownerComponent.active) {
-			entity.add(new ClickableComponent());
-			entity.add(inputTouchTargetComponent);
-		} else {
-			entity.remove(ClickableComponent.class);
-			entity.remove(InputTouchTargetComponent.class);
-		}
+		this.pooledEngine.addEntity(renderEntity);
+		this.renderTargets.add(renderEntity);
 	}
 }
