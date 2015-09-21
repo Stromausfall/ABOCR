@@ -1,9 +1,9 @@
 package net.matthiasauer.abocr.map.tile;
 
 public enum TileType {
-	Dirt(true),
-	Grass(true),
-	Sand(false);
+	DIRT(true),
+	GRASS(true),
+	MOUNTAIN(false);
 	
 	public boolean traversable;
 	

@@ -26,9 +26,9 @@ public class TileRenderSystem extends IteratingSystem {
 		super(family);
 		
 		this.tileTextureContainer = new TextureContainer<TileType>();
-		this.tileTextureContainer.add(TileType.Grass, "tile_grass");
-		this.tileTextureContainer.add(TileType.Dirt, "tile_dirt");
-		this.tileTextureContainer.add(TileType.Sand, "tile_sand");
+		this.tileTextureContainer.add(TileType.GRASS, "tile_grass");
+		this.tileTextureContainer.add(TileType.DIRT, "tile_dirt");
+		this.tileTextureContainer.add(TileType.MOUNTAIN, "tile_mountain");
 	}
 	
 	@Override

@@ -88,14 +88,14 @@ tile_grass
   orig: 128, 128
   offset: 0, 0
   index: -1
-tile_owner
+tile_mountain
   rotate: false
   xy: 262, 100
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: -1
-tile_sand
+tile_owner
   rotate: false
   xy: 392, 100
   size: 128, 128

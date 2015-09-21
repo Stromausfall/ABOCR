@@ -1,6 +1,13 @@
 package net.matthiasauer.abocr.map;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Queue;
 import java.util.Random;
+import java.util.Set;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
@@ -8,6 +15,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -50,6 +58,7 @@ import net.matthiasauer.abocr.map.unit.interaction.select.UnitSelectionMovementT
 import net.matthiasauer.abocr.map.unit.interaction.select.UnitSelectionSystem;
 import net.matthiasauer.abocr.map.unit.movement.MovementSystem;
 import net.matthiasauer.abocr.map.unit.range.RangeSystem;
+import net.matthiasauer.abocr.utils.Mappers;
 import net.matthiasauer.abocr.utils.Systems;
 
 public class MapView extends ScreenAdapter {
@@ -62,7 +71,7 @@ public class MapView extends ScreenAdapter {
 	public MapView() {
 		Random xxx = new Random();
 		long seed = xxx.nextLong();
-		seed = 2617083260353271239L;
+		//seed = 6112794154692742719L;
 		this.random = new Random(seed);
 		System.err.println("seed : " + seed);
 		
@@ -74,7 +83,7 @@ public class MapView extends ScreenAdapter {
 		this.inputMultiplexer = new InputMultiplexer();		
 		Gdx.input.setInputProcessor(this.inputMultiplexer);
 		
-		this.createMap();
+		this.createMap(this.engine);
 		
 		this.engine.addSystem(new PlayerManagementSystem());
 		this.engine.addSystem(new SupplySystem());
@@ -151,6 +160,11 @@ public class MapView extends ScreenAdapter {
 				elements[randomIndex];
 	}
 	
+	@SuppressWarnings("unchecked")
+	private <T> T choice(Collection<T> elements) {
+		return (T)choice(elements.toArray());
+	}
+	
 	private void createUnits(int x, int y, Player owner) {
 		if (random.nextInt(100) <= unitChancePercentage) {
 			Entity unit =
@@ -171,8 +185,11 @@ public class MapView extends ScreenAdapter {
 		}
 	}
 	
-	private void createCities(int x, int y, Player owner, Entity tileEntity) {
-		if (random.nextInt(100) <= cityChancePercentage) {
+	private void createCities(int x, int y, Player owner, Entity tileEntity, boolean useRandom) {
+		boolean createAccordingToRandom =
+				random.nextInt(100) <= cityChancePercentage;	
+		
+		if (createAccordingToRandom || !useRandom) {
 			CityComponent cityComponent =
 					this.engine.createComponent(CityComponent.class);
 			cityComponent.x = x;
@@ -183,30 +200,148 @@ public class MapView extends ScreenAdapter {
 		}
 	}
 	
-	private void createMap() {		
+	private void createMap(PooledEngine engine) {
 		for (int x = 0; x < xSize; x++) {
 			for (int y = 0; y < ySize; y++) {
 				Entity tile =
 						this.engine.createEntity();
-				Player owner = choice(Player.values());
 				
 				TileComponent tileComponent =
 						this.engine.createComponent(TileComponent.class);
 				tileComponent.x = x;
 				tileComponent.y = y;
-				tileComponent.tileType = choice(TileType.values());
 				tileComponent.receivesInput = true;
 
 				tile.add(tileComponent);
 				tile.add(new ClickableComponent());
-				tile.add(new MapElementOwnerComponent().set(owner, false));
-				
-				this.createUnits(x, y, owner);
-				this.createCities(x, y, owner, tile);
 				
 				this.engine.addEntity(tile);
 			}
 		}
+		
+		TileFastAccessSystem tileFastAccess = new TileFastAccessSystem();
+		this.engine.addSystem(tileFastAccess);
+		this.engine.update(Float.MIN_VALUE);
+				
+		// first spread the tile type
+		for (int x = 0; x < xSize; x++) {
+			for (int y = 0; y < ySize; y++) {
+				Entity tile = tileFastAccess.getTile(x, y);
+				TileComponent tileComponent = tileFastAccess.getTileComponent(tile);
+
+				tileComponent.tileType = choice(TileType.values());
+			}
+		}
+		
+
+		// first spread the player
+		// the neutral player will have the largest chunk according to the algorithm
+		Map<Player, Vector2> startPositions =
+				this.createStartPositions(tileFastAccess, xSize, ySize);
+		Queue<Vector2> allTiles =
+				this.createAllTilesWithoutStart(startPositions, xSize, ySize);
+		
+		while (!allTiles.isEmpty()) {
+			Vector2 tilePos = allTiles.poll();
+			Entity tileEntity = tileFastAccess.getTile((int)tilePos.x, (int)tilePos.y);
+			TileComponent tileComponent = tileFastAccess.getTileComponent(tileEntity);
+				
+			// if it is not traversable then the owner has to be the neutral player !
+			if (!tileComponent.tileType.traversable) {
+				tileEntity.add(new MapElementOwnerComponent().set(Player.Neutral, false));
+			} else {
+				// get all possible players (a possible player has to own an adjacent tile
+				Set<Player> surroundingPlayers =
+						new HashSet<Player>();
+				
+				for (Entity surroundingEntity : tileFastAccess.getSurroundingTiles(tilePos)) {
+					MapElementOwnerComponent owner =
+							Mappers.mapElementOwnerComponent.get(surroundingEntity);
+					
+					if (owner != null) {
+						surroundingPlayers.add(owner.owner);
+					}
+				}
+				
+				// add the neutral player
+				surroundingPlayers.add(Player.Neutral);
+				
+				Player owner = choice(surroundingPlayers);
+				
+				tileEntity.add(new MapElementOwnerComponent().set(owner, false));
+				
+				this.createCities((int)tilePos.x, (int)tilePos.y, owner, tileEntity, true);
+				this.createUnits((int)tilePos.x, (int)tilePos.y, owner);
+			}
+		}
+		
+		this.engine.removeSystem(tileFastAccess);
+	}
+	
+	private Queue<Vector2> createAllTilesWithoutStart(
+			Map<Player, Vector2> startPositions,
+			int xSize,
+			int ySize) {
+		Queue<Vector2> tiles =
+				new LinkedList<Vector2>();
+		Set<Vector2> startTiles =
+				new HashSet<Vector2>(startPositions.values());
+		
+		for (int x = 0; x < xSize; x++) {
+			for (int y = 0; y < ySize; y++) {
+				Vector2 position =
+						new Vector2(x, y);
+				
+				if (!startTiles.contains(position)) {
+					tiles.add(position);
+				}
+			}
+		}
+		
+		return tiles;
+	}
+
+	private Map<Player, Vector2> createStartPositions(
+			TileFastAccessSystem tileFastAccess,
+			int maxX,
+			int maxY) {
+		Map<Player, Vector2> startPositions = 
+				new HashMap<Player, Vector2>();
+		Set<Vector2> alreadyUsed =
+				new HashSet<Vector2>();
+		
+		for (Player player : Player.values()) {
+			Vector2 startPosition = null;
+			boolean validStart = false;
+			Entity tileEntity = null;
+			
+			
+			
+			// find a start position not already taken
+			do {
+				startPosition =
+						new Vector2(
+								random.nextInt(maxX),
+								random.nextInt(maxY));
+				
+				tileEntity = tileFastAccess.getTile((int)startPosition.x, (int)startPosition.y);
+				TileComponent tileComponent =
+						tileFastAccess.getTileComponent(tileEntity);
+				
+				// make sure the start tile is also traversable
+				validStart = tileComponent.tileType.traversable;
+			} while (alreadyUsed.contains(startPosition) || !validStart);
+
+			alreadyUsed.add(startPosition);
+			tileEntity.add(new MapElementOwnerComponent().set(player, false));
+			
+			// create cities there
+			this.createCities((int)startPosition.x, (int)startPosition.y, player, tileEntity, false);
+							
+			startPositions.put(player, startPosition);
+		}
+		
+		return startPositions;
 	}
 	
 	@Override
