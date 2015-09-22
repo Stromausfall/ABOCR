@@ -31,6 +31,7 @@ import net.matthiasauer.abocr.input.base.gestures.InputGestureEventGenerator;
 import net.matthiasauer.abocr.input.base.simple.InputSimpleEventGenerator;
 import net.matthiasauer.abocr.input.base.touch.InputTouchGeneratorSystem;
 import net.matthiasauer.abocr.input.click.ClickGeneratorSystem;
+import net.matthiasauer.abocr.map.income.CalculateIncomeSystem;
 import net.matthiasauer.abocr.map.owner.player.AIPlayerSystem;
 import net.matthiasauer.abocr.map.owner.player.NeutralPlayerSystem;
 import net.matthiasauer.abocr.map.player.MapElementOwnerComponent;
@@ -87,6 +88,7 @@ public class MapView extends ScreenAdapter {
 		
 		this.engine.addSystem(new PlayerManagementSystem());
 		this.engine.addSystem(new SupplySystem());
+		this.engine.addSystem(new CalculateIncomeSystem());
 		this.engine.addSystem(new UnsuppliedRenderSystem());
 		
 		
@@ -227,6 +229,11 @@ public class MapView extends ScreenAdapter {
 		for (int x = 0; x < xSize; x++) {
 			for (int y = 0; y < ySize; y++) {
 				Entity tile = tileFastAccess.getTile(x, y);
+				
+				if (tile == null) {
+					System.out.println("2422");
+				}
+				
 				TileComponent tileComponent = tileFastAccess.getTileComponent(tile);
 
 				tileComponent.tileType = choice(TileType.values());
@@ -324,7 +331,7 @@ public class MapView extends ScreenAdapter {
 								random.nextInt(maxX),
 								random.nextInt(maxY));
 				
-				tileEntity = tileFastAccess.getTile((int)startPosition.x, (int)startPosition.y);
+				tileEntity = tileFastAccess.getTile(startPosition);
 				TileComponent tileComponent =
 						tileFastAccess.getTileComponent(tileEntity);
 				

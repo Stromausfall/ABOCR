@@ -7,6 +7,7 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.ashley.utils.ImmutableArray;
 
+import net.matthiasauer.abocr.map.income.RequestIncomeCalculation;
 import net.matthiasauer.abocr.map.supply.AboutToNextTurnComponent;
 import net.matthiasauer.abocr.map.supply.NextTurnComponent;
 import net.matthiasauer.abocr.utils.Mappers;
@@ -79,6 +80,9 @@ public class PlayerManagementSystem extends EntitySystem {
 		} else {
 			this.setPlayer(nextHigherPlayer);
 		}
+		
+		this.entity.add(
+				this.pooledEngine.createComponent(RequestIncomeCalculation.class));
 	}
 	
 	public Player getPlayer() {
