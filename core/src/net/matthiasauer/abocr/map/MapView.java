@@ -73,6 +73,7 @@ public class MapView extends ScreenAdapter {
 		Random xxx = new Random();
 		long seed = xxx.nextLong();
 		//seed = 6112794154692742719L;
+		seed = -954972457995969242L;
 		this.random = new Random(seed);
 		System.err.println("seed : " + seed);
 		
