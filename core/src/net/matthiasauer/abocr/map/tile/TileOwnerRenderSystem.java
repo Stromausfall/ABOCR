@@ -59,7 +59,7 @@ public class TileOwnerRenderSystem extends IteratingSystem {
 		MapElementOwnerComponent mapElementOwner =
 				Mappers.mapElementOwnerComponent.get(entity);
 		RenderComponent renderComponent =
-				this.engine.createComponent(RenderComponent.class).set(
+				this.engine.createComponent(RenderComponent.class).setSprite(
 						tileComponent.x,
 						tileComponent.y,
 						0,

@@ -70,8 +70,8 @@ public class CameraMoveSystem extends IteratingSystem {
 				minX = Math.min(minX, renderedComponent.renderedTarget.x);
 				minY = Math.min(minY, renderedComponent.renderedTarget.y);
 	
-				maxX = Math.max(maxX, renderedComponent.renderedTarget.x + renderComponent.texture.getRegionWidth());
-				maxY = Math.max(maxY, renderedComponent.renderedTarget.y + renderComponent.texture.getRegionHeight());
+				maxX = Math.max(maxX, renderedComponent.renderedTarget.x + renderComponent.spriteTexture.getRegionWidth());
+				maxY = Math.max(maxY, renderedComponent.renderedTarget.y + renderComponent.spriteTexture.getRegionHeight());
 				
 				collectedEntities += 1;
 			}

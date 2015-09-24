@@ -79,7 +79,7 @@ public class UnitSelectionMovementTargetRenderSystem extends IteratingSystem {
 		}
 
 		RenderComponent selectionTargetRenderComponent =
-				this.engine.createComponent(RenderComponent.class).set(
+				this.engine.createComponent(RenderComponent.class).setSprite(
 						tileComponent.x,
 						tileComponent.y,
 						0,

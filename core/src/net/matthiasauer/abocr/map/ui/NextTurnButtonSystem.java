@@ -39,7 +39,7 @@ public class NextTurnButtonSystem extends EntitySystem {
 	@Override
 	public void update(float deltaTime) {
 		this.buttonEntity.add(
-				this.pooledEngine.createComponent(RenderComponent.class).set(
+				this.pooledEngine.createComponent(RenderComponent.class).setSprite(
 						80,
 						80,
 						0,

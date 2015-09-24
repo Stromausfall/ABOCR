@@ -16,7 +16,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Matrix4;
 
 public class RenderSystem extends EntitySystem {
 	public final OrthographicCamera camera;
@@ -67,7 +70,7 @@ public class RenderSystem extends EntitySystem {
 
 		this.spriteBatch.begin();
 		Boolean lastProjectedValue = null;
-		
+float xxx = this.camera.zoom;
 		// iterate over the enum in order
 		for (RenderLayer layer : RenderLayer.values()) {
 			if (lastProjectedValue != (Boolean)layer.projected) {
@@ -77,8 +80,14 @@ public class RenderSystem extends EntitySystem {
 				this.spriteBatch.end();
 				
 				if (layer.projected) {
+					this.camera.zoom = xxx;
+					this.camera.update();
+					
 					this.spriteBatch.setProjectionMatrix(this.camera.combined);
 				} else {
+					this.camera.zoom = 1;
+					this.camera.update();
+					
 					this.spriteBatch.setProjectionMatrix(this.camera.projection);
 				}
 				
@@ -86,13 +95,61 @@ public class RenderSystem extends EntitySystem {
 				this.spriteBatch.begin();
 			}
 			
-			
 			for (RenderComponent renderComponent : this.sortedComponents.get(layer)) {
-				this.drawSprite(renderComponent);					
+				switch (renderComponent.renderType) {
+				case Sprite:
+					this.drawSprite(renderComponent);
+					break;
+				case Text:
+					this.drawText(renderComponent);
+					break;
+				default:
+					throw new NullPointerException("Unknown RenderType ! : " + renderComponent.renderType);
+				}				
 			}
 		}
 		
 		this.spriteBatch.end();
+		
+		this.camera.zoom = xxx;
+		this.camera.update();
+	}
+	
+	private final BitmapFont font = new BitmapFont(); 
+	private void drawText(RenderComponent renderComponent) {
+		float actualPositionX =
+				RenderPositionUnitTranslator.translateX(
+						renderComponent.position.x,
+						renderComponent.position.y,
+						renderComponent.positionUnit);
+		float actualPositionY =
+				RenderPositionUnitTranslator.translateY(
+						renderComponent.position.x,
+						renderComponent.position.y,
+						renderComponent.positionUnit);
+		
+		if (!renderComponent.layer.projected) {
+			actualPositionX *= this.camera.zoom;
+			actualPositionY *= this.camera.zoom;
+		}
+/*
+	     Matrix4 rotationMatrix = new Matrix4();
+	     Matrix4 oldMatrix = this.spriteBatch.getTransformMatrix();
+	     rotationMatrix.idt();
+	     rotationMatrix.rotate(new Vector3(this.getX(),this.getY()+this.getHeight(),0),rotationAngle);
+	     this.spriteBatch.setTransformMatrix(rotationMatrix);
+	     //this.spriteBatch.
+	      */
+		
+		font.draw(
+				this.spriteBatch,
+				renderComponent.textString,
+				actualPositionX,
+				actualPositionY);
+		
+	     /*
+	     this.spriteBatch.setTransformMatrix(oldMatrix);
+	     */
 	}
 	
 	private void drawSprite(RenderComponent renderComponent) {
@@ -100,16 +157,16 @@ public class RenderSystem extends EntitySystem {
 				RenderPositionUnitTranslator.translateX(
 						renderComponent.position.x,
 						renderComponent.position.y,
-						renderComponent.positionUnit) - renderComponent.texture.getRegionWidth() / 2;
+						renderComponent.positionUnit) - renderComponent.spriteTexture.getRegionWidth() / 2;
 		float actualPositionY =
 				RenderPositionUnitTranslator.translateY(
 						renderComponent.position.x,
 						renderComponent.position.y,
-						renderComponent.positionUnit) - renderComponent.texture.getRegionHeight() / 2;
-		float originX = renderComponent.texture.getRegionWidth()/2;
-		float originY = renderComponent.texture.getRegionHeight()/2;
-		float width = renderComponent.texture.getRegionWidth();
-		float height = renderComponent.texture.getRegionHeight();
+						renderComponent.positionUnit) - renderComponent.spriteTexture.getRegionHeight() / 2;
+		float originX = renderComponent.spriteTexture.getRegionWidth()/2;
+		float originY = renderComponent.spriteTexture.getRegionHeight()/2;
+		float width = renderComponent.spriteTexture.getRegionWidth();
+		float height = renderComponent.spriteTexture.getRegionHeight();
 		
 		if (!renderComponent.layer.projected) {
 			actualPositionX *= this.camera.zoom;
@@ -127,7 +184,7 @@ public class RenderSystem extends EntitySystem {
 		}
 
 		this.spriteBatch.draw(
-				renderComponent.texture,
+				renderComponent.spriteTexture,
 				actualPositionX,
 				actualPositionY,
 				originX,
@@ -146,8 +203,8 @@ public class RenderSystem extends EntitySystem {
 				this.pooledEngine.createComponent(RenderedComponent.class).set(
 						actualPositionX,
 						actualPositionY,
-						renderComponent.texture.getRegionWidth(),
-						renderComponent.texture.getRegionHeight(),
+						renderComponent.spriteTexture.getRegionWidth(),
+						renderComponent.spriteTexture.getRegionHeight(),
 						this.camera.zoom));
 	}
 	

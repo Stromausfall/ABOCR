@@ -45,7 +45,7 @@ public class TileRenderSystem extends IteratingSystem {
 		AtlasRegion texture =
 				this.tileTextureContainer.get(tileComponent.tileType);
 		RenderComponent renderComponent =
-				this.engine.createComponent(RenderComponent.class).set(
+				this.engine.createComponent(RenderComponent.class).setSprite(
 						tileComponent.x,
 						tileComponent.y,
 						0,

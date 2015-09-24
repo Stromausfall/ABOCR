@@ -61,7 +61,7 @@ public class UnsuppliedRenderSystem extends IteratingSystem {
 				this.engine.createEntity();
 		
 		RenderComponent typeRenderComponent =
-				this.engine.createComponent(RenderComponent.class).set(
+				this.engine.createComponent(RenderComponent.class).setSprite(
 						unit.x,
 						unit.y,
 						0,

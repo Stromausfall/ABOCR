@@ -78,7 +78,7 @@ public class UnitRenderSystem extends IteratingSystem {
 				Mappers.mapElementOwnerComponent.get(entity);
 		
 		RenderComponent typeRenderComponent =
-				this.engine.createComponent(RenderComponent.class).set(
+				this.engine.createComponent(RenderComponent.class).setSprite(
 						unitComponent.x,
 						unitComponent.y,
 						0,
@@ -112,7 +112,7 @@ public class UnitRenderSystem extends IteratingSystem {
 		AtlasRegion strengthTexture =
 				this.unitStrengthTextureContainer.get(unitComponent.strength);
 		RenderComponent strengthRenderComponent =
-				this.engine.createComponent(RenderComponent.class).set(
+				this.engine.createComponent(RenderComponent.class).setSprite(
 						unitComponent.x,
 						unitComponent.y,
 						0,

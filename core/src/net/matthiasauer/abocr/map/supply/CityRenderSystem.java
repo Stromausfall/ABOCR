@@ -66,7 +66,7 @@ public class CityRenderSystem extends IteratingSystem {
 		Entity renderEntity = this.pooledEngine.createEntity();
 
 		RenderComponent typeRenderComponent =
-				this.pooledEngine.createComponent(RenderComponent.class).set(
+				this.pooledEngine.createComponent(RenderComponent.class).setSprite(
 						cityComponent.x,
 						cityComponent.y,
 						0,

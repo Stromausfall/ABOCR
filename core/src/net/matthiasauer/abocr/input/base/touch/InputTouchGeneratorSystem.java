@@ -111,7 +111,7 @@ public class InputTouchGeneratorSystem extends EntitySystem implements InputProc
 		
 		// if in the bounding box
 		if (rectangle.contains(position)) {
-			if (renderComponent.texture == null) {
+			if (renderComponent.spriteTexture == null) {
 				throw new NullPointerException("targetComponent.texture was null !");
 			}
 
@@ -169,19 +169,19 @@ public class InputTouchGeneratorSystem extends EntitySystem implements InputProc
 	private boolean isClickedPixelVisible(Rectangle renderedRectangle, RenderComponent renderComponent, InputTouchTargetComponent targetComponent, Vector2 position) {
 		// http://gamedev.stackexchange.com/questions/43943/how-to-detect-a-touch-on-transparent-area-of-an-image-in-a-libgdx-stage
 		Pixmap pixmap =
-				this.archive.getPixmap(renderComponent.texture.getTexture());
+				this.archive.getPixmap(renderComponent.spriteTexture.getTexture());
 
 		// we want the position of the pixel in the texture !
 		// first add the offset of the region inside the texture, then add the position inside the texture !
 		// -> because we need the position inside the texture
 		int pixelX =
-				(int)(renderComponent.texture.getRegionX() + position.x - renderedRectangle.x);
+				(int)(renderComponent.spriteTexture.getRegionX() + position.x - renderedRectangle.x);
 		
 		// the same goes for the Y component, BUT the Y axis is inverted, therefore
 		// we need to invert the position INSIDE the texture !
 		// --> that's why we use regionHeigth - positionInsideTexture
 		int pixelY =
-				(int)(renderComponent.texture.getRegionY() + renderComponent.texture.getRegionHeight() - (position.y - renderedRectangle.y));
+				(int)(renderComponent.spriteTexture.getRegionY() + renderComponent.spriteTexture.getRegionHeight() - (position.y - renderedRectangle.y));
 
 		int pixel =
 				pixmap.getPixel(pixelX, pixelY);

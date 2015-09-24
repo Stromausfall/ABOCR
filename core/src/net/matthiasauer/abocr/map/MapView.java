@@ -14,11 +14,15 @@ import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import net.matthiasauer.abocr.graphics.RenderComponent;
+import net.matthiasauer.abocr.graphics.RenderLayer;
+import net.matthiasauer.abocr.graphics.RenderPositionUnit;
 import net.matthiasauer.abocr.graphics.RenderSystem;
 import net.matthiasauer.abocr.graphics.camera.move.CameraMoveSystem;
 import net.matthiasauer.abocr.graphics.camera.move.InputGestureToMoveEventSystem;
@@ -202,7 +206,7 @@ public class MapView extends ScreenAdapter {
 			tileEntity.add(cityComponent);
 		}
 	}
-	
+	private Entity entityxxxx = null;
 	private void createMap(PooledEngine engine) {
 		for (int x = 0; x < xSize; x++) {
 			for (int y = 0; y < ySize; y++) {
@@ -219,6 +223,29 @@ public class MapView extends ScreenAdapter {
 				tile.add(new ClickableComponent());
 				
 				this.engine.addEntity(tile);
+				
+				if ((x == 0) && (y == 0)) {
+					entityxxxx = this.engine.createEntity();
+					this.engine.addEntity(entityxxxx);
+					
+					entityxxxx.add(
+							new RenderComponent().setText(
+									100,
+									100,
+									0,
+									RenderPositionUnit.Pixels,
+									RenderLayer.UI,
+										/*
+										2,
+										2,
+										0,
+										RenderPositionUnit.Tiles,
+										RenderLayer.UnitSelection,*/
+									"foo foo foo 1234 !",
+									"foo ?",
+//									19, 
+									Color.RED));
+				}
 			}
 		}
 		

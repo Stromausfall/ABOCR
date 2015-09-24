@@ -63,7 +63,7 @@ public class UnitSelectionMovementOriginRenderSystem extends IteratingSystem {
 				this.engine.createEntity();
 
 		RenderComponent selectionOriginRenderComponent =
-				this.engine.createComponent(RenderComponent.class).set(
+				this.engine.createComponent(RenderComponent.class).setSprite(
 						unitComponent.x,
 						unitComponent.y,
 						0,
