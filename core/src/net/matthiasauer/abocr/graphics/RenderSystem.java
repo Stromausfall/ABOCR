@@ -70,7 +70,8 @@ public class RenderSystem extends EntitySystem {
 
 		this.spriteBatch.begin();
 		Boolean lastProjectedValue = null;
-float xxx = this.camera.zoom;
+		final float originalZoom = this.camera.zoom;
+		
 		// iterate over the enum in order
 		for (RenderLayer layer : RenderLayer.values()) {
 			if (lastProjectedValue != (Boolean)layer.projected) {
@@ -80,7 +81,7 @@ float xxx = this.camera.zoom;
 				this.spriteBatch.end();
 				
 				if (layer.projected) {
-					this.camera.zoom = xxx;
+					this.camera.zoom = originalZoom;
 					this.camera.update();
 					
 					this.spriteBatch.setProjectionMatrix(this.camera.combined);
@@ -111,7 +112,7 @@ float xxx = this.camera.zoom;
 		
 		this.spriteBatch.end();
 		
-		this.camera.zoom = xxx;
+		this.camera.zoom = originalZoom;
 		this.camera.update();
 	}
 	
