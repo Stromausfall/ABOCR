@@ -20,6 +20,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector3;
 
 public class RenderSystem extends EntitySystem {
 	public final OrthographicCamera camera;
@@ -133,24 +134,41 @@ public class RenderSystem extends EntitySystem {
 			actualPositionX *= this.camera.zoom;
 			actualPositionY *= this.camera.zoom;
 		}
-/*
+		
+		if (renderComponent.tint != null) {
+			font.setColor(renderComponent.tint);
+		} else {
+			font.setColor(Color.BLACK);
+		}
+
 	     Matrix4 rotationMatrix = new Matrix4();
-	     Matrix4 oldMatrix = this.spriteBatch.getTransformMatrix();
+	     Matrix4 oldMatrix = this.spriteBatch.getTransformMatrix().cpy();
 	     rotationMatrix.idt();
-	     rotationMatrix.rotate(new Vector3(this.getX(),this.getY()+this.getHeight(),0),rotationAngle);
+	     
+	     Vector3 centerOfRotation =
+	    		 new Vector3(
+	    				 actualPositionX,
+	    				 actualPositionY,
+	    				 0);
+	     
+	     rotationMatrix.rotate(new Vector3(0, 0, 1), renderComponent.rotation);
+	     rotationMatrix.trn(centerOfRotation);
+
+	     spriteBatch.end();
 	     this.spriteBatch.setTransformMatrix(rotationMatrix);
-	     //this.spriteBatch.
-	      */
+	     spriteBatch.begin();
+
 		
 		font.draw(
 				this.spriteBatch,
 				renderComponent.textString,
-				actualPositionX,
-				actualPositionY);
-		
-	     /*
+				0,
+				0);
+
+
+	     spriteBatch.end();
 	     this.spriteBatch.setTransformMatrix(oldMatrix);
-	     */
+	     spriteBatch.begin();
 	}
 	
 	private void drawSprite(RenderComponent renderComponent) {

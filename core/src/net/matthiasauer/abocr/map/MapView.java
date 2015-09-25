@@ -1,5 +1,6 @@
 package net.matthiasauer.abocr.map;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -90,6 +91,44 @@ public class MapView extends ScreenAdapter {
 		Gdx.input.setInputProcessor(this.inputMultiplexer);
 		
 		this.createMap(this.engine);
+		
+		
+		LinkedList<Entity> xxx2 = new LinkedList<Entity>();
+		
+		for (int i = 0; i < 350; i += 45) {
+			Entity entityxxxx = this.engine.createEntity();
+			this.engine.addEntity(entityxxxx);
+			
+			Color color = choice(Arrays.asList(Color.WHITE, Color.RED, Color.YELLOW, null));
+System.err.println(color);
+			
+			entityxxxx.add(
+					new RenderComponent().setText(
+							3,
+							3,
+							i,
+							RenderPositionUnit.Tiles,
+							RenderLayer.UnitSelection,
+								/*
+								2,
+								2,
+								0,
+								RenderPositionUnit.Tiles,
+								RenderLayer.UnitSelection,*/
+							"foo foo foo 1234 !",
+							"foo ?",
+//							19, 
+							color));
+			
+			
+
+			xxx2.add(entityxxxx);
+		}
+		
+		
+		
+		
+		
 		
 		this.engine.addSystem(new PlayerManagementSystem());
 		this.engine.addSystem(new SupplySystem());
@@ -206,7 +245,7 @@ public class MapView extends ScreenAdapter {
 			tileEntity.add(cityComponent);
 		}
 	}
-	private Entity entityxxxx = null;
+	
 	private void createMap(PooledEngine engine) {
 		for (int x = 0; x < xSize; x++) {
 			for (int y = 0; y < ySize; y++) {
@@ -223,29 +262,6 @@ public class MapView extends ScreenAdapter {
 				tile.add(new ClickableComponent());
 				
 				this.engine.addEntity(tile);
-				
-				if ((x == 0) && (y == 0)) {
-					entityxxxx = this.engine.createEntity();
-					this.engine.addEntity(entityxxxx);
-					
-					entityxxxx.add(
-							new RenderComponent().setText(
-									100,
-									100,
-									0,
-									RenderPositionUnit.Pixels,
-									RenderLayer.UI,
-										/*
-										2,
-										2,
-										0,
-										RenderPositionUnit.Tiles,
-										RenderLayer.UnitSelection,*/
-									"foo foo foo 1234 !",
-									"foo ?",
-//									19, 
-									Color.RED));
-				}
 			}
 		}
 		
