@@ -47,13 +47,13 @@ public class UnitSelectionSystem extends IteratingSystem implements ILateInitial
 
 		this.selectedOriginEntities =
 				this.pooledEngine.getEntitiesFor(
-						Family.all(UnitSelectionMovementOrigin.class).get());
+						Family.all(UnitSelectionMovementOriginComponent.class).get());
 		super.addedToEngine(engine);
 	}
 	
 	private void selectUnit(Entity entity) {
 		entity.add(
-				this.pooledEngine.createComponent(UnitSelectionMovementOrigin.class));
+				this.pooledEngine.createComponent(UnitSelectionMovementOriginComponent.class));
 	}
 	
 	@Override
@@ -65,7 +65,7 @@ public class UnitSelectionSystem extends IteratingSystem implements ILateInitial
 					this.systems.ownerManagement.getPlayer();
 			
 			if (mapElementOwner.owner != currentPlayer) {
-				entity.remove(UnitSelectionMovementOrigin.class);
+				entity.remove(UnitSelectionMovementOriginComponent.class);
 			}
 		}
 		
@@ -86,7 +86,7 @@ public class UnitSelectionSystem extends IteratingSystem implements ILateInitial
 					wasAlreadySelected = true;
 				}
 
-				previouslySelected.remove(UnitSelectionMovementOrigin.class);
+				previouslySelected.remove(UnitSelectionMovementOriginComponent.class);
 			}
 			
 			// only select the entity if it was not already selected !

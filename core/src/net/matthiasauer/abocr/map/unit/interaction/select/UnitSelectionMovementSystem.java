@@ -19,7 +19,7 @@ public class UnitSelectionMovementSystem extends IteratingSystem {
 	private static final Family selectedEntitiesFamily =
 			Family.all(
 					UnitComponent.class,
-					UnitSelectionMovementOrigin.class).get();
+					UnitSelectionMovementOriginComponent.class).get();
 	@SuppressWarnings("unchecked")
 	private static final Family clickedTilesFamily =
 			Family.all(

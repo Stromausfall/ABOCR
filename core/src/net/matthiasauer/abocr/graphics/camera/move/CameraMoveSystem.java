@@ -123,7 +123,7 @@ public class CameraMoveSystem extends IteratingSystem {
 		
 		// by scaling it with the zoom - the movement is adapted to the zoom !
 		translateCamera.scl(this.camera.zoom);
-		
+
 		// don't shoot over the edge !
 		this.limitCameraPos(this.translateCamera);
 

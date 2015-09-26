@@ -22,7 +22,7 @@ public class UnitSelectionMovementOriginRenderSystem extends IteratingSystem {
 	private static final Family family =
 			Family.all(
 					UnitComponent.class,
-					UnitSelectionMovementOrigin.class).get();
+					UnitSelectionMovementOriginComponent.class).get();
 	private final AtlasRegion texture;
 	private List<Entity> selectedEntities;
 	private PooledEngine engine;
@@ -73,8 +73,6 @@ public class UnitSelectionMovementOriginRenderSystem extends IteratingSystem {
 						null);
 		 
 		renderEntity.add(selectionOriginRenderComponent);
-		renderEntity.add(
-				this.engine.createComponent(UnitSelectionMovementOriginRenderRemoveComponent.class));
 		
 		this.selectedEntities.add(renderEntity);
 		this.engine.addEntity(renderEntity);

@@ -43,7 +43,6 @@ public class InputSimpleEventGenerator extends EntitySystem implements InputProc
 		this.lastEvent =
 				this.engine.createComponent(InputSimpleEventComponent.class).set(
 						inputType,
-						System.currentTimeMillis(),
 						argument);
 	}
 

@@ -18,14 +18,14 @@ import net.matthiasauer.abocr.map.tile.TileComponent;
 import net.matthiasauer.abocr.map.tile.TileFastAccessSystem;
 import net.matthiasauer.abocr.map.unit.UnitComponent;
 import net.matthiasauer.abocr.map.unit.UnitFastAccessSystem;
-import net.matthiasauer.abocr.map.unit.interaction.select.UnitSelectionMovementOrigin;
+import net.matthiasauer.abocr.map.unit.interaction.select.UnitSelectionMovementOriginComponent;
 import net.matthiasauer.abocr.utils.Mappers;
 
 public class RangeSystem extends IteratingSystem {
 	@SuppressWarnings("unchecked")
 	private static final Family selectedUnits =
 			Family.all(
-					UnitSelectionMovementOrigin.class).get();
+					UnitSelectionMovementOriginComponent.class).get();
 	@SuppressWarnings("unchecked")
 	private static final Family targetTileFamily =
 			Family.all(TargetComponent.class).get();

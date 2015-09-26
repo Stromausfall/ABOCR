@@ -158,7 +158,7 @@ public class InputTouchGeneratorSystem extends EntitySystem implements InputProc
 			
 			Gdx.app.debug(
 					"InputTouchGeneratorSystem",
-					lastEvent.inputType + " - " + lastEvent.target + " @" + lastEvent.timestamp);
+					lastEvent.inputType + " - " + lastEvent.target);
 
 			// save the event
 			this.inputTouchContainerEntity.add(lastEvent);
@@ -215,7 +215,6 @@ public class InputTouchGeneratorSystem extends EntitySystem implements InputProc
 		this.lastEvent.argument = argument;
 		this.lastEvent.target = null;
 		this.lastEvent.inputType = inputType;
-		this.lastEvent.timestamp = System.currentTimeMillis();
 		this.lastEvent.projectedPosition.x = unprojected.x;
 		this.lastEvent.projectedPosition.y = unprojected.y;
 		this.lastEvent.unprojectedPosition.x = screenX - (Gdx.graphics.getWidth() / 2);

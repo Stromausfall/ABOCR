@@ -1,13 +1,13 @@
 package net.matthiasauer.abocr.graphics.texture;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 
 public class TextureContainer<S extends Enum<?>> {
 	private Map<S, AtlasRegion> container =
-			new ConcurrentHashMap<S, AtlasRegion>();
+			new HashMap<S, AtlasRegion>();
 	
 	public void add(S id, String textureName) {
 		if (id == null) {

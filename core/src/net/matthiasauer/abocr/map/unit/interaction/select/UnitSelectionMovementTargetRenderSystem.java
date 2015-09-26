@@ -89,8 +89,6 @@ public class UnitSelectionMovementTargetRenderSystem extends IteratingSystem {
 						tint);
 		 
 		renderTargetEntity.add(selectionTargetRenderComponent);
-		renderTargetEntity.add(
-				this.engine.createComponent(UnitSelectionMovementTargetRenderRemoveComponent.class));
 		
 		this.selectedEntities.add(renderTargetEntity);
 		this.engine.addEntity(renderTargetEntity);

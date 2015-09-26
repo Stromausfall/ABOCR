@@ -16,7 +16,7 @@ import net.matthiasauer.abocr.utils.Systems;
 public class CalculateIncomeSystem extends IteratingSystem implements ILateInitialization {
 	@SuppressWarnings("unchecked")
 	private static final Family requestIncome =
-			Family.all(RequestIncomeCalculation.class).get();
+			Family.all(RequestIncomeCalculationComponent.class).get();
 	private Systems systems;
 	
 	public CalculateIncomeSystem() {
@@ -25,7 +25,7 @@ public class CalculateIncomeSystem extends IteratingSystem implements ILateIniti
 
 	@Override
 	protected void processEntity(Entity entity, float deltaTime) {
-		entity.remove(RequestIncomeCalculation.class);
+		entity.remove(RequestIncomeCalculationComponent.class);
 		
 		Player player =
 				systems.ownerManagement.getPlayer();

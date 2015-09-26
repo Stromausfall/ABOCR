@@ -23,6 +23,7 @@ import net.matthiasauer.abocr.map.unit.range.TargetType;
 import net.matthiasauer.abocr.utils.ILateInitialization;
 import net.matthiasauer.abocr.utils.Mappers;
 import net.matthiasauer.abocr.utils.Systems;
+import net.matthiasauer.abocr.utils.Utils;
 
 public class AIPlayerSystem extends EntitySystem implements ILateInitialization {
 	@SuppressWarnings("unchecked")
@@ -78,7 +79,7 @@ public class AIPlayerSystem extends EntitySystem implements ILateInitialization 
 									systems.tileFastAccess.getSurroundingTiles(unit.x, unit.y));
 					
 					// we want to get a different ordering !
-					Collections.shuffle(surroundingTiles);
+					Utils.shuffle(surroundingTiles);
 					
 					ableToMove = false;
 					

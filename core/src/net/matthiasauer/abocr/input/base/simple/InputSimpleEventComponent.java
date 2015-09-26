@@ -5,17 +5,15 @@ import com.badlogic.gdx.utils.Pool.Poolable;
 
 public class InputSimpleEventComponent implements Component, Poolable {
 	public InputSimpleEventType inputType;
-	public long timestamp;
 	public int argument;
 	
 	@Override
 	public void reset() {
-		this.set(null, 0, 0);
+		this.set(null, 0);
 	}
 	
-	public InputSimpleEventComponent set(InputSimpleEventType inputType, long timestamp, int argument) {
+	public InputSimpleEventComponent set(InputSimpleEventType inputType, int argument) {
 		this.inputType = inputType;
-		this.timestamp = timestamp;
 		this.argument = argument;
 		
 		return this;

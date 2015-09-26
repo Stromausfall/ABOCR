@@ -1,11 +1,13 @@
 package net.matthiasauer.abocr.map.tile;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.ashley.systems.IteratingSystem;
-import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 
 import net.matthiasauer.abocr.graphics.RenderComponent;
@@ -19,12 +21,9 @@ public class TileOwnerRenderSystem extends IteratingSystem {
 	@SuppressWarnings("unchecked")
 	private static final Family tileFamily =
 			Family.all(TileComponent.class).get();
-	@SuppressWarnings("unchecked")
-	private static final Family tileOwnerFamily =
-			Family.all(TileOwnerComponent.class).get();
 	private final AtlasRegion tileOwner;
-	private ImmutableArray<Entity> tileOwnerEntities;
 	private PooledEngine engine;
+	private final List<Entity> renderEntities = new LinkedList<Entity>();
 	
 	public TileOwnerRenderSystem() {
 		super(tileFamily);
@@ -37,19 +36,18 @@ public class TileOwnerRenderSystem extends IteratingSystem {
 		super.addedToEngine(engine);
 		
 		this.engine = (PooledEngine) engine;
-		
-		this.tileOwnerEntities =
-				this.engine.getEntitiesFor(tileOwnerFamily);
 	}
 
 	@Override
 	public void update(float deltaTime) {
-		super.update(deltaTime);
-
 		// remove all the tile owners
-		for (Entity entity : this.tileOwnerEntities) {
+		for (Entity entity : this.renderEntities) {
 			this.engine.removeEntity(entity);
 		}
+		
+		this.renderEntities.clear();
+
+		super.update(deltaTime);
 	}
 	
 	@Override
@@ -69,10 +67,9 @@ public class TileOwnerRenderSystem extends IteratingSystem {
 						mapElementOwner.owner.color);
 		Entity tileOwnerEntity = this.engine.createEntity();
 		
-		tileOwnerEntity.add(
-				this.engine.createComponent(TileOwnerComponent.class));
 		tileOwnerEntity.add(renderComponent);
 		
 		this.engine.addEntity(tileOwnerEntity);
+		this.renderEntities.add(tileOwnerEntity);
 	}
 }
