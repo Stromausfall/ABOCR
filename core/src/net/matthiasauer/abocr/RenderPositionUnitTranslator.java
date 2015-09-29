@@ -1,23 +1,25 @@
-package net.matthiasauer.abocr.graphics;
+package net.matthiasauer.abocr;
 
 import com.badlogic.gdx.Gdx;
 
-import net.matthiasauer.abocr.map.tile.TileRenderSystem;
+import net.matthiasauer.abocr.graphics.RenderPositionUnit;
 
 /**
  * Looks cumbersome but primitives are better for the GarbageCollector than a Vector2 !
  */
 public class RenderPositionUnitTranslator {
+	private static final int TILE_SIZE = 128;
+	
 	public static float translateX(float x, float y, RenderPositionUnit positionUnit) {
 		float result = x;
 		
 		if (positionUnit == RenderPositionUnit.Tiles) {
-			result = x * TileRenderSystem.TILE_SIZE;
+			result = x * TILE_SIZE;
 			boolean shiftXCoordinate =
 					(y % 2) == 1;
 
 			if (shiftXCoordinate) {
-				result += TileRenderSystem.TILE_SIZE / 2;
+				result += TILE_SIZE / 2;
 			}
 		}
 		if (positionUnit == RenderPositionUnit.Percent) {
@@ -32,7 +34,7 @@ public class RenderPositionUnitTranslator {
 		float result = y;
 		
 		if (positionUnit == RenderPositionUnit.Tiles) {
-			result = y * TileRenderSystem.TILE_SIZE;
+			result = y * TILE_SIZE;
 		}
 		if (positionUnit == RenderPositionUnit.Percent) {
 			result =

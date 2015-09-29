@@ -23,12 +23,14 @@ allprojects {
         box2DLightsVersion = '1.4'
         ashleyVersion = '1.6.0'
         aiVersion = '1.5.0'
+		ecsToolsVersion = '0.1.8.3'
     }
 
     repositories {
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+		maven { url "https://jitpack.io" }
     }
 }
 
@@ -84,16 +86,18 @@ project(":html") {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion:sources"
         compile "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion:sources"
         compile "com.badlogicgames.ashley:ashley:$ashleyVersion:sources"
+		compile "com.github.Stromausfall:ecs-tools:$ecsToolsVersion:sources"
     }
 }
 
 project(":core") {
     apply plugin: "java"
-
+	
 
     dependencies {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.ashley:ashley:$ashleyVersion"
+		compile "com.github.Stromausfall:ecs-tools:$ecsToolsVersion"
     }
 }
 
