@@ -2,7 +2,7 @@ package net.matthiasauer.abocr;
 
 import com.badlogic.gdx.Gdx;
 
-import net.matthiasauer.abocr.graphics.RenderPositionUnit;
+import net.matthiasauer.ecstools.graphics.RenderPositionUnit;
 
 /**
  * Looks cumbersome but primitives are better for the GarbageCollector than a Vector2 !

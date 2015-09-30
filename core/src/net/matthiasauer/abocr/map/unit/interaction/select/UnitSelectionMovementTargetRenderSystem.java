@@ -10,10 +10,10 @@ import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.graphics.Color;
 
-import net.matthiasauer.abocr.graphics.RenderComponent;
-import net.matthiasauer.abocr.graphics.RenderLayer;
-import net.matthiasauer.abocr.graphics.RenderPositionUnit;
-import net.matthiasauer.abocr.graphics.texture.TextureContainer;
+import net.matthiasauer.ecstools.graphics.RenderComponent;
+import net.matthiasauer.ecstools.graphics.RenderLayer;
+import net.matthiasauer.ecstools.graphics.RenderPositionUnit;
+import net.matthiasauer.ecstools.graphics.texture.TextureContainer;
 import net.matthiasauer.abocr.map.tile.TileComponent;
 import net.matthiasauer.abocr.map.unit.range.TargetComponent;
 import net.matthiasauer.abocr.map.unit.range.TargetType;

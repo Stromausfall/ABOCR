@@ -2,7 +2,7 @@ package net.matthiasauer.abocr.utils;
 
 import com.badlogic.ashley.core.ComponentMapper;
 
-import net.matthiasauer.abocr.input.click.ClickedComponent;
+import net.matthiasauer.ecstools.input.click.ClickedComponent;
 import net.matthiasauer.abocr.map.player.ActivePlayerComponent;
 import net.matthiasauer.abocr.map.player.MapElementOwnerComponent;
 import net.matthiasauer.abocr.map.supply.CityComponent;

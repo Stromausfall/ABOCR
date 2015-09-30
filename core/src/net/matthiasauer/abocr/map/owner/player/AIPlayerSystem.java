@@ -1,7 +1,5 @@
 package net.matthiasauer.abocr.map.owner.player;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -12,7 +10,6 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.ashley.utils.ImmutableArray;
 
-import net.matthiasauer.abocr.graphics.RenderComponent;
 import net.matthiasauer.abocr.map.player.MapElementOwnerComponent;
 import net.matthiasauer.abocr.map.player.Player;
 import net.matthiasauer.abocr.map.player.PlayerManagementSystem;

@@ -7,7 +7,7 @@ import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.ashley.utils.ImmutableArray;
 
-import net.matthiasauer.abocr.input.click.ClickedComponent;
+import net.matthiasauer.ecstools.input.click.ClickedComponent;
 import net.matthiasauer.abocr.map.tile.TileComponent;
 import net.matthiasauer.abocr.map.unit.UnitComponent;
 import net.matthiasauer.abocr.map.unit.movement.MovementComponent;
