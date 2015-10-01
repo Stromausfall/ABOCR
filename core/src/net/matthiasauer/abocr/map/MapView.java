@@ -127,7 +127,7 @@ System.err.println(color);
 		
 		
 		
-		
+		this.engine.addSystem(new XXX(this.inputMultiplexer));
 		
 		
 		this.engine.addSystem(new PlayerManagementSystem());
