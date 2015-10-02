@@ -7,13 +7,13 @@ import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.ashley.utils.ImmutableArray;
 
-import net.matthiasauer.ecstools.input.click.ClickedComponent;
 import net.matthiasauer.abocr.map.player.MapElementOwnerComponent;
 import net.matthiasauer.abocr.map.player.Player;
 import net.matthiasauer.abocr.map.unit.UnitComponent;
 import net.matthiasauer.abocr.utils.ILateInitialization;
 import net.matthiasauer.abocr.utils.Mappers;
 import net.matthiasauer.abocr.utils.Systems;
+import net.matthiasauer.ecstools.input.click.ClickedComponent;
 
 public class UnitSelectionSystem extends IteratingSystem implements ILateInitialization {
 	/**

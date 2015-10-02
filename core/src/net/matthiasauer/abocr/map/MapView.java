@@ -1,6 +1,5 @@
 package net.matthiasauer.abocr.map;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,27 +14,11 @@ import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-import net.matthiasauer.ecstools.graphics.RenderComponent;
-import net.matthiasauer.ecstools.graphics.RenderLayer;
-import net.matthiasauer.ecstools.graphics.RenderPositionUnit;
-import net.matthiasauer.ecstools.graphics.RenderSystem;
-import net.matthiasauer.ecstools.graphics.camera.move.CameraMoveSystem;
-import net.matthiasauer.ecstools.graphics.camera.move.InputGestureToMoveEventSystem;
-import net.matthiasauer.ecstools.graphics.camera.zoom.CameraZoomSystem;
-import net.matthiasauer.ecstools.graphics.camera.zoom.InputGestureToZoomEventSystem;
-import net.matthiasauer.ecstools.graphics.camera.zoom.InputSimpleToZoomEventSystem;
-import net.matthiasauer.ecstools.graphics.texture.archive.RenderTextureArchiveSystem;
-import net.matthiasauer.ecstools.input.click.ClickableComponent;
-import net.matthiasauer.ecstools.input.base.gestures.InputGestureEventGenerator;
-import net.matthiasauer.ecstools.input.base.simple.InputSimpleEventGenerator;
-import net.matthiasauer.ecstools.input.base.touch.InputTouchGeneratorSystem;
-import net.matthiasauer.ecstools.input.click.ClickGeneratorSystem;
 import net.matthiasauer.abocr.map.income.CalculateIncomeSystem;
 import net.matthiasauer.abocr.map.owner.player.AIPlayerSystem;
 import net.matthiasauer.abocr.map.owner.player.NeutralPlayerSystem;
@@ -66,6 +49,18 @@ import net.matthiasauer.abocr.map.unit.movement.MovementSystem;
 import net.matthiasauer.abocr.map.unit.range.RangeSystem;
 import net.matthiasauer.abocr.utils.Mappers;
 import net.matthiasauer.abocr.utils.Systems;
+import net.matthiasauer.ecstools.graphics.RenderSystem;
+import net.matthiasauer.ecstools.graphics.camera.move.CameraMoveSystem;
+import net.matthiasauer.ecstools.graphics.camera.move.InputGestureToMoveEventSystem;
+import net.matthiasauer.ecstools.graphics.camera.zoom.CameraZoomSystem;
+import net.matthiasauer.ecstools.graphics.camera.zoom.InputGestureToZoomEventSystem;
+import net.matthiasauer.ecstools.graphics.camera.zoom.InputSimpleToZoomEventSystem;
+import net.matthiasauer.ecstools.graphics.texture.archive.RenderTextureArchiveSystem;
+import net.matthiasauer.ecstools.input.base.gestures.InputGestureEventGenerator;
+import net.matthiasauer.ecstools.input.base.simple.InputSimpleEventGenerator;
+import net.matthiasauer.ecstools.input.base.touch.InputTouchGeneratorSystem;
+import net.matthiasauer.ecstools.input.click.ClickGeneratorSystem;
+import net.matthiasauer.ecstools.input.click.ClickableComponent;
 
 public class MapView extends ScreenAdapter {
 	private final PooledEngine engine;
@@ -77,8 +72,7 @@ public class MapView extends ScreenAdapter {
 	public MapView() {
 		Random xxx = new Random();
 		long seed = xxx.nextLong();
-		//seed = 6112794154692742719L;
-		seed = -954972457995969242L;
+		//seed = -954972457995969242L;
 		this.random = new Random(seed);
 		System.err.println("seed : " + seed);
 		
@@ -91,43 +85,6 @@ public class MapView extends ScreenAdapter {
 		Gdx.input.setInputProcessor(this.inputMultiplexer);
 		
 		this.createMap(this.engine);
-		
-		
-		LinkedList<Entity> xxx2 = new LinkedList<Entity>();
-		
-		for (int i = 0; i < 350; i += 45) {
-			Entity entityxxxx = this.engine.createEntity();
-			this.engine.addEntity(entityxxxx);
-			
-			Color color = choice(Arrays.asList(Color.WHITE, Color.RED, Color.YELLOW, null));
-System.err.println(color);
-			
-			entityxxxx.add(
-					new RenderComponent().setText(
-							3,
-							3,
-							i,
-							RenderPositionUnit.Tiles,
-							RenderLayer.UnitSelection,
-								/*
-								2,
-								2,
-								0,
-								RenderPositionUnit.Tiles,
-								RenderLayer.UnitSelection,*/
-							"foo foo foo 1234 !",
-							"foo ?",
-//							19, 
-							color));
-			
-			
-
-			xxx2.add(entityxxxx);
-		}
-		
-		
-		
-		this.engine.addSystem(new XXX(this.inputMultiplexer));
 		
 		
 		this.engine.addSystem(new PlayerManagementSystem());
@@ -155,7 +112,6 @@ System.err.println(color);
 		this.engine.addSystem(new InputSimpleEventGenerator(this.inputMultiplexer));
 		
 		this.engine.addSystem(new ClickGeneratorSystem());
-		
 		
 		
 		
