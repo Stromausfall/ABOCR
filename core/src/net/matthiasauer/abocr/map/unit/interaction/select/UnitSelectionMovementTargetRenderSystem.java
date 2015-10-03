@@ -36,7 +36,6 @@ public class UnitSelectionMovementTargetRenderSystem extends IteratingSystem {
 				new TextureContainer<TargetType>();
 		this.textureContainer.add(TargetType.Attack, "attackTarget");
 		this.textureContainer.add(TargetType.Move, "moveTarget");
-		this.textureContainer.add(TargetType.NoMove, "noTarget");
 		this.selectedEntities =
 				new ArrayList<Entity>();
 	}

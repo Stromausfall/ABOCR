@@ -112,16 +112,19 @@ public class RangeSystem extends IteratingSystem {
 				// if we haven't already calculate the entity !
 				TargetType targetType =
 						this.calculateTargetType(centerEntity, surroundingEntity);
-				
-				boolean inDirectRange = (currentRange == 1);
-				
-				// if we haven't found the entity yet - it must be
-				// exactly 'currentRange' from the centre
-				surroundingEntity.add(
-						this.pooledEngine.createComponent(TargetComponent.class)
-								.set(currentRange, inDirectRange, targetType));
-				
-				total.add(surroundingEntity);
+
+				if (targetType != TargetType.NoMove) {
+					// only consider this tile if we can move to it !
+					boolean inDirectRange = (currentRange == 1);
+					
+					// if we haven't found the entity yet - it must be
+					// exactly 'currentRange' from the centre
+					surroundingEntity.add(
+							this.pooledEngine.createComponent(TargetComponent.class)
+									.set(currentRange, inDirectRange, targetType));
+					
+					total.add(surroundingEntity);
+				}
 			}
 		}
 	}
