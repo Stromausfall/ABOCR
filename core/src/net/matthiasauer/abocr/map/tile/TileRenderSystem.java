@@ -9,9 +9,9 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 
 import net.matthiasauer.ecstools.graphics.RenderComponent;
 import net.matthiasauer.ecstools.graphics.RenderLayer;
-import net.matthiasauer.ecstools.graphics.RenderPositionUnit;
 import net.matthiasauer.ecstools.graphics.texture.TextureContainer;
 import net.matthiasauer.ecstools.input.base.touch.InputTouchTargetComponent;
+import net.matthiasauer.abocr.graphics.TileRenderComponentConversion;
 import net.matthiasauer.abocr.utils.Mappers;
 
 public class TileRenderSystem extends IteratingSystem {
@@ -45,11 +45,11 @@ public class TileRenderSystem extends IteratingSystem {
 		AtlasRegion texture =
 				this.tileTextureContainer.get(tileComponent.tileType);
 		RenderComponent renderComponent =
-				this.engine.createComponent(RenderComponent.class).setSprite(
+				TileRenderComponentConversion.createSprite(
+						this.engine,
 						tileComponent.x,
 						tileComponent.y,
 						0,
-						RenderPositionUnit.Tiles,
 						texture,
 						RenderLayer.Tiles,
 						null);

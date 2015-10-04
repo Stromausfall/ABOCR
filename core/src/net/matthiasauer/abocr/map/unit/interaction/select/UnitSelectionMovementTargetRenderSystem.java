@@ -12,8 +12,8 @@ import com.badlogic.gdx.graphics.Color;
 
 import net.matthiasauer.ecstools.graphics.RenderComponent;
 import net.matthiasauer.ecstools.graphics.RenderLayer;
-import net.matthiasauer.ecstools.graphics.RenderPositionUnit;
 import net.matthiasauer.ecstools.graphics.texture.TextureContainer;
+import net.matthiasauer.abocr.graphics.TileRenderComponentConversion;
 import net.matthiasauer.abocr.map.tile.TileComponent;
 import net.matthiasauer.abocr.map.unit.range.TargetComponent;
 import net.matthiasauer.abocr.map.unit.range.TargetType;
@@ -78,11 +78,11 @@ public class UnitSelectionMovementTargetRenderSystem extends IteratingSystem {
 		}
 
 		RenderComponent selectionTargetRenderComponent =
-				this.engine.createComponent(RenderComponent.class).setSprite(
+				TileRenderComponentConversion.createSprite(
+						this.engine,
 						tileComponent.x,
 						tileComponent.y,
 						0,
-						RenderPositionUnit.Tiles,
 						this.textureContainer.get(targetComponent.type),
 						RenderLayer.UnitSelection,
 						tint);

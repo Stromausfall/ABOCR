@@ -12,8 +12,8 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 
 import net.matthiasauer.ecstools.graphics.RenderComponent;
 import net.matthiasauer.ecstools.graphics.RenderLayer;
-import net.matthiasauer.ecstools.graphics.RenderPositionUnit;
 import net.matthiasauer.ecstools.graphics.texture.TextureContainer;
+import net.matthiasauer.abocr.graphics.TileRenderComponentConversion;
 import net.matthiasauer.abocr.utils.Mappers;
 
 public class CityRenderSystem extends IteratingSystem {
@@ -21,7 +21,7 @@ public class CityRenderSystem extends IteratingSystem {
 	private static final Family family =
 			Family.all(CityComponent.class).get();
 	private final TextureContainer<CityType> unitTypeTextureContainer;
-	private PooledEngine pooledEngine;
+	private PooledEngine engine;
 	private final List<Entity> renderTargets;
 
 	public CityRenderSystem() {
@@ -35,16 +35,16 @@ public class CityRenderSystem extends IteratingSystem {
 	
 	@Override
 	public void addedToEngine(Engine engine) {
-		this.pooledEngine = (PooledEngine)engine;
+		this.engine = (PooledEngine)engine;
 		
-		super.addedToEngine(this.pooledEngine);
+		super.addedToEngine(this.engine);
 	};
 	
 	@Override
 	public void update(float deltaTime) {
 		for (Entity entity : this.renderTargets) {
 			entity.removeAll();
-			this.pooledEngine.removeEntity(entity);
+			this.engine.removeEntity(entity);
 		}
 		
 		this.renderTargets.clear();
@@ -63,21 +63,21 @@ public class CityRenderSystem extends IteratingSystem {
 	private void displayCounterAndMakeItClickable(Entity entity, CityComponent cityComponent) {
 		AtlasRegion typeTexture =
 				this.unitTypeTextureContainer.get(cityComponent.type);
-		Entity renderEntity = this.pooledEngine.createEntity();
+		Entity renderEntity = this.engine.createEntity();
 
 		RenderComponent typeRenderComponent =
-				this.pooledEngine.createComponent(RenderComponent.class).setSprite(
+				TileRenderComponentConversion.createSprite(
+						this.engine,
 						cityComponent.x,
 						cityComponent.y,
 						0,
-						RenderPositionUnit.Tiles,
 						typeTexture,
 						RenderLayer.Cities,
 						null);
 
 		renderEntity.add(typeRenderComponent);
 		
-		this.pooledEngine.addEntity(renderEntity);
+		this.engine.addEntity(renderEntity);
 		this.renderTargets.add(renderEntity);
 	}
 }

@@ -12,8 +12,8 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 
 import net.matthiasauer.ecstools.graphics.RenderComponent;
 import net.matthiasauer.ecstools.graphics.RenderLayer;
-import net.matthiasauer.ecstools.graphics.RenderPositionUnit;
 import net.matthiasauer.ecstools.graphics.texture.TextureLoader;
+import net.matthiasauer.abocr.graphics.TileRenderComponentConversion;
 import net.matthiasauer.abocr.map.unit.UnitComponent;
 import net.matthiasauer.abocr.utils.Mappers;
 
@@ -63,11 +63,11 @@ public class UnitSelectionMovementOriginRenderSystem extends IteratingSystem {
 				this.engine.createEntity();
 
 		RenderComponent selectionOriginRenderComponent =
-				this.engine.createComponent(RenderComponent.class).setSprite(
+				TileRenderComponentConversion.createSprite(
+						this.engine,
 						unitComponent.x,
 						unitComponent.y,
 						0,
-						RenderPositionUnit.Tiles,
 						this.texture,
 						RenderLayer.UnitSelection,
 						null);

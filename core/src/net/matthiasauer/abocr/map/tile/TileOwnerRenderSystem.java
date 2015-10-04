@@ -12,8 +12,8 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 
 import net.matthiasauer.ecstools.graphics.RenderComponent;
 import net.matthiasauer.ecstools.graphics.RenderLayer;
-import net.matthiasauer.ecstools.graphics.RenderPositionUnit;
 import net.matthiasauer.ecstools.graphics.texture.TextureLoader;
+import net.matthiasauer.abocr.graphics.TileRenderComponentConversion;
 import net.matthiasauer.abocr.map.player.MapElementOwnerComponent;
 import net.matthiasauer.abocr.utils.Mappers;
 
@@ -57,11 +57,11 @@ public class TileOwnerRenderSystem extends IteratingSystem {
 		MapElementOwnerComponent mapElementOwner =
 				Mappers.mapElementOwnerComponent.get(entity);
 		RenderComponent renderComponent =
-				this.engine.createComponent(RenderComponent.class).setSprite(
+				TileRenderComponentConversion.createSprite(
+						this.engine,
 						tileComponent.x,
 						tileComponent.y,
 						0,
-						RenderPositionUnit.Tiles,
 						this.tileOwner,
 						RenderLayer.TileOwner,
 						mapElementOwner.owner.color);

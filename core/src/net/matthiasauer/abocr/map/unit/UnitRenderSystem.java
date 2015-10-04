@@ -12,10 +12,10 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 
 import net.matthiasauer.ecstools.graphics.RenderComponent;
 import net.matthiasauer.ecstools.graphics.RenderLayer;
-import net.matthiasauer.ecstools.graphics.RenderPositionUnit;
 import net.matthiasauer.ecstools.graphics.texture.TextureContainer;
 import net.matthiasauer.ecstools.input.base.touch.InputTouchTargetComponent;
 import net.matthiasauer.ecstools.input.click.ClickableComponent;
+import net.matthiasauer.abocr.graphics.TileRenderComponentConversion;
 import net.matthiasauer.abocr.map.player.MapElementOwnerComponent;
 import net.matthiasauer.abocr.utils.Mappers;
 
@@ -78,11 +78,11 @@ public class UnitRenderSystem extends IteratingSystem {
 				Mappers.mapElementOwnerComponent.get(entity);
 		
 		RenderComponent typeRenderComponent =
-				this.engine.createComponent(RenderComponent.class).setSprite(
+				TileRenderComponentConversion.createSprite(
+						this.engine,
 						unitComponent.x,
 						unitComponent.y,
 						0,
-						RenderPositionUnit.Tiles,
 						typeTexture,
 						RenderLayer.UnitType,
 						null);
@@ -112,11 +112,11 @@ public class UnitRenderSystem extends IteratingSystem {
 		AtlasRegion strengthTexture =
 				this.unitStrengthTextureContainer.get(unitComponent.strength);
 		RenderComponent strengthRenderComponent =
-				this.engine.createComponent(RenderComponent.class).setSprite(
+				TileRenderComponentConversion.createSprite(
+						this.engine,
 						unitComponent.x,
 						unitComponent.y,
 						0,
-						RenderPositionUnit.Tiles,
 						strengthTexture,
 						RenderLayer.UnitType,
 						null);
