@@ -10,13 +10,24 @@ public class UnitComponent implements Component, Poolable {
 	public UnitType type;
 	public int movement;
 
+	public UnitComponent set(
+			int x,
+			int y,
+			UnitStrength strength,
+			UnitType type,
+			int movement) {
+		this.x = x;
+		this.y = y;
+		this.type = type;
+		this.strength = strength;
+		this.movement = movement;
+		
+		return this;
+	}
+	
 	@Override
 	public void reset() {
-		this.x = 0;
-		this.y = 0;
-		this.type = null;
-		this.strength = null;
-		this.movement = 0;
+		this.set(0, 0, null, null, 0);
 	}
 
 }

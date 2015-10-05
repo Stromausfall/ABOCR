@@ -8,8 +8,10 @@ import net.matthiasauer.abocr.map.player.MapElementOwnerComponent;
 import net.matthiasauer.abocr.map.supply.CityComponent;
 import net.matthiasauer.abocr.map.tile.TileComponent;
 import net.matthiasauer.abocr.map.unit.UnitComponent;
+import net.matthiasauer.abocr.map.unit.create.RequestCreationComponent;
 import net.matthiasauer.abocr.map.unit.movement.MovementComponent;
 import net.matthiasauer.abocr.map.unit.range.TargetComponent;
+import net.matthiasauer.abocr.map.unit.reinforce.RequestReinforcementComponent;
 
 public class Mappers {
 	public static final ComponentMapper<UnitComponent> unitComponent = 
@@ -28,6 +30,10 @@ public class Mappers {
 			ComponentMapper.getFor(TargetComponent.class);
 	public static final ComponentMapper<MovementComponent> movementComponent =
 			ComponentMapper.getFor(MovementComponent.class);
+	public static final ComponentMapper<RequestReinforcementComponent> requestReinforcementComponent =
+			ComponentMapper.getFor(RequestReinforcementComponent.class);
+	public static final ComponentMapper<RequestCreationComponent> requestCreationComponent =
+			ComponentMapper.getFor(RequestCreationComponent.class);
 	
 	private Mappers() {
 	}

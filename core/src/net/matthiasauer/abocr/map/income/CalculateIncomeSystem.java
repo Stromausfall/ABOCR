@@ -2,9 +2,12 @@ package net.matthiasauer.abocr.map.income;
 
 import java.util.Set;
 
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
+import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.ashley.systems.IteratingSystem;
+import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.math.Vector2;
 
 import net.matthiasauer.abocr.map.player.Player;
@@ -17,10 +20,33 @@ public class CalculateIncomeSystem extends IteratingSystem implements ILateIniti
 	@SuppressWarnings("unchecked")
 	private static final Family requestIncome =
 			Family.all(RequestIncomeCalculationComponent.class).get();
+	@SuppressWarnings("unchecked")
+	private static final Family incomeFamily =
+			Family.all(IncomeComponent.class).get();
+	private ImmutableArray<Entity> incomeEntities;
 	private Systems systems;
+	private PooledEngine engine;
 	
 	public CalculateIncomeSystem() {
 		super(requestIncome);
+	}
+	
+	@Override
+	public void addedToEngine(Engine engine) {
+		super.addedToEngine(engine);
+		
+		this.engine = (PooledEngine)engine;
+		this.incomeEntities =
+				this.engine.getEntitiesFor(incomeFamily);
+	}
+	
+	@Override
+	public void update(float deltaTime) {
+		for (Entity entity : this.incomeEntities) {
+			entity.remove(IncomeComponent.class);
+		}
+		
+		super.update(deltaTime);
 	}
 
 	@Override
@@ -45,8 +71,13 @@ public class CalculateIncomeSystem extends IteratingSystem implements ILateIniti
 				ownedCities++;
 			}
 		}
+		
+		int income = ownedCities;
+		
+		entity.add(
+				this.engine.createComponent(IncomeComponent.class).set(income));
 
-				System.err.println("x !111 " + player + " = " + ownedCities);
+		System.err.println("x !111 " + player + " = " + income);
 	}
 
 	@Override

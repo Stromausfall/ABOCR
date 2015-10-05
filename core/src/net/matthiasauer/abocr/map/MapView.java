@@ -41,12 +41,15 @@ import net.matthiasauer.abocr.map.unit.UnitFastAccessSystem;
 import net.matthiasauer.abocr.map.unit.UnitRenderSystem;
 import net.matthiasauer.abocr.map.unit.UnitStrength;
 import net.matthiasauer.abocr.map.unit.UnitType;
+import net.matthiasauer.abocr.map.unit.create.CreationSystem;
+import net.matthiasauer.abocr.map.unit.create.RequestCreationComponent;
 import net.matthiasauer.abocr.map.unit.interaction.select.UnitSelectionMovementOriginRenderSystem;
 import net.matthiasauer.abocr.map.unit.interaction.select.UnitSelectionMovementSystem;
 import net.matthiasauer.abocr.map.unit.interaction.select.UnitSelectionMovementTargetRenderSystem;
 import net.matthiasauer.abocr.map.unit.interaction.select.UnitSelectionSystem;
 import net.matthiasauer.abocr.map.unit.movement.MovementSystem;
 import net.matthiasauer.abocr.map.unit.range.RangeSystem;
+import net.matthiasauer.abocr.map.unit.reinforce.ReinforcementSystem;
 import net.matthiasauer.abocr.utils.Mappers;
 import net.matthiasauer.abocr.utils.Systems;
 import net.matthiasauer.ecstools.graphics.RenderSystem;
@@ -142,6 +145,10 @@ public class MapView extends ScreenAdapter {
 		this.engine.addSystem(new CameraMoveSystem(this.camera));
 		
 
+		
+		this.engine.addSystem(new CreationSystem());
+		this.engine.addSystem(new ReinforcementSystem());
+		
 
 
 		this.engine.addSystem(new NextTurnButtonSystem());
@@ -168,23 +175,11 @@ public class MapView extends ScreenAdapter {
 		return (T)choice(elements.toArray());
 	}
 	
-	private void createUnits(int x, int y, Player owner) {
+	private void createUnits(int x, int y, Player owner, Entity tileEntity) {
 		if (random.nextInt(100) <= unitChancePercentage) {
-			Entity unit =
-					this.engine.createEntity();
-			
-			UnitComponent unitComponent =
-					this.engine.createComponent(UnitComponent.class);
-			unitComponent.x = x;
-			unitComponent.y = y;
-			unitComponent.type = choice(UnitType.values());
-			unitComponent.strength = choice(UnitStrength.values());
-			unitComponent.movement = 1 + random.nextInt(3);
-			
-			unit.add(unitComponent);			
-			unit.add(new MapElementOwnerComponent().set(owner, false));
-			
-			this.engine.addEntity(unit);
+			tileEntity.add(
+					this.engine.createComponent(RequestCreationComponent.class).set(
+							x, y, choice(UnitStrength.values()).count));
 		}
 	}
 	
@@ -279,7 +274,7 @@ public class MapView extends ScreenAdapter {
 				tileEntity.add(new MapElementOwnerComponent().set(owner, false));
 				
 				this.createCities((int)tilePos.x, (int)tilePos.y, owner, tileEntity, true);
-				this.createUnits((int)tilePos.x, (int)tilePos.y, owner);
+				this.createUnits((int)tilePos.x, (int)tilePos.y, owner, tileEntity);
 			}
 		}
 		

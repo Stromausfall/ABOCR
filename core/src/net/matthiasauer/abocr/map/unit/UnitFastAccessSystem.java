@@ -52,6 +52,10 @@ public class UnitFastAccessSystem extends EntitySystem {
 		}
 	}
 	
+	public Entity getUnit(Vector2 position) {
+		return this.getUnit((int)position.x, (int)position.y);
+	}
+	
 	public Entity getUnit(int x, int y) {
 		Vector2 key =
 				new Vector2(x, y);
