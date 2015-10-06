@@ -42,15 +42,15 @@ public class CalculateIncomeSystem extends IteratingSystem implements ILateIniti
 	
 	@Override
 	public void update(float deltaTime) {
-		for (Entity entity : this.incomeEntities) {
-			entity.remove(IncomeComponent.class);
-		}
-		
 		super.update(deltaTime);
 	}
 
 	@Override
 	protected void processEntity(Entity entity, float deltaTime) {
+		for (Entity entity2 : this.incomeEntities) {
+			entity2.remove(IncomeComponent.class);
+		}
+		
 		entity.remove(RequestIncomeCalculationComponent.class);
 		
 		Player player =

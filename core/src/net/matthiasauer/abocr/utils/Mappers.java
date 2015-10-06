@@ -3,6 +3,7 @@ package net.matthiasauer.abocr.utils;
 import com.badlogic.ashley.core.ComponentMapper;
 
 import net.matthiasauer.ecstools.input.click.ClickedComponent;
+import net.matthiasauer.abocr.map.income.IncomeComponent;
 import net.matthiasauer.abocr.map.player.ActivePlayerComponent;
 import net.matthiasauer.abocr.map.player.MapElementOwnerComponent;
 import net.matthiasauer.abocr.map.supply.CityComponent;
@@ -34,6 +35,8 @@ public class Mappers {
 			ComponentMapper.getFor(RequestReinforcementComponent.class);
 	public static final ComponentMapper<RequestCreationComponent> requestCreationComponent =
 			ComponentMapper.getFor(RequestCreationComponent.class);
+	public static final ComponentMapper<IncomeComponent> incomeComponent =
+			ComponentMapper.getFor(IncomeComponent.class);
 	
 	private Mappers() {
 	}
