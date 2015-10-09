@@ -7,12 +7,12 @@ import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 
 import net.matthiasauer.ecstools.graphics.RenderComponent;
-import net.matthiasauer.ecstools.graphics.RenderLayer;
 import net.matthiasauer.ecstools.graphics.RenderPositionUnit;
 import net.matthiasauer.ecstools.graphics.texture.TextureLoader;
 import net.matthiasauer.ecstools.input.base.touch.InputTouchTargetComponent;
 import net.matthiasauer.ecstools.input.click.ClickableComponent;
 import net.matthiasauer.ecstools.input.click.ClickedComponent;
+import net.matthiasauer.abocr.graphics.RenderLayer;
 import net.matthiasauer.abocr.map.player.PlayerManagementSystem;
 import net.matthiasauer.abocr.utils.Mappers;
 
@@ -45,7 +45,8 @@ public class NextTurnButtonSystem extends EntitySystem {
 						0,
 						RenderPositionUnit.Percent,
 						texture,
-						RenderLayer.UI,
+						RenderLayer.UI.order,
+						RenderLayer.UI.projected,
 						null));
 		this.buttonEntity.add(
 				this.pooledEngine.createComponent(ClickableComponent.class));

@@ -19,7 +19,6 @@ import net.matthiasauer.abocr.map.player.MapElementOwnerComponent;
 import net.matthiasauer.abocr.map.player.Player;
 import net.matthiasauer.abocr.map.player.PlayerManagementSystem;
 import net.matthiasauer.abocr.map.tile.TileComponent;
-import net.matthiasauer.abocr.map.tile.TileFastAccessSystem;
 import net.matthiasauer.abocr.map.unit.UnitComponent;
 import net.matthiasauer.abocr.map.unit.UnitStrength;
 import net.matthiasauer.abocr.map.unit.create.RequestCreationComponent;

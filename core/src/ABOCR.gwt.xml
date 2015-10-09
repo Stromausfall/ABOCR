@@ -29,4 +29,7 @@
 	
 	<extend-configuration-property name="gdx.reflect.include" value="net.matthiasauer.abocr.map.unit.range.TargetComponent" />
 	<extend-configuration-property name="gdx.reflect.include" value="net.matthiasauer.abocr.map.unit.range.TargetType" />
+	
+	<extend-configuration-property name="gdx.reflect.include" value="net.matthiasauer.abocr.map.unit.create.RequestCreationComponent" />
+	<extend-configuration-property name="gdx.reflect.include" value="net.matthiasauer.abocr.map.unit.reinforce.RequestReinforcementComponent" />
 </module>

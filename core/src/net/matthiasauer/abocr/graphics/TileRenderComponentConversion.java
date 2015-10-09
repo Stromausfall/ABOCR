@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 
 import net.matthiasauer.abocr.map.tile.TileRenderSystem;
 import net.matthiasauer.ecstools.graphics.RenderComponent;
-import net.matthiasauer.ecstools.graphics.RenderLayer;
 import net.matthiasauer.ecstools.graphics.RenderPositionUnit;
 
 public class TileRenderComponentConversion extends RenderComponent {
@@ -30,7 +29,8 @@ public class TileRenderComponentConversion extends RenderComponent {
 				translateY(tilePositionX, tilePositionY),
 				rotation,
 				RenderPositionUnit.Pixels,
-				layer,
+				layer.order,
+				layer.projected,
 				textString,
 				textFont,
 				tint);
@@ -55,7 +55,8 @@ public class TileRenderComponentConversion extends RenderComponent {
 				rotation,
 				RenderPositionUnit.Pixels,
 				texture,
-				layer,
+				layer.order,
+				layer.projected,
 				tint);
 		
 		return component;
