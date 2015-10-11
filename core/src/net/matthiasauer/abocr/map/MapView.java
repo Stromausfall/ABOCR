@@ -1,9 +1,12 @@
 package net.matthiasauer.abocr.map;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
@@ -56,6 +59,7 @@ import net.matthiasauer.ecstools.graphics.camera.move.InputGestureToMoveEventSys
 import net.matthiasauer.ecstools.graphics.camera.zoom.CameraZoomSystem;
 import net.matthiasauer.ecstools.graphics.camera.zoom.InputGestureToZoomEventSystem;
 import net.matthiasauer.ecstools.graphics.camera.zoom.InputSimpleToZoomEventSystem;
+import net.matthiasauer.ecstools.graphics.texture.TextureLoader;
 import net.matthiasauer.ecstools.graphics.texture.archive.RenderTextureArchiveSystem;
 import net.matthiasauer.ecstools.input.base.gestures.InputGestureEventGenerator;
 import net.matthiasauer.ecstools.input.base.simple.InputSimpleEventGenerator;
@@ -64,6 +68,9 @@ import net.matthiasauer.ecstools.input.click.ClickGeneratorSystem;
 import net.matthiasauer.ecstools.input.click.ClickableComponent;
 
 public class MapView extends ScreenAdapter {
+	public static List<String> TEXTURE_ATLAS_PATHS =
+			Collections.unmodifiableList(
+					Arrays.asList("data1.atlas"));
 	private final PooledEngine engine;
 	private final Random random;
 	private final OrthographicCamera camera;
@@ -78,6 +85,8 @@ public class MapView extends ScreenAdapter {
 		this.random = new Random(seed);
 		System.err.println("seed : " + seed);
 		
+		TextureLoader.createInstance(TEXTURE_ATLAS_PATHS);
+		
 		
 		this.engine = new PooledEngine();
 		this.camera = new OrthographicCamera(800, 600);
@@ -87,7 +96,6 @@ public class MapView extends ScreenAdapter {
 		Gdx.input.setInputProcessor(this.inputMultiplexer);
 		
 		this.createMap(this.engine);
-		
 		
 		this.engine.addSystem(new PlayerManagementSystem());
 		this.engine.addSystem(new SupplySystem());
