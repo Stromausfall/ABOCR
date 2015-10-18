@@ -29,11 +29,11 @@ public class TileRenderComponentConversion extends RenderComponent {
 				translateY(tilePositionX, tilePositionY),
 				rotation,
 				RenderPositionUnit.Pixels,
+				tint,
 				layer.order,
 				layer.projected,
 				textString,
-				textFont,
-				tint);
+				textFont);
 		
 		return component;
 	}
@@ -54,10 +54,10 @@ public class TileRenderComponentConversion extends RenderComponent {
 				translateY(tilePositionX, tilePositionY),
 				rotation,
 				RenderPositionUnit.Pixels,
-				texture,
+				tint,
 				layer.order,
 				layer.projected,
-				tint);
+				texture);
 		
 		return component;
 	}

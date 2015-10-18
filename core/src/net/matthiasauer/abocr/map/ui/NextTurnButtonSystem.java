@@ -44,10 +44,10 @@ public class NextTurnButtonSystem extends EntitySystem {
 						80,
 						0,
 						RenderPositionUnit.Percent,
-						texture,
+						null,
 						RenderLayer.UI.order,
 						RenderLayer.UI.projected,
-						null));
+						texture));
 		this.buttonEntity.add(
 				this.pooledEngine.createComponent(ClickableComponent.class));
 		this.buttonEntity.add(
