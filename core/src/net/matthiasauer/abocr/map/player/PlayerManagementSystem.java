@@ -1,16 +1,22 @@
 package net.matthiasauer.abocr.map.player;
 
+import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.ashley.utils.ImmutableArray;
+import com.badlogic.gdx.graphics.Color;
 
+import net.matthiasauer.abocr.graphics.RenderLayer;
+import net.matthiasauer.abocr.map.income.IncomeComponent;
 import net.matthiasauer.abocr.map.income.RequestIncomeCalculationComponent;
 import net.matthiasauer.abocr.map.supply.AboutToNextTurnComponent;
 import net.matthiasauer.abocr.map.supply.NextTurnComponent;
 import net.matthiasauer.abocr.utils.Mappers;
+import net.matthiasauer.ecstools.graphics.RenderComponent;
+import net.matthiasauer.ecstools.graphics.RenderPositionUnit;
 
 public class PlayerManagementSystem extends EntitySystem {
 	@SuppressWarnings("unchecked")
@@ -19,8 +25,14 @@ public class PlayerManagementSystem extends EntitySystem {
 	@SuppressWarnings("unchecked")
 	private static final Family mapElementOwnerFamily =
 			Family.all(MapElementOwnerComponent.class).get();
+	@SuppressWarnings("unchecked")
+	private static final Family incomeFamily =
+			Family.all(IncomeComponent.class).get();
+	private final ComponentMapper<IncomeComponent> incomeComponentMapper =
+			ComponentMapper.getFor(IncomeComponent.class);
 	private ImmutableArray<Entity> activePlayerEntities;
 	private ImmutableArray<Entity> mapElementOwnerEntities;
+	private ImmutableArray<Entity> incomeEntities;
 	private PooledEngine pooledEngine;
 	private Entity entity;
 	
@@ -32,6 +44,8 @@ public class PlayerManagementSystem extends EntitySystem {
 				this.pooledEngine.getEntitiesFor(activePlayerFamily);
 		this.mapElementOwnerEntities =
 				this.pooledEngine.getEntitiesFor(mapElementOwnerFamily);
+		this.incomeEntities =
+				this.pooledEngine.getEntitiesFor(incomeFamily);
 		this.entity =
 				this.pooledEngine.createEntity();
 		this.pooledEngine.addEntity(this.entity);
@@ -99,9 +113,31 @@ public class PlayerManagementSystem extends EntitySystem {
 		return activePlayerComponent.owner;
 	}
 	
+	private void foo(Player activeOwner) {
+		if (this.incomeEntities.size() != 0) {
+			Entity entity = this.incomeEntities.first();
+			IncomeComponent incomeComponent =
+					this.incomeComponentMapper.get(entity);
+			
+			this.entity.add(
+					this.pooledEngine.createComponent(RenderComponent.class)
+						.setText(
+								-75,
+								0,
+								0,
+								RenderPositionUnit.Percent,
+								Color.BLACK,
+								RenderLayer.UI.order,
+								RenderLayer.UI.projected,
+								activeOwner.toString() + " : " + incomeComponent.income,
+								null));
+		}
+	}
+	
 	@Override
 	public void update(float deltaTime) {
 		Player activeOwner = this.getPlayer();
+		this.foo(activeOwner);
 		
 		for (Entity entity : this.mapElementOwnerEntities) {
 			MapElementOwnerComponent mapElementOwnerComponent =

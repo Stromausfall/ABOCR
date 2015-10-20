@@ -76,8 +76,6 @@ public class CalculateIncomeSystem extends IteratingSystem implements ILateIniti
 		
 		entity.add(
 				this.engine.createComponent(IncomeComponent.class).set(income));
-
-		System.err.println("x !111 " + player + " = " + income);
 	}
 
 	@Override
