@@ -5,6 +5,27 @@ public enum UnitStrength {
 	Two(2),
 	Three(3),
 	Four(4);
+
+	public static final UnitStrength smallest;
+	public static final UnitStrength largest;
+	
+	static {
+		UnitStrength smallestValue = UnitStrength.values()[0];
+		UnitStrength largestValue = UnitStrength.values()[0];
+		
+		for (UnitStrength element : UnitStrength.values()) {
+			if (element.count > largestValue.count) {
+				largestValue = element;
+			}
+			
+			if (element.count < smallestValue.count) {
+				smallestValue = element;
+			}
+		}
+		
+		smallest = smallestValue;
+		largest = largestValue;
+	}
 	
 	public int count;
 	

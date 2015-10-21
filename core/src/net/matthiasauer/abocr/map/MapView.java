@@ -50,6 +50,7 @@ import net.matthiasauer.abocr.map.unit.interaction.select.UnitSelectionMovementT
 import net.matthiasauer.abocr.map.unit.interaction.select.UnitSelectionSystem;
 import net.matthiasauer.abocr.map.unit.movement.MovementSystem;
 import net.matthiasauer.abocr.map.unit.range.RangeSystem;
+import net.matthiasauer.abocr.map.unit.reinforce.CaptureReinformentSystem;
 import net.matthiasauer.abocr.map.unit.reinforce.ReinforcementSystem;
 import net.matthiasauer.abocr.utils.Mappers;
 import net.matthiasauer.abocr.utils.Systems;
@@ -151,6 +152,7 @@ public class MapView extends ScreenAdapter {
 		this.engine.addSystem(new CameraMoveSystem(this.camera));
 		
 
+		this.engine.addSystem(new CaptureReinformentSystem());
 		
 		this.engine.addSystem(new CreationSystem());
 		this.engine.addSystem(new ReinforcementSystem());
