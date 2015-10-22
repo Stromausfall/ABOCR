@@ -27,7 +27,7 @@ public enum UnitStrength {
 		largest = largestValue;
 	}
 	
-	public int count;
+	public final int count;
 	
 	private UnitStrength(int count) {
 		this.count = count;

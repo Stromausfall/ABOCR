@@ -60,23 +60,10 @@ public class AIPlayerSystem extends EntitySystem implements ILateInitialization 
 		this.systems = systems;
 	}
 	
-	private UnitStrength getMaxStrength() {
-		UnitStrength max =
-				UnitStrength.values()[0];
-		
-		for (UnitStrength element : UnitStrength.values()) {
-			if (element.count > max.count) {
-				max = element;
-			}
-		}
-		
-		return max;
-	}
-	
 	private Set<Entity> calculateUnitsToReinforce(Player player) {
 		Set<Entity> result =
 				new HashSet<Entity>();
-		UnitStrength max = this.getMaxStrength();
+		UnitStrength max = UnitStrength.largest;
 		
 		for (Entity unitEntity : this.unitEntities) {
 			MapElementOwnerComponent unitOwner =
