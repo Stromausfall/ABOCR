@@ -42,6 +42,7 @@ import net.matthiasauer.abocr.map.ui.NextTurnButtonSystem;
 import net.matthiasauer.abocr.map.unit.UnitFastAccessSystem;
 import net.matthiasauer.abocr.map.unit.UnitRenderSystem;
 import net.matthiasauer.abocr.map.unit.UnitStrength;
+import net.matthiasauer.abocr.map.unit.create.CaptureCreateSystem;
 import net.matthiasauer.abocr.map.unit.create.CreationSystem;
 import net.matthiasauer.abocr.map.unit.create.RequestCreationComponent;
 import net.matthiasauer.abocr.map.unit.interaction.select.UnitSelectionMovementOriginRenderSystem;
@@ -153,6 +154,7 @@ public class MapView extends ScreenAdapter {
 		
 
 		this.engine.addSystem(new CaptureReinformentSystem());
+		this.engine.addSystem(new CaptureCreateSystem());
 		
 		this.engine.addSystem(new CreationSystem());
 		this.engine.addSystem(new ReinforcementSystem());
