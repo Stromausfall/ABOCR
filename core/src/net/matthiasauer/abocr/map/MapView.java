@@ -38,6 +38,7 @@ import net.matthiasauer.abocr.map.tile.TileFastAccessSystem;
 import net.matthiasauer.abocr.map.tile.TileOwnerRenderSystem;
 import net.matthiasauer.abocr.map.tile.TileRenderSystem;
 import net.matthiasauer.abocr.map.tile.TileType;
+import net.matthiasauer.abocr.map.ui.NextPhaseButtonSystem;
 import net.matthiasauer.abocr.map.ui.NextTurnButtonSystem;
 import net.matthiasauer.abocr.map.unit.UnitFastAccessSystem;
 import net.matthiasauer.abocr.map.unit.UnitRenderSystem;
@@ -162,6 +163,7 @@ public class MapView extends ScreenAdapter {
 
 
 		this.engine.addSystem(new NextTurnButtonSystem());
+		this.engine.addSystem(new NextPhaseButtonSystem());
 		
 		this.engine.addSystem(new RenderSystem(this.camera));
 		
