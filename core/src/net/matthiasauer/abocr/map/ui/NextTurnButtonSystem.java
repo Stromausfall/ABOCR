@@ -59,8 +59,8 @@ public class NextTurnButtonSystem extends EntitySystem {
 		if (clickedComponent != null) {
 			// button clicked
 			// only works if the current player is interactable !
-			if (this.ownerManagementSystem.getPlayer().interaction) {
-				System.err.println("oi ! next turn now :) was : " + this.ownerManagementSystem.getPlayer());
+			if (this.ownerManagementSystem.getActivePlayer().interaction) {
+				System.err.println("oi ! next turn now :) was : " + this.ownerManagementSystem.getActivePlayer());
 				this.ownerManagementSystem.nextPlayer();
 			}
 		}

@@ -9,6 +9,7 @@ import com.badlogic.ashley.utils.ImmutableArray;
 
 import net.matthiasauer.abocr.map.player.MapElementOwnerComponent;
 import net.matthiasauer.abocr.map.player.Player;
+import net.matthiasauer.abocr.map.player.TurnPhase;
 import net.matthiasauer.abocr.map.unit.UnitComponent;
 import net.matthiasauer.abocr.utils.ILateInitialization;
 import net.matthiasauer.abocr.utils.Mappers;
@@ -62,7 +63,7 @@ public class UnitSelectionSystem extends IteratingSystem implements ILateInitial
 			MapElementOwnerComponent mapElementOwner =
 					Mappers.mapElementOwnerComponent.get(entity);
 			Player currentPlayer =
-					this.systems.ownerManagement.getPlayer();
+					this.systems.ownerManagement.getActivePlayer();
 			
 			if (mapElementOwner.owner != currentPlayer) {
 				entity.remove(UnitSelectionMovementOriginComponent.class);
@@ -74,6 +75,11 @@ public class UnitSelectionSystem extends IteratingSystem implements ILateInitial
 
 	@Override
 	protected void processEntity(Entity entity, float deltaTime) {
+		if (this.systems.ownerManagement.getActivePlayerComponent().activePhase != TurnPhase.MoveUnits) {
+			// only move units if we are in the phase of the turn that deals with moving units !
+			return;
+		}
+		
 		if (this.selectedOriginEntities.size() == 0) {
 			// no entity was previous selected !
 			this.selectUnit(entity);

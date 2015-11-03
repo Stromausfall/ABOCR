@@ -10,12 +10,16 @@ import com.badlogic.ashley.utils.ImmutableArray;
 import net.matthiasauer.abocr.map.income.IncomeComponent;
 import net.matthiasauer.abocr.map.player.MapElementOwnerComponent;
 import net.matthiasauer.abocr.map.player.Player;
+import net.matthiasauer.abocr.map.player.TurnPhase;
 import net.matthiasauer.abocr.map.tile.TileComponent;
 import net.matthiasauer.abocr.utils.ILateInitialization;
 import net.matthiasauer.abocr.utils.Mappers;
 import net.matthiasauer.abocr.utils.Systems;
 import net.matthiasauer.ecstools.input.click.ClickedComponent;
 
+/**
+ * Captures player interaction and creates a request for the creation of a new unit
+ */
 public class CaptureCreateSystem extends IteratingSystem implements ILateInitialization {
 	@SuppressWarnings("unchecked")
 	private static final Family family =
@@ -49,10 +53,15 @@ public class CaptureCreateSystem extends IteratingSystem implements ILateInitial
 
 	@Override
 	protected void processEntity(Entity entity, float deltaTime) {
+		if (this.systems.ownerManagement.getActivePlayerComponent().activePhase != TurnPhase.SpendReinforcements) {
+			// only move units if we are in the phase of the turn that deals with reinforcement
+			return;
+		}
+		
 		IncomeComponent incomeComponent =
 				Mappers.incomeComponent.get(entity);
 		Player player =
-				systems.ownerManagement.getPlayer();
+				systems.ownerManagement.getActivePlayer();
 		
 		if (!player.interaction) {
 			// this is a computer player !

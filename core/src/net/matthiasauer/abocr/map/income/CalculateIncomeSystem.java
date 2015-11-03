@@ -54,7 +54,7 @@ public class CalculateIncomeSystem extends IteratingSystem implements ILateIniti
 		entity.remove(RequestIncomeCalculationComponent.class);
 		
 		Player player =
-				systems.ownerManagement.getPlayer();
+				systems.ownerManagement.getActivePlayer();
 		Set<Vector2> ownedTiles =
 				systems.tileFastAccess.getOwnedTiles(player);
 		

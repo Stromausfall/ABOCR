@@ -104,7 +104,7 @@ public class AIPlayerSystem extends EntitySystem implements ILateInitialization 
 	@Override
 	public void update(float deltaTime) {
 		Player owner =
-				this.ownerManagementSystem.getPlayer();
+				this.ownerManagementSystem.getActivePlayer();
 		
 		if ((owner != Player.Neutral) && (!owner.interaction)) {
 			// we only want non-interactable players which are NOT the NEUTRAL player !

@@ -24,7 +24,7 @@ public class NeutralPlayerSystem extends EntitySystem {
 	@Override
 	public void update(float deltaTime) {
 		Player owner =
-				this.ownerManagementSystem.getPlayer();
+				this.ownerManagementSystem.getActivePlayer();
 		
 		if (owner == Player.Neutral) {
 			// we only want to process the neutral player

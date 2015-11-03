@@ -55,12 +55,12 @@ public class PlayerManagementSystem extends EntitySystem {
 	
 	public void setPlayer(Player owner) {
 		this.entity.add(
-				this.pooledEngine.createComponent(ActivePlayerComponent.class).set(owner));
+				this.pooledEngine.createComponent(ActivePlayerComponent.class).set(owner, TurnPhase.SpendReinforcements));
 	}
 	
 	public void nextPlayer() {
 		Player firstPlayer = Player.Neutral;
-		Player currentPlayer = this.getPlayer();
+		Player currentPlayer = this.getActivePlayer();
 		Player nextHigherPlayer = null;
 		
 		for (Player owner : Player.values()) {
@@ -99,7 +99,14 @@ public class PlayerManagementSystem extends EntitySystem {
 				this.pooledEngine.createComponent(RequestIncomeCalculationComponent.class));
 	}
 	
-	public Player getPlayer() {
+	/**
+	 * @return the active player
+	 */
+	public Player getActivePlayer() {
+		return this.getActivePlayerComponent().owner;
+	}
+	
+	public ActivePlayerComponent getActivePlayerComponent() {
 		if (activePlayerEntities.size() != 1) {
 			throw new NullPointerException(
 					"There must only ever be exactly one active player ! But there were : "
@@ -110,7 +117,7 @@ public class PlayerManagementSystem extends EntitySystem {
 		ActivePlayerComponent activePlayerComponent =
 				Mappers.activePlayerComponent.get(entity);
 		
-		return activePlayerComponent.owner;
+		return activePlayerComponent;
 	}
 	
 	private void foo(Player activeOwner) {
@@ -136,7 +143,7 @@ public class PlayerManagementSystem extends EntitySystem {
 	
 	@Override
 	public void update(float deltaTime) {
-		Player activeOwner = this.getPlayer();
+		Player activeOwner = this.getActivePlayer();
 		this.foo(activeOwner);
 		
 		for (Entity entity : this.mapElementOwnerEntities) {
